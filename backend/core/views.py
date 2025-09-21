@@ -317,6 +317,45 @@ def api_logout(request):
         }, status=500)
 
 
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_verify_password(request):
+    """Verify user password for quiz creation"""
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        
+        if not username or not password:
+            return JsonResponse({
+                'success': False,
+                'error': 'Username and password are required'
+            }, status=400)
+        
+        # Import Django's authenticate function
+        from django.contrib.auth import authenticate
+        
+        # Verify credentials using Django authentication
+        user = authenticate(request, username=username, password=password)
+        
+        if user:
+            return JsonResponse({
+                'success': True,
+                'message': 'Password verified successfully'
+            })
+        else:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid credentials'
+            }, status=401)
+            
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
 # Quiz API Views
 @csrf_exempt
 @require_http_methods(["GET"])
@@ -942,6 +981,24 @@ def api_create_quiz(request):
     try:
         data = json.loads(request.body)
         
+        username = data.get('username')
+        admin_password = data.get('admin_password')
+        
+        if not username or not admin_password:
+            return JsonResponse({
+                'success': False,
+                'error': 'Admin credentials are required'
+            }, status=400)
+        
+        from django.contrib.auth import authenticate
+        user = authenticate(request, username=username, password=admin_password)
+        
+        if not user:
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid admin credentials'
+            }, status=401)
+        
         title = data.get('title')
         description = data.get('description', '')
         question = data.get('question')
@@ -980,7 +1037,7 @@ def api_create_quiz(request):
                 'error': 'Invalid datetime format'
             }, status=400)
         
-        # Create quiz (temporarily without user for API access)
+        # Create quiz with authenticated user
         quiz = Quiz.objects.create(
             title=title,
             description=description,
@@ -993,7 +1050,7 @@ def api_create_quiz(request):
             start_time=start_time,
             end_time=end_time,
             password=password,
-            created_by=None  # Temporarily set to None for API access
+            created_by=user
         )
         
         return JsonResponse({

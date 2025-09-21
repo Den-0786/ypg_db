@@ -25,6 +25,7 @@ export default function DashboardPage() {
   const [showQuizPassword, setShowQuizPassword] = useState(false);
   const [showAdminPassword, setShowAdminPassword] = useState(false);
   const [adminPasswordInput, setAdminPasswordInput] = useState("");
+  const [storedAdminPassword, setStoredAdminPassword] = useState("");
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showResultsModal, setShowResultsModal] = useState(false);
@@ -104,7 +105,7 @@ export default function DashboardPage() {
   const fetchActiveQuiz = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quizzes/active/`
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/quizzes/active/`
       );
       if (response.ok) {
         const data = await response.json();
@@ -179,18 +180,20 @@ export default function DashboardPage() {
       return;
     }
 
-    // Generate a random password if none is provided
-    const passwordToUse = quizPassword || generateRandomPassword();
+    // Use the generated quiz password
+    const passwordToUse = quizPassword;
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quizzes/create/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/quizzes/create/`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
+            username: "district_admin",
+            admin_password: storedAdminPassword,
             title: newQuestion.title,
             question: newQuestion.question,
             option_a: newQuestion.optionA,
@@ -251,7 +254,7 @@ export default function DashboardPage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quizzes/${activeQuiz.id}/end/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/quizzes/${activeQuiz.id}/end/`,
         {
           method: "POST",
           headers: {
@@ -280,7 +283,7 @@ export default function DashboardPage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quizzes/${activeQuiz.id}/delete/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/quizzes/${activeQuiz.id}/delete/`,
         {
           method: "DELETE",
           headers: {
@@ -356,7 +359,7 @@ export default function DashboardPage() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quizzes/${activeQuiz.id}/update/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/quizzes/${activeQuiz.id}/update/`,
         {
           method: "PUT",
           headers: {
@@ -417,22 +420,41 @@ export default function DashboardPage() {
     }
   };
 
-  const handlePasswordSubmit = (password) => {
-    const adminPassword = "district2024";
+  const handlePasswordSubmit = async (password) => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/verify-password/`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username: "district_admin",
+            password: password,
+          }),
+        }
+      );
 
-    if (password === adminPassword) {
-      setShowPasswordModal(false);
-      setShowQuizModal(true);
-      setAdminPasswordInput("");
-    } else {
-      showToast("Incorrect admin password!", "error");
+      const data = await response.json();
+
+      if (data.success) {
+        setStoredAdminPassword(adminPasswordInput);
+        setShowPasswordModal(false);
+        setShowQuizModal(true);
+        setAdminPasswordInput("");
+      } else {
+        showToast("Incorrect admin password!", "error");
+      }
+    } catch (error) {
+      showToast("Failed to verify password", "error");
     }
   };
 
   const handleQuizSubmission = async (submission) => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/quizzes/submit/`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"}/api/quizzes/submit/`,
         {
           method: "POST",
           headers: {

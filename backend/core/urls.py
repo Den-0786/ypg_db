@@ -51,6 +51,7 @@ urlpatterns = [
     path("api/auth/login/", views.api_login, name="api_login"),
     path("api/auth/pin-login/", views.api_pin_login, name="api_pin_login"),
     path("api/auth/logout/", views.api_logout, name="api_logout"),
+    path("api/auth/verify-password/", views.api_verify_password, name="api_verify_password"),
     
     # API URLs
     path("api/members/", views.api_members, name="api_members"),
@@ -115,6 +116,7 @@ urlpatterns = [
     path("api/quizzes/<int:quiz_id>/delete/", views.api_delete_quiz, name="api_delete_quiz"),
     path("api/quizzes/cleanup/", views.api_cleanup_expired_quizzes, name="api_cleanup_expired_quizzes"),
     path("api/quizzes/congregation-stats/", views.api_congregation_quiz_stats, name="api_congregation_quiz_stats"),
+    path("api/verify-password/", views.api_verify_password, name="api_verify_password"),
 
     
     # Settings API URLs
