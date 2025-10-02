@@ -23,6 +23,7 @@ export default function DashboardLayout({
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState("profile");
+  const [settingsSidebarOpen, setSettingsSidebarOpen] = useState(true);
   const [securityMethod, setSecurityMethod] = useState("password");
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [pinModalConfig, setPinModalConfig] = useState({});
@@ -145,16 +146,20 @@ export default function DashboardLayout({
       if (window.innerWidth >= 1024) {
         // lg breakpoint
         setSidebarOpen(true);
+        setSettingsSidebarOpen(true);
       } else {
         setSidebarOpen(false);
+        setSettingsSidebarOpen(false);
       }
     };
 
     // Set initial state - ensure sidebar is closed on mobile by default
     if (window.innerWidth >= 1024) {
       setSidebarOpen(true);
+      setSettingsSidebarOpen(true);
     } else {
       setSidebarOpen(false);
+      setSettingsSidebarOpen(false);
     }
 
     // Add event listener
@@ -1089,9 +1094,18 @@ export default function DashboardLayout({
           <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg sm:max-w-2xl max-h-[95vh] overflow-hidden">
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
-                  Settings
-                </h2>
+                <div className="flex items-center space-x-3">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+                    Settings
+                  </h2>
+                  {/* Mobile sidebar toggle */}
+                  <button
+                    onClick={() => setSettingsSidebarOpen(!settingsSidebarOpen)}
+                    className="lg:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  >
+                    <i className="fas fa-bars text-lg"></i>
+                  </button>
+                </div>
                 <button
                   onClick={() => setSettingsOpen(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -1101,58 +1115,118 @@ export default function DashboardLayout({
               </div>
               <div className="flex max-h-[70vh] sm:max-h-[80vh]">
                 {/* Settings Sidebar */}
-                <div className="w-48 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                <div className={`${
+                  settingsSidebarOpen ? "w-48" : "w-0"
+                } transition-all duration-300 border-r overflow-hidden ${
+                  theme === "dark"
+                    ? "border-gray-700 bg-gray-900"
+                    : "border-gray-200 bg-gray-50"
+                }`}>
                   <nav className="p-4 space-y-2">
                     <button
-                      onClick={() => setActiveSettingsTab("profile")}
+                      onClick={() => {
+                        setActiveSettingsTab("profile");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "profile" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-user mr-2"></i>Profile
                     </button>
                     <button
-                      onClick={handleSecurityTabClick}
+                      onClick={() => {
+                        handleSecurityTabClick();
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "security" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-shield-alt mr-2"></i>Security
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("privacy")}
+                      onClick={() => {
+                        setActiveSettingsTab("privacy");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "privacy" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-user-secret mr-2"></i>Privacy
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("notifications")}
+                      onClick={() => {
+                        setActiveSettingsTab("notifications");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "notifications" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-bell mr-2"></i>Notifications
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("appearance")}
+                      onClick={() => {
+                        setActiveSettingsTab("appearance");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "appearance" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-palette mr-2"></i>Appearance
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("data")}
+                      onClick={() => {
+                        setActiveSettingsTab("data");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "data" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-database mr-2"></i>Data Management
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("about")}
+                      onClick={() => {
+                        setActiveSettingsTab("about");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "about" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-info-circle mr-2"></i>About
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("reminders")}
+                      onClick={() => {
+                        setActiveSettingsTab("reminders");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "reminders" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-bell mr-2"></i>Reminder Messages
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("website")}
+                      onClick={() => {
+                        setActiveSettingsTab("website");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "website" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-globe mr-2"></i>Website Content

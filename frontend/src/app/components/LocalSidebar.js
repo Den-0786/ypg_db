@@ -14,9 +14,20 @@ export default function LocalSidebar({
   notificationsOpen,
   setNotificationsOpen,
 }) {
-  const { theme, setTheme, mounted } = useTheme();
+  const { theme: globalTheme, setTheme: setGlobalTheme, mounted } = useTheme();
+  const [theme, setTheme] = useState("light");
   const { showSuccess } = useToast();
   const pathname = usePathname();
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const congregationId = localStorage.getItem("congregationId");
+      const savedTheme = localStorage.getItem(`theme_${congregationId}`);
+      if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
+        setTheme(savedTheme);
+      }
+    }
+  }, []);
 
   // Test toast on mount
   useEffect(() => {
@@ -359,7 +370,12 @@ export default function LocalSidebar({
               className={`w-full flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"} rounded-lg transition-colors min-w-0`}
             >
               <button
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                onClick={() => {
+                  const newTheme = theme === "dark" ? "light" : "dark";
+                  setTheme(newTheme);
+                  const congregationId = localStorage.getItem("congregationId");
+                  localStorage.setItem(`theme_${congregationId}`, newTheme);
+                }}
                 className="relative w-12 h-6 bg-gray-200 dark:bg-gray-800 rounded-full p-0.5 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 aria-label="Toggle theme"
                 title={

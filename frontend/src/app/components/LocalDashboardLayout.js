@@ -347,11 +347,13 @@ export default function LocalDashboardLayout({
   onBulkEdit = () => {},
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { theme, setTheme, mounted } = useTheme();
+  const { theme: globalTheme, setTheme: setGlobalTheme, mounted } = useTheme();
+  const [theme, setTheme] = useState("light");
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState("profile");
+  const [settingsSidebarOpen, setSettingsSidebarOpen] = useState(true);
   const [securityMethod, setSecurityMethod] = useState("password"); // 'password' or 'pin'
   const [pinModalOpen, setPinModalOpen] = useState(false);
   const [pinModalConfig, setPinModalConfig] = useState({});
@@ -1019,18 +1021,28 @@ export default function LocalDashboardLayout({
         }
       };
 
+      const congregationId = localStorage.getItem("congregationId");
+      const savedTheme = localStorage.getItem(`theme_${congregationId}`);
+      if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
+        setTheme(savedTheme);
+      }
+
       const handleResize = () => {
         if (window.innerWidth >= 1024) {
           setSidebarOpen(true);
+          setSettingsSidebarOpen(true);
         } else {
           setSidebarOpen(false);
+          setSettingsSidebarOpen(false);
         }
       };
 
       if (window.innerWidth >= 1024) {
         setSidebarOpen(true);
+        setSettingsSidebarOpen(true);
       } else {
         setSidebarOpen(false);
+        setSettingsSidebarOpen(false);
       }
 
       window.addEventListener("resize", handleResize);
@@ -1189,9 +1201,18 @@ export default function LocalDashboardLayout({
           <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg sm:max-w-2xl max-h-[95vh] overflow-hidden">
               <div className="flex items-center justify-between p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
-                  Settings
-                </h2>
+                <div className="flex items-center space-x-3">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
+                    Settings
+                  </h2>
+                  {/* Mobile sidebar toggle */}
+                  <button
+                    onClick={() => setSettingsSidebarOpen(!settingsSidebarOpen)}
+                    className="lg:hidden text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  >
+                    <i className="fas fa-bars text-lg"></i>
+                  </button>
+                </div>
                 <button
                   onClick={() => setSettingsOpen(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -1201,46 +1222,94 @@ export default function LocalDashboardLayout({
               </div>
               <div className="flex h-96">
                 {/* Settings Sidebar */}
-                <div className="w-48 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                <div className={`${
+                  settingsSidebarOpen ? "w-48" : "w-0"
+                } transition-all duration-300 border-r overflow-hidden ${
+                  theme === "dark"
+                    ? "border-gray-700 bg-gray-900"
+                    : "border-gray-200 bg-gray-50"
+                }`}>
                   <nav className="p-4 space-y-2">
                     <button
-                      onClick={() => setActiveSettingsTab("profile")}
+                      onClick={() => {
+                        setActiveSettingsTab("profile");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "profile" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-user mr-2"></i>Profile
                     </button>
                     <button
-                      onClick={handleSecurityTabClick}
+                      onClick={() => {
+                        handleSecurityTabClick();
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "security" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-shield-alt mr-2"></i>Security
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("privacy")}
+                      onClick={() => {
+                        setActiveSettingsTab("privacy");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "privacy" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-user-secret mr-2"></i>Privacy
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("notifications")}
+                      onClick={() => {
+                        setActiveSettingsTab("notifications");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "notifications" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-bell mr-2"></i>Notifications
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("appearance")}
+                      onClick={() => {
+                        setActiveSettingsTab("appearance");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "appearance" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-palette mr-2"></i>Appearance
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("data")}
+                      onClick={() => {
+                        setActiveSettingsTab("data");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "data" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-database mr-2"></i>Data Management
                     </button>
                     <button
-                      onClick={() => setActiveSettingsTab("about")}
+                      onClick={() => {
+                        setActiveSettingsTab("about");
+                        // Close sidebar on mobile after selecting tab
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
                       className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "about" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-info-circle mr-2"></i>About
@@ -1815,7 +1884,12 @@ export default function LocalDashboardLayout({
                           </label>
                           <select
                             value={theme}
-                            onChange={(e) => setTheme(e.target.value)}
+                            onChange={(e) => {
+                              const newTheme = e.target.value;
+                              setTheme(newTheme);
+                              const congregationId = localStorage.getItem("congregationId");
+                              localStorage.setItem(`theme_${congregationId}`, newTheme);
+                            }}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                           >
                             <option value="light">Light Mode</option>
