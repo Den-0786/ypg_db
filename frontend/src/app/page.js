@@ -733,7 +733,7 @@ export default function HomePage() {
 
         <main className="flex-1 flex flex-col items-center justify-start p-0 w-full mt-0">
           <div className="w-full max-w-7xl flex flex-col items-center h-full">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 w-full max-w-7xl mx-auto items-center justify-items-center flex-1 mt-0 overflow-hidden px-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-8 w-full max-w-7xl mx-auto items-center justify-items-center flex-1 mt-0 overflow-hidden px-4">
               {/* Left column cards with position rotation */}
               {cardPositions.left.map((positionIndex, displayIndex) => {
                 const card = currentCards.left[positionIndex];
