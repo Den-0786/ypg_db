@@ -23,7 +23,6 @@ export default function HomePage() {
     totalFemale: 0,
     totalCongregations: 0,
     sundayAttendance: 0,
-    weeklyQuiz: 0,
     leaderboardTop: [],
     growthRate: 0,
     averageAttendance: 0,
@@ -31,17 +30,6 @@ export default function HomePage() {
     thisWeekAttendance: 0,
     thisMonthAttendance: 0,
     totalEvents: 0,
-    volunteerHours: 0,
-    bibleStudyGroups: 0,
-    communityOutreach: 0,
-    prayerRequests: 0,
-    digitalEngagement: 0,
-    leadershipTraining: 0,
-    worshipTeams: 0,
-    missionTrips: 0,
-    smallGroups: 0,
-    discipleship: 0,
-    innovationScore: "A+",
   });
 
   // Navigation items with descriptions
@@ -105,25 +93,13 @@ export default function HomePage() {
           totalFemale: apiData.totalFemale || 0,
           totalCongregations: apiData.totalCongregations || 0,
           sundayAttendance: apiData.sundayAttendance || 0,
-          weeklyQuiz: apiData.weeklyQuiz || 35,
           leaderboardTop: apiData.leaderboardTop || [],
           growthRate: apiData.growthRate || 0,
           averageAttendance: apiData.sundayAttendance || 0,
           executiveMembers: apiData.executiveMembers || 0,
           thisWeekAttendance: apiData.thisWeekAttendance || 0,
           thisMonthAttendance: apiData.thisMonthAttendance || 0,
-          totalEvents: apiData.totalEvents || 12,
-          volunteerHours: apiData.volunteerHours || 1850,
-          bibleStudyGroups: apiData.bibleStudyGroups || 18,
-          communityOutreach: apiData.communityOutreach || 150,
-          prayerRequests: apiData.prayerRequests || 45,
-          digitalEngagement: apiData.digitalEngagement || 85,
-          leadershipTraining: apiData.leadershipTraining || 28,
-          worshipTeams: apiData.worshipTeams || 8,
-          missionTrips: apiData.missionTrips || 3,
-          smallGroups: apiData.smallGroups || 15,
-          discipleship: apiData.discipleship || 65,
-          innovationScore: apiData.innovationScore || "A+",
+          totalEvents: apiData.totalEvents || 0,
         });
       } else {
         // Fallback to local dataStore if API fails
@@ -225,20 +201,6 @@ export default function HomePage() {
             previous > 0 ? ((recent - previous) / previous) * 100 : 0;
         }
 
-        // Mock data for additional metrics (hybrid approach)
-        const weeklyQuiz = Math.floor(Math.random() * 50) + 20;
-        const totalEvents = Math.floor(Math.random() * 15) + 5;
-        const volunteerHours = Math.floor(Math.random() * 1000) + 1500;
-        const bibleStudyGroups = Math.floor(Math.random() * 10) + 15;
-        const communityOutreach = Math.floor(Math.random() * 100) + 100;
-        const prayerRequests = Math.floor(Math.random() * 50) + 30;
-        const digitalEngagement = Math.floor(Math.random() * 20) + 80;
-        const leadershipTraining = Math.floor(Math.random() * 20) + 25;
-        const worshipTeams = Math.floor(Math.random() * 5) + 5;
-        const missionTrips = Math.floor(Math.random() * 3) + 2;
-        const smallGroups = Math.floor(Math.random() * 10) + 12;
-        const discipleship = Math.floor(Math.random() * 30) + 50;
-
         setRealTimeData({
           totalMembers,
           activeMembers,
@@ -246,25 +208,13 @@ export default function HomePage() {
           totalFemale,
           totalCongregations,
           sundayAttendance: Math.round(averageAttendance),
-          weeklyQuiz,
           leaderboardTop: leaderboard.slice(0, 3),
           growthRate: Math.round(growthRate),
           averageAttendance: Math.round(averageAttendance),
           executiveMembers,
           thisWeekAttendance,
           thisMonthAttendance,
-          totalEvents,
-          volunteerHours,
-          bibleStudyGroups,
-          communityOutreach,
-          prayerRequests,
-          digitalEngagement,
-          leadershipTraining,
-          worshipTeams,
-          missionTrips,
-          smallGroups,
-          discipleship,
-          innovationScore: "A+",
+          totalEvents: 0,
         });
       }
     } catch (error) {
@@ -277,25 +227,13 @@ export default function HomePage() {
         totalFemale: 0,
         totalCongregations: 0,
         sundayAttendance: 0,
-        weeklyQuiz: 35,
         leaderboardTop: [],
         growthRate: 0,
         averageAttendance: 0,
         executiveMembers: 0,
         thisWeekAttendance: 0,
         thisMonthAttendance: 0,
-        totalEvents: 12,
-        volunteerHours: 1850,
-        bibleStudyGroups: 18,
-        communityOutreach: 150,
-        prayerRequests: 45,
-        digitalEngagement: 85,
-        leadershipTraining: 28,
-        worshipTeams: 8,
-        missionTrips: 3,
-        smallGroups: 15,
-        discipleship: 65,
-        innovationScore: "A+",
+        totalEvents: 0,
       });
     }
   };
@@ -385,67 +323,18 @@ export default function HomePage() {
           color: "from-cyan-500 to-cyan-600",
         },
         {
-          title: "Weekly Quiz",
-          value: realTimeData.weeklyQuiz,
-          subtitle: "Participants",
-          icon: "fas fa-question-circle",
-          color: "from-orange-500 to-orange-600",
-        },
-        {
           title: "Events This Month",
           value: realTimeData.totalEvents,
           subtitle: "Activities Planned",
           icon: "fas fa-calendar",
           color: "from-violet-500 to-violet-600",
         },
-      ],
-    },
-    // Set 3 - Programs & Activities
-    {
-      left: [
         {
-          title: "Bible Study Groups",
-          value: realTimeData.bibleStudyGroups,
-          subtitle: "Weekly Sessions",
-          icon: "fas fa-book-open",
-          color: "from-rose-500 to-rose-600",
-        },
-        {
-          title: "Volunteer Hours",
-          value: realTimeData.volunteerHours,
-          subtitle: "This Quarter",
-          icon: "fas fa-clock",
-          color: "from-lime-500 to-lime-600",
-        },
-        {
-          title: "Community Outreach",
-          value: realTimeData.communityOutreach,
-          subtitle: "People Reached",
-          icon: "fas fa-hands-helping",
-          color: "from-amber-500 to-amber-600",
-        },
-      ],
-      right: [
-        {
-          title: "Prayer Requests",
-          value: realTimeData.prayerRequests,
-          subtitle: "This Week",
-          icon: "fas fa-pray",
-          color: "from-sky-500 to-sky-600",
-        },
-        {
-          title: "Digital Engagement",
-          value: realTimeData.digitalEngagement,
-          subtitle: "Online Activity %",
-          icon: "fas fa-mobile-alt",
-          color: "from-fuchsia-500 to-fuchsia-600",
-        },
-        {
-          title: "Leadership Training",
-          value: realTimeData.leadershipTraining,
-          subtitle: "Sessions Completed",
-          icon: "fas fa-graduation-cap",
-          color: "from-slate-500 to-slate-600",
+          title: "Average Attendance",
+          value: realTimeData.averageAttendance,
+          subtitle: "Per Meeting",
+          icon: "fas fa-chart-bar",
+          color: "from-orange-500 to-orange-600",
         },
       ],
     },
@@ -588,6 +477,16 @@ export default function HomePage() {
             </span>
           </div>
           <div className="flex items-center space-x-2 sm:space-x-4">
+            <a
+              href="https://ypg-website.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 sm:px-5 py-1 sm:py-2 bg-blue-700 text-white hover:bg-blue-800 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 border border-blue-400 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center"
+            >
+              <i className="fas fa-globe mr-1 sm:mr-2"></i>
+              <span className="hidden sm:inline">Main Website</span>
+              <span className="sm:hidden">Website</span>
+            </a>
             <button
               className="px-3 sm:px-6 py-1 sm:py-2 bg-white text-blue-600 hover:bg-blue-100 rounded-lg font-semibold text-xs sm:text-base transition-all duration-300 border border-blue-500 shadow-md hover:shadow-lg transform hover:scale-105"
               onClick={() => (window.location.href = "/login")}
@@ -833,7 +732,7 @@ export default function HomePage() {
         <div className="flex flex-col items-center w-full mb-1">
           <footer className="p-0 text-center w-full">
             <p className="text-[#a68a64] text-xs drop-shadow-sm">
-              © 2024 YPG Database System - Empowering Youth Ministry
+              © {new Date().getFullYear()} YPG Database System - Empowering Youth Ministry
             </p>
           </footer>
         </div>

@@ -45,7 +45,7 @@ The YPG Database System is a comprehensive web application designed for managing
 ### District Admin
 
 - **Username**: district_admin
-- **Password**: district2024
+- **Password**: district2025
 - **Access**: Full system access to all congregations
 
 ### Local Congregations
@@ -53,12 +53,12 @@ The YPG Database System is a comprehensive web application designed for managing
 #### 1. Emmanuel Congregation Ahinsan
 
 - **Username**: emmanuel
-- **Password**: emmanuel123
+- **Password**: emmanuel2025
 
 #### 2. Peniel Congregation Esreso No1
 
 - **Username**: peniel
-- **Password**: peniel123
+- **Password**: peniel2025
 
 #### 3. Mizpah Congregation Odagya No1
 
@@ -68,12 +68,12 @@ The YPG Database System is a comprehensive web application designed for managing
 #### 4. Christ Congregation Ahinsan Estate
 
 - **Username**: christ_ahinsan
-- **Password**: christ2024
+- **Password**: christ2025
 
 #### 5. Ebenezer Congregation Dompoase Aprabo
 
 - **Username**: ebenezer_dompoase
-- **Password**: ebenezer2024
+- **Password**: ebenezer2025
 
 #### 6. Favour Congregation Esreso No2
 

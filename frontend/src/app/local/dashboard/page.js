@@ -38,12 +38,15 @@ export default function LocalDashboardPage() {
       return;
     }
 
-    // Show welcome message when dashboard loads
+    // Show welcome message only once per session (not on every navigation back)
+    const alreadyWelcomed = sessionStorage.getItem("welcomeShown");
     if (
       storedCongregationName &&
+      !alreadyWelcomed &&
       typeof window !== "undefined" &&
       window.showToast
     ) {
+      sessionStorage.setItem("welcomeShown", "1");
       setTimeout(() => {
         window.showToast(
           `Welcome to ${storedCongregationName}!`,

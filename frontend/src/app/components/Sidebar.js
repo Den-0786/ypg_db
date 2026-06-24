@@ -315,31 +315,6 @@ export default function Sidebar({
               )}
             </Link>
 
-            <Link
-              href="/leaderboard"
-              className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
-                pathname === "/leaderboard"
-                  ? mounted && theme === "dark"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
-                  : mounted && theme === "dark"
-                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
-              }`}
-              title="Leaderboard"
-            >
-              <i
-                className={`fas fa-trophy text-lg flex-shrink-0 ${pathname === "/leaderboard" ? "text-white" : ""}`}
-              ></i>
-              {sidebarOpen && (
-                <span
-                  className={`font-medium truncate ${pathname === "/leaderboard" ? "text-white" : ""}`}
-                >
-                  Leaderboard
-                </span>
-              )}
-            </Link>
-
             {/* Theme Toggle */}
             <div
               className={`w-full flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"} rounded-lg transition-colors min-w-0`}

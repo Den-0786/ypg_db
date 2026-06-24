@@ -105,17 +105,6 @@ urlpatterns = [
         views.send_birthday_sms,
         name="send_birthday_sms",
     ),
-    # Quiz API URLs
-    path("api/quizzes/", views.api_quizzes, name="api_quizzes"),
-    path("api/quizzes/active/", views.api_active_quiz, name="api_active_quiz"),
-    path("api/quizzes/submit/", views.api_submit_quiz, name="api_submit_quiz"),
-    path("api/quizzes/results/", views.api_quiz_results, name="api_quiz_results"),
-    path("api/quizzes/results/<int:quiz_id>/", views.api_quiz_results, name="api_quiz_results_detail"),
-    path("api/quizzes/create/", views.api_create_quiz, name="api_create_quiz"),
-    path("api/quizzes/<int:quiz_id>/end/", views.api_end_quiz, name="api_end_quiz"),
-    path("api/quizzes/<int:quiz_id>/delete/", views.api_delete_quiz, name="api_delete_quiz"),
-    path("api/quizzes/cleanup/", views.api_cleanup_expired_quizzes, name="api_cleanup_expired_quizzes"),
-    path("api/quizzes/congregation-stats/", views.api_congregation_quiz_stats, name="api_congregation_quiz_stats"),
     path("api/verify-password/", views.api_verify_password, name="api_verify_password"),
 
     

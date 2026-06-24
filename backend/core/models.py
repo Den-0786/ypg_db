@@ -149,7 +149,7 @@ class Guilder(models.Model):
     # Section B – Church Participation
     membership_status = models.CharField(
         max_length=20,
-        choices=[("Active", "Active"), ("Distant", "Distant")],
+        choices=[("Active", "Active"), ("Inactive", "Inactive"), ("Distant", "Distant")],
         default="Active",
     )
     position = models.CharField(max_length=100, blank=True)

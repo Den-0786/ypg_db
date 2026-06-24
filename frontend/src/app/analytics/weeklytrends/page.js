@@ -3,16 +3,12 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from "../../components/DashboardLayout";
 import getDataStore from "../../utils/dataStore";
+import TrendLineChart from "../../components/TrendLineChart";
+import TrendBarChart from "../../components/TrendBarChart";
 
 export default function WeeklyTrendsPage() {
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState({});
-  const [tooltip, setTooltip] = useState({
-    show: false,
-    data: null,
-    x: 0,
-    y: 0,
-  });
 
   useEffect(() => {
     fetchAnalyticsData();
@@ -189,368 +185,21 @@ export default function WeeklyTrendsPage() {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 mt-2 md:mt-6">
                 Weekly Attendance Trend
               </h3>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 md:p-6 shadow-lg border border-gray-100 dark:border-gray-600 w-full">
-                <div className="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center">
-                  <i className="fas fa-calendar-week text-blue-500 mr-2"></i>
-                  {(() => {
-                    const weeklyData = chartData.sundayAttendance?.weeklyTrend || [];
-                    if (weeklyData.length === 0) return "No data available";
-                    const firstRecord = weeklyData[0];
-                    const month = new Date(firstRecord?.date || new Date()).toLocaleDateString("default", { month: "long" });
-                    const year = new Date(firstRecord?.date || new Date()).getFullYear();
-                    return `${month} ${year}`;
-                  })()}
-                </div>
-                <div className="overflow-x-auto">
-                  <div className="flex items-end justify-between space-x-2 md:space-x-4 min-w-max">
-                    {(chartData.sundayAttendance?.weeklyTrend || [])
-                      .map((week, index) => (
-                        <div
-                          key={index}
-                          className="flex flex-col items-center min-w-[60px] md:min-w-[80px]"
-                        >
-                          <div className="flex space-x-0 h-32 md:h-48 mb-1 items-end">
-                            <div
-                              className="w-4 md:w-8 bg-blue-500 rounded flex items-center justify-center text-white text-xs font-medium"
-                              style={{
-                                height: `${((week?.male || 0) / Math.max(...(chartData.sundayAttendance?.weeklyTrend || []).map((w) => Math.max(w?.male || 0, w?.female || 0, w?.total || 0)))) * 100}%`,
-                              }}
-                            >
-                              <span className="transform -rotate-90 whitespace-nowrap text-[10px] md:text-xs">
-                                M: {week?.male || 0}
-                              </span>
-                            </div>
-                            <div
-                              className="w-4 md:w-8 bg-pink-500 rounded flex items-center justify-center text-white text-xs font-medium"
-                              style={{
-                                height: `${((week?.female || 0) / Math.max(...(chartData.sundayAttendance?.weeklyTrend || []).map((w) => Math.max(w?.male || 0, w?.female || 0, w?.total || 0)))) * 100}%`,
-                              }}
-                            >
-                              <span className="transform -rotate-90 whitespace-nowrap text-[10px] md:text-xs">
-                                F: {week?.female || 0}
-                              </span>
-                            </div>
-                            <div
-                              className="w-4 md:w-8 bg-green-500 rounded flex items-center justify-center text-white text-xs font-medium"
-                              style={{
-                                height: `${((week?.total || 0) / Math.max(...(chartData.sundayAttendance?.weeklyTrend || []).map((w) => Math.max(w?.male || 0, w?.female || 0, w?.total || 0)))) * 100}%`,
-                              }}
-                            >
-                              <span className="transform -rotate-90 whitespace-nowrap text-[10px] md:text-xs">
-                                Total: {week?.total || 0}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="text-[10px] md:text-xs text-gray-600 font-medium text-center">
-                            {week?.week || "N/A"}
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                </div>
-              </div>
+              <TrendBarChart
+                data={chartData.sundayAttendance?.weeklyTrend || []}
+                labelKey="week"
+              />
             </div>
 
             {/* Weekly Attendance Line Graph */}
-            <div
-              className="w-full"
-              style={{ boxShadow: "0 0 20px rgba(249, 115, 22, 0.3)" }}
-            >
-              <div
-                className="p-4 md:p-6 h-[20rem] md:h-[30rem] bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg w-full"
-                style={{ boxShadow: "0 0 20px rgba(249, 115, 22, 0.3)" }}
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <div>
-                    <h4 className="text-white text-lg font-semibold">
-                      Weekly Trend
-                    </h4>
-                    <p className="text-gray-300 text-sm">
-                      Total Attendance:{" "}
-                      {(chartData.sundayAttendance?.weeklyTrend || []).reduce((sum, week) => sum + (week?.total || 0), 0)}
-                    </p>
-                  </div>
-                  <div
-                    className="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center border-2 border-orange-400 shadow-lg"
-                    style={{
-                      boxShadow: "0 0 10px rgba(249, 115, 22, 0.6)",
-                    }}
-                  >
-                    <i className="fas fa-chart-line text-white text-sm"></i>
-                  </div>
-                </div>
-
-                <div className="relative h-[10rem] md:h-[16rem] bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
-                  {/* Grid Lines */}
-                  <div className="absolute inset-0 flex flex-col justify-between">
-                    {[...Array(6)].map((_, i) => (
-                      <div
-                        key={i}
-                        className="border-b border-gray-300 dark:border-gray-600 opacity-30"
-                      ></div>
-                    ))}
-                  </div>
-
-                  {/* Y-axis labels */}
-                  <div className="absolute left-0 top-0 h-full flex flex-col justify-between text-xs text-gray-500 dark:text-gray-400">
-                    {(() => {
-                      const weeklyData = chartData.sundayAttendance?.weeklyTrend || [];
-                      if (weeklyData.length === 0) return [0, 0, 0, 0, 0, 0];
-                      const maxValue = Math.max(...weeklyData.map(w => w?.total || 0));
-                      const step = Math.ceil(maxValue / 5);
-                      return [step * 5, step * 4, step * 3, step * 2, step, 0].map((num) => (
-                        <span key={num}>{num}</span>
-                      ));
-                    })()}
-                  </div>
-
-                  {/* Line Graph */}
-                  <svg
-                    className="absolute inset-0 w-full h-full"
-                    viewBox="0 0 100 100"
-                    preserveAspectRatio="xMidYMid slice"
-                    style={{ padding: "0.2rem" }}
-                  >
-                    <defs>
-                      <linearGradient
-                        id="lineGradient"
-                        x1="0%"
-                        y1="0%"
-                        x2="100%"
-                        y2="0%"
-                      >
-                        <stop offset="0%" stopColor="#f97316" />
-                        <stop offset="100%" stopColor="#ef4444" />
-                      </linearGradient>
-                      <filter id="glow">
-                        <feGaussianBlur stdDeviation="0" result="coloredBlur" />
-                        <feMerge>
-                          <feMergeNode in="coloredBlur" />
-                          <feMergeNode in="SourceGraphic" />
-                        </feMerge>
-                      </filter>
-                    </defs>
-
-                    {/* Background Gray Line */}
-                    <polyline
-                      fill="none"
-                      stroke="rgba(156, 163, 175, 0.3)"
-                      strokeWidth="0.5"
-                      strokeLinecap="round"
-                      points={(() => {
-                        const weeklyData = chartData.sundayAttendance?.weeklyTrend || [];
-                        if (weeklyData.length === 0) return "";
-                        const maxValue = Math.max(...weeklyData.map(w => w?.total || 0));
-                        const scale = maxValue > 0 ? 80 / maxValue : 0;
-                        return weeklyData.map((week, index) => {
-                          const x = weeklyData.length === 1 ? 50 : 10 + index * (80 / Math.max(weeklyData.length - 1, 1));
-                          const y = 90 - (week?.total || 0) * scale;
-                          return `${x},${y}`;
-                        }).join(" ");
-                      })()}
-                    />
-
-                    {/* Main Orange/Red Line */}
-                    <polyline
-                      fill="none"
-                      stroke="url(#lineGradient)"
-                      strokeWidth="0.5"
-                      strokeLinecap="round"
-                      points={(() => {
-                        const weeklyData = chartData.sundayAttendance?.weeklyTrend || [];
-                        if (weeklyData.length === 0) return "";
-                        const maxValue = Math.max(...weeklyData.map(w => w?.total || 0));
-                        const scale = maxValue > 0 ? 80 / maxValue : 0;
-                        return weeklyData.map((week, index) => {
-                          const x = weeklyData.length === 1 ? 50 : 10 + index * (80 / Math.max(weeklyData.length - 1, 1));
-                          const y = 90 - (week?.total || 0) * scale;
-                          return `${x},${y}`;
-                        }).join(" ");
-                      })()}
-                      filter="url(#glow)"
-                    />
-
-                    {/* Invisible Interactive Path for Tooltip */}
-                    <path
-                      d={(() => {
-                        const weeklyData = chartData.sundayAttendance?.weeklyTrend || [];
-                        if (weeklyData.length === 0) return "";
-                        const maxValue = Math.max(...weeklyData.map(w => w?.total || 0));
-                        const scale = maxValue > 0 ? 80 / maxValue : 0;
-                        return weeklyData.map((week, index) => {
-                          const x = weeklyData.length === 1 ? 50 : 10 + index * (80 / Math.max(weeklyData.length - 1, 1));
-                          const y = 90 - (week?.total || 0) * scale;
-                          return index === 0 ? `M ${x} ${y}` : `L ${x} ${y}`;
-                        }).join(" ");
-                      })()}
-                      fill="none"
-                      stroke="transparent"
-                      strokeWidth="12"
-                      className="cursor-pointer"
-                      onMouseMove={(e) => {
-                        const rect = e.target
-                          .closest("svg")
-                          .getBoundingClientRect();
-                        const mouseX =
-                          ((e.clientX - rect.left) / rect.width) * 100;
-
-                        const weeklyData = chartData.sundayAttendance?.weeklyTrend || [];
-                        if (weeklyData.length === 0) return;
-                        
-                        const maxValue = Math.max(...weeklyData.map(w => w?.total || 0));
-                        const scale = maxValue > 0 ? 80 / maxValue : 0;
-                        
-                        let nearestIndex = 0;
-                        let minDistance = Infinity;
-
-                        weeklyData.forEach((week, index) => {
-                          const x = weeklyData.length === 1 ? 50 : 10 + index * (80 / Math.max(weeklyData.length - 1, 1));
-                          const distance = Math.abs(mouseX - x);
-                          if (distance < minDistance) {
-                            minDistance = distance;
-                            nearestIndex = index;
-                          }
-                        });
-
-                        const nearestWeek = weeklyData[nearestIndex];
-                        const x = weeklyData.length === 1 ? 50 : 10 + nearestIndex * (80 / Math.max(weeklyData.length - 1, 1));
-                        const y = 90 - (nearestWeek?.total || 0) * scale;
-                        const prevWeek = nearestIndex > 0 ? weeklyData[nearestIndex - 1] : null;
-                        const difference = prevWeek ? (nearestWeek?.total || 0) - (prevWeek?.total || 0) : 0;
-
-                        const tooltipX = (x / 100) * rect.width;
-                        const tooltipY = (y / 100) * rect.height - 40;
-
-                        setTooltip({
-                          show: true,
-                          data: {
-                            week: nearestWeek,
-                            index: nearestIndex,
-                            difference,
-                            prevWeek,
-                            type: "weekly",
-                          },
-                          x: tooltipX,
-                          y: tooltipY,
-                        });
-                      }}
-                      onMouseLeave={() => {
-                        setTooltip({
-                          show: false,
-                          data: null,
-                          x: 0,
-                          y: 0,
-                        });
-                      }}
-                    />
-
-                    {/* Data Points */}
-                    {(() => {
-                      const weeklyData = chartData.sundayAttendance?.weeklyTrend || [];
-                      if (weeklyData.length === 0) return [];
-                      const maxValue = Math.max(...weeklyData.map(w => w?.total || 0));
-                      const scale = maxValue > 0 ? 80 / maxValue : 0;
-                      
-                      return weeklyData.map((week, index) => {
-                        const x = weeklyData.length === 1 ? 50 : 10 + index * (80 / Math.max(weeklyData.length - 1, 1));
-                        const y = 90 - (week?.total || 0) * scale;
-                        const prevWeek = index > 0 ? weeklyData[index - 1] : null;
-                        const difference = prevWeek ? (week?.total || 0) - (prevWeek?.total || 0) : 0;
-
-                        return (
-                          <g key={index}>
-                            <circle
-                              cx={x}
-                              cy={y}
-                              r="3"
-                              fill="rgba(249, 115, 22, 0.3)"
-                              className="cursor-pointer"
-                            />
-                            <circle
-                              cx={x}
-                              cy={y}
-                              r="2"
-                              fill="#f97316"
-                              stroke="#ffffff"
-                              strokeWidth="0.5"
-                              className="cursor-pointer hover:r-3 transition-all duration-200"
-                            onMouseEnter={(e) => {
-                              const rect = e.target
-                                .closest("svg")
-                                .getBoundingClientRect();
-
-                              const tooltipX = (x / 100) * rect.width;
-                              const tooltipY = (y / 100) * rect.height - 40;
-
-                              setTooltip({
-                                show: true,
-                                data: {
-                                  week,
-                                  index,
-                                  difference,
-                                  prevWeek,
-                                  type: "weekly",
-                                },
-                                x: tooltipX,
-                                y: tooltipY,
-                              });
-                            }}
-                            onMouseLeave={() => {
-                              setTooltip({
-                                show: false,
-                                data: null,
-                                x: 0,
-                                y: 0,
-                              });
-                            }}
-                          />
-                          </g>
-                        );
-                      });
-                    })()}
-                  </svg>
-
-                  {/* Tooltip */}
-                  {tooltip.show && tooltip.data && (
-                    <div
-                      className="absolute bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow-lg z-10 min-w-[160px]"
-                      style={{
-                        left:
-                          tooltip.data.index < 2
-                            ? Math.min(tooltip.x + 20, window.innerWidth - 180) // Right side for points 1, 2
-                            : Math.max(10, tooltip.x - 20), // Left side for points 3, 4
-                        top: Math.max(10, tooltip.y),
-                        transform:
-                          tooltip.data.index < 2 ? "none" : "translateX(-100%)",
-                      }}
-                    >
-                      <div className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                        {tooltip.data.week?.week || `Week ${tooltip.data.index + 1}`}
-                      </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-300">
-                        Male: {tooltip.data.week?.male || 0}
-                      </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-300">
-                        Female: {tooltip.data.week?.female || 0}
-                      </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-300">
-                        Total: {tooltip.data.week?.total || 0}
-                      </div>
-                      {tooltip.data.difference !== 0 && (
-                        <div
-                          className={`text-xs font-medium mt-1 ${
-                            tooltip.data.difference > 0
-                              ? "text-green-600 dark:text-green-400"
-                              : "text-red-600 dark:text-red-400"
-                          }`}
-                        >
-                          {tooltip.data.difference > 0 ? "+" : ""}
-                          {tooltip.data.difference} from previous week
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
+            <div className="w-full">
+              <TrendLineChart
+                data={chartData.sundayAttendance?.weeklyTrend || []}
+                labelKey="week"
+                title="Weekly Trend"
+                subtitle={`Total Attendance: ${(chartData.sundayAttendance?.weeklyTrend || []).reduce((sum, w) => sum + (w?.total || 0), 0)}`}
+                colorScheme={{ accent: "#f97316", gradientId: "gradWeekly", gradientColor: "#f97316" }}
+              />
 
                 {/* Trend Analysis */}
                 <div className="mt-4 p-3 md:p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
@@ -564,14 +213,12 @@ export default function WeeklyTrendsPage() {
                       const firstWeek = weeklyData[0];
                       const lastWeek = weeklyData[weeklyData.length - 1];
                       const difference = (lastWeek?.total || 0) - (firstWeek?.total || 0);
-
                       return difference > 0
                         ? `Weekly attendance has increased by ${Math.abs(difference)} people over the period. Strong weekly growth!`
                         : `Weekly attendance has decreased by ${Math.abs(difference)} people. Consider weekly engagement strategies.`;
                     })()}
                   </p>
                 </div>
-              </div>
             </div>
           </div>
         </div>

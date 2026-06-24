@@ -191,6 +191,7 @@ class AutoLogout {
       sessionStorage.removeItem("authToken");
       localStorage.removeItem("user");
       sessionStorage.removeItem("user");
+      sessionStorage.removeItem("welcomeShown");
     }
 
     // Show logout toast
@@ -232,6 +233,7 @@ class AutoLogout {
       sessionStorage.removeItem("authToken");
       localStorage.removeItem("user");
       sessionStorage.removeItem("user");
+      sessionStorage.removeItem("welcomeShown");
     }
 
     // Show logout toast
