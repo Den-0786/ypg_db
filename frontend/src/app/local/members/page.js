@@ -430,7 +430,7 @@ export default function LocalMembersPage() {
           onConfirm: async () => {
             try {
               const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/delete/${pendingAction.member.id}/`,
+                `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/${pendingAction.member.id}/delete/`,
                 {
                   method: "DELETE",
                   headers: {
@@ -477,7 +477,7 @@ export default function LocalMembersPage() {
             try {
               const deletePromises = pendingAction.memberIds.map((id) =>
                 fetch(
-                  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/delete/${id}/`,
+                  `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/${id}/delete/`,
                   {
                     method: "DELETE",
                     headers: {
