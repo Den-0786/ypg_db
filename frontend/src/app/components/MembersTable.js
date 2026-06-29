@@ -47,6 +47,12 @@ export default function MembersTable({
                 scope="col"
                 className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
               >
+                Member ID
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+              >
                 Phone
               </th>
               <th
@@ -110,21 +116,36 @@ export default function MembersTable({
                         }}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
                       />
-                      <div
-                        className={`flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center mr-3`}
-                      >
-                        <span className="text-sm font-medium text-white">
-                          {member.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .toUpperCase()}
-                        </span>
-                      </div>
+                      {member.profile_picture ? (
+                        <img
+                          src={member.profile_picture}
+                          alt={member.name}
+                          className="flex-shrink-0 h-10 w-10 rounded-full object-cover mr-3 border border-gray-200"
+                        />
+                      ) : (
+                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center mr-3">
+                          <span className="text-sm font-medium text-white">
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                      )}
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {member.name}
                       </div>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                    {member.member_id ? (
+                      <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                        {member.member_id}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400 text-xs italic">—</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {member.phone}

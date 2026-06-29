@@ -49,6 +49,7 @@ class GuilderForm(forms.ModelForm):
             "local_executive_position",
             "district_executive_position",
             "role",
+            "profile_picture",
         ]
         widgets = {
             "date_of_birth": forms.DateInput(attrs={"type": "date"}),

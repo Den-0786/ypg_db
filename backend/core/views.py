@@ -1587,6 +1587,7 @@ def api_members(request):
     for member in members:
         member_data = {
             "id": member.id,
+            "member_id": member.member_id or "",
             "first_name": member.first_name,
             "last_name": member.last_name,
             "phone_number": member.phone_number,
@@ -1609,12 +1610,9 @@ def api_members(request):
             "executive_level": member.executive_level,
             "local_executive_position": member.local_executive_position,
             "district_executive_position": member.district_executive_position,
+            "profile_picture": request.build_absolute_uri(member.profile_picture.url) if member.profile_picture else None,
         }
         data.append(member_data)
-        
-        # Debug: Print first member's data
-        if len(data) == 1:
-            print(f"API Debug - First member data: {member_data}")
 
     return JsonResponse({"members": data})
 
@@ -1642,9 +1640,15 @@ def api_attendance_stats(request):
 @require_http_methods(["POST"])
 def api_add_member(request):
     try:
-        data = json.loads(request.body)
+        # Support both JSON and multipart/form-data
+        content_type = request.content_type or ""
+        if "multipart" in content_type or "form-data" in content_type:
+            data = request.POST.dict()
+            files = request.FILES
+        else:
+            data = json.loads(request.body)
+            files = {}
         
-        # Debug: Print the received data
         print(f"api_add_member - Received data: {data}")
         
         # Handle congregation name to ID conversion
@@ -1663,36 +1667,29 @@ def api_add_member(request):
         # Handle executive level and position mapping
         if data.get("is_executive"):
             executive_level = data.get("executive_level")
-            
             if executive_level == "local":
-                # Set primary position to local position
                 if data.get("local_executive_position"):
                     data["executive_position"] = data["local_executive_position"]
-                    
             elif executive_level == "district":
-                # Set primary position to district position
                 if data.get("district_executive_position"):
                     data["executive_position"] = data["district_executive_position"]
-                    
             elif executive_level == "both":
-                # Set primary position to the first available position
                 if data.get("local_executive_position"):
                     data["executive_position"] = data["local_executive_position"]
                 elif data.get("district_executive_position"):
                     data["executive_position"] = data["district_executive_position"]
         
-        form = GuilderForm(data)
+        form = GuilderForm(data, files)
 
         if form.is_valid():
             member = form.save()
             print(f"api_add_member - Member saved successfully with ID: {member.id}")
-            return JsonResponse(
-                {
-                    "success": True,
-                    "message": "Member added successfully",
-                    "member_id": member.id,
-                }
-            )
+            return JsonResponse({
+                "success": True,
+                "message": "Member added successfully",
+                "member_id": member.id,
+                "generated_member_id": member.member_id or "",
+            })
         else:
             print(f"api_add_member - Form validation failed: {form.errors}")
             return JsonResponse({"success": False, "errors": form.errors}, status=400)
@@ -1702,12 +1699,18 @@ def api_add_member(request):
 
 
 @csrf_exempt
-@require_http_methods(["PUT"])
+@require_http_methods(["PUT", "POST"])
 def api_update_member(request, member_id):
     try:
-        data = json.loads(request.body)
+        # Support both JSON and multipart/form-data
+        content_type = request.content_type or ""
+        if "multipart" in content_type or "form-data" in content_type:
+            data = request.POST.dict()
+            files = request.FILES
+        else:
+            data = json.loads(request.body)
+            files = {}
         
-        # Debug: Print the received data
         print(f"api_update_member - Received data for member {member_id}: {data}")
         
         # Get the member to update
@@ -1737,12 +1740,10 @@ def api_update_member(request, member_id):
             executive_level = data.get("executive_level")
             
             if executive_level == "local":
-                # Set primary position to local position
                 if data.get("local_executive_position"):
                     data["executive_position"] = data["local_executive_position"]
                     
             elif executive_level == "district":
-                # Set primary position to district position
                 if data.get("district_executive_position"):
                     data["executive_position"] = data["district_executive_position"]
                     
@@ -1753,18 +1754,17 @@ def api_update_member(request, member_id):
                 elif data.get("district_executive_position"):
                     data["executive_position"] = data["district_executive_position"]
         
-        form = GuilderForm(data, instance=member)
+        form = GuilderForm(data, files, instance=member)
 
         if form.is_valid():
             updated_member = form.save()
             print(f"api_update_member - Member updated successfully with ID: {updated_member.id}")
-            return JsonResponse(
-                {
-                    "success": True,
-                    "message": "Member updated successfully",
-                    "member_id": updated_member.id,
-                }
-            )
+            return JsonResponse({
+                "success": True,
+                "message": "Member updated successfully",
+                "member_id": updated_member.id,
+                "generated_member_id": updated_member.member_id or "",
+            })
         else:
             print(f"api_update_member - Form validation failed: {form.errors}")
             return JsonResponse({"success": False, "errors": form.errors}, status=400)
@@ -2366,6 +2366,34 @@ def api_settings_profile(request):
             'success': False, 
             'error': str(e)
         }, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def api_congregation_initials(request):
+    """GET or SET the initials for the logged-in congregation"""
+    try:
+        congregation_id = request.GET.get("congregation") or (
+            json.loads(request.body).get("congregation_id") if request.method == "POST" else None
+        )
+        if not congregation_id:
+            return JsonResponse({"success": False, "error": "congregation_id required"}, status=400)
+
+        congregation = Congregation.objects.get(id=congregation_id)
+
+        if request.method == "GET":
+            return JsonResponse({"success": True, "initials": congregation.initials or ""})
+
+        data = json.loads(request.body)
+        initials = (data.get("initials") or "").strip().upper()
+        congregation.initials = initials
+        congregation.save()
+        return JsonResponse({"success": True, "initials": congregation.initials})
+
+    except Congregation.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Congregation not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 @csrf_exempt
@@ -3014,7 +3042,39 @@ def api_home_stats(request):
         
         # Get congregation list for dropdown (exclude district)
         congregations = list(Congregation.objects.filter(is_district=False).values_list('name', flat=True).order_by('name'))
-        
+
+        # Fetch events this month from ypg_website API
+        total_events = 0
+        try:
+            import urllib.request
+            import json as _json
+            website_api_url = os.environ.get('YPG_WEBSITE_API_URL', 'https://ypg-website.onrender.com')
+            events_url = f"{website_api_url.rstrip('/')}/api/events/?excludeDeleted=true"
+            req = urllib.request.Request(events_url, headers={'Accept': 'application/json'})
+            with urllib.request.urlopen(req, timeout=8) as resp:
+                events_data = _json.loads(resp.read().decode())
+            if events_data.get('success') and events_data.get('events'):
+                from datetime import datetime as dt, timezone as dt_tz
+                now = dt.now(dt_tz.utc)
+                month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+                if now.month == 12:
+                    month_end = now.replace(year=now.year + 1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+                else:
+                    month_end = now.replace(month=now.month + 1, day=1, hour=0, minute=0, second=0, microsecond=0)
+                for ev in events_data['events']:
+                    start_str = ev.get('start_date', '')
+                    if start_str:
+                        try:
+                            ev_date = dt.fromisoformat(start_str.replace('Z', '+00:00'))
+                            if ev_date.tzinfo is None:
+                                ev_date = ev_date.replace(tzinfo=dt_tz.utc)
+                            if month_start <= ev_date < month_end:
+                                total_events += 1
+                        except Exception:
+                            pass
+        except Exception:
+            total_events = 0
+
         return JsonResponse({
             'success': True,
             'data': {
@@ -3031,7 +3091,7 @@ def api_home_stats(request):
                 'growthRate': round(growth_rate, 1),
                 'leaderboardTop': leaderboard_data,
                 'congregations': congregations,
-                'totalEvents': 0,
+                'totalEvents': total_events,
             }
         })
         

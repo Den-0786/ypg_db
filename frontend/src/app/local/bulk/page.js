@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import DashboardLayout from "../../components/DashboardLayout";
+import LocalDashboardLayout from "../../components/LocalDashboardLayout";
 import BulkAddForm from "./components/BulkAddForm";
 import MemberList from "./components/MemberList";
 import ModeToggle from "./components/ModeToggle";
@@ -94,8 +94,8 @@ export default function LocalBulkAddPage() {
   };
 
   return (
-    <DashboardLayout
-      currentPage="Bulk Add"
+    <LocalDashboardLayout
+      currentPage="Members"
       headerAction={
         <div className="flex items-center space-x-2">
           <div className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/30 transition-all duration-200 hover:scale-105 shadow-lg">
@@ -157,6 +157,6 @@ export default function LocalBulkAddPage() {
           />
         )}
       </div>
-    </DashboardLayout>
+    </LocalDashboardLayout>
   );
 }

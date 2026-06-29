@@ -258,15 +258,24 @@ class DataStore {
         throw new Error(`District position already assigned. Choose another.`);
       }
 
+      let fetchOptions;
+      if (member.profile_picture instanceof File) {
+        const formData = new FormData();
+        Object.entries(requestData).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append("profile_picture", member.profile_picture);
+        fetchOptions = { method: "POST", body: formData };
+      } else {
+        fetchOptions = {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestData),
+        };
+      }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/add/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        }
+        fetchOptions
       );
 
       const data = await response.json();
@@ -396,6 +405,8 @@ class DataStore {
           is_baptized: member.is_baptized,
           is_confirmed: member.is_confirmed,
           is_communicant: member.is_communicant,
+          member_id: member.member_id || "",
+          profile_picture: member.profile_picture || null,
           timestamp: new Date().toISOString(),
         }));
 
@@ -613,15 +624,24 @@ class DataStore {
         throw precheckError;
       }
 
+      let fetchOptions;
+      if (updatedData.profile_picture instanceof File) {
+        const formData = new FormData();
+        Object.entries(requestData).forEach(([k, v]) => {
+          if (v !== undefined && v !== null) formData.append(k, v);
+        });
+        formData.append("profile_picture", updatedData.profile_picture);
+        fetchOptions = { method: "POST", body: formData };
+      } else {
+        fetchOptions = {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(requestData),
+        };
+      }
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/update/${memberId}/`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestData),
-        }
+        fetchOptions
       );
 
       const data = await response.json();

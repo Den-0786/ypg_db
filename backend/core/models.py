@@ -40,6 +40,10 @@ class Congregation(models.Model):
     pin = models.CharField(
         max_length=4, default="1234", help_text="4-digit PIN for congregation access"
     )
+    initials = models.CharField(
+        max_length=10, blank=True, default="",
+        help_text="Short initials used for member ID generation (e.g. AE)"
+    )
     user = models.OneToOneField(
         User,
         on_delete=models.CASCADE,
@@ -196,6 +200,13 @@ class Guilder(models.Model):
 
     # Permissions/roles
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
+
+    # Auto-generated unique member ID (e.g. AE/YPG/001)
+    member_id = models.CharField(max_length=30, unique=True, blank=True, null=True)
+
+    # Profile picture
+    profile_picture = models.ImageField(upload_to='member_pictures/', blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -211,6 +222,14 @@ class Guilder(models.Model):
         elif self.executive_level == "both":
             return self.local_executive_position or self.district_executive_position or self.executive_position
         return self.executive_position
+
+    def save(self, *args, **kwargs):
+        if not self.member_id:
+            initials = (self.congregation.initials or '').strip().upper()
+            if initials:
+                count = Guilder.objects.filter(congregation=self.congregation).count() + 1
+                self.member_id = f"{initials}/YPG/{count:03d}"
+        super().save(*args, **kwargs)
 
     def is_local_executive(self):
         """Check if this person is a local executive"""

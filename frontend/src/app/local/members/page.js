@@ -62,6 +62,8 @@ export default function LocalMembersPage() {
     is_executive: false,
     executive_position: "",
     executive_level: "",
+    profile_picture: null,
+    profile_picture_preview: null,
   });
 
   // Fetch data for congregation
@@ -213,6 +215,8 @@ export default function LocalMembersPage() {
       is_executive: member.is_executive || false,
       executive_position: member.executive_position || "",
       executive_level: member.executive_level || "",
+      profile_picture: null,
+      profile_picture_preview: member.profile_picture || null,
     });
     setSelectedMember(member);
     setShowEditModal(true);
@@ -527,10 +531,7 @@ export default function LocalMembersPage() {
     try {
       setLoading(true);
 
-      // Get dataStore instance
       const dataStore = getDataStore();
-
-      // Update member in dataStore (which will also update backend)
       await dataStore.updateMember(selectedMember.id, editForm);
 
       // Update local state
@@ -569,13 +570,24 @@ export default function LocalMembersPage() {
               is_executive: editForm.is_executive,
               executive_position: editForm.executive_position,
               executive_level: editForm.executive_level,
+              profile_picture: editForm.profile_picture instanceof File
+                ? editForm.profile_picture_preview
+                : (editForm.profile_picture_preview || member.profile_picture),
             }
           : member
       );
 
       // Update members list
       const updatedMembers = members.map((member) =>
-        member.id === selectedMember.id ? { ...member, ...editForm } : member
+        member.id === selectedMember.id
+          ? {
+              ...member,
+              ...editForm,
+              profile_picture: editForm.profile_picture instanceof File
+                ? editForm.profile_picture_preview
+                : (editForm.profile_picture_preview || member.profile_picture),
+            }
+          : member
       );
 
       setExecutives(updatedExecutives);
@@ -918,6 +930,12 @@ export default function LocalMembersPage() {
                     scope="col"
                     className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
+                    Member ID
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                  >
                     Phone
                   </th>
                   <th
@@ -979,17 +997,34 @@ export default function LocalMembersPage() {
                             onChange={() => handleSelectMember(member.id)}
                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
                           />
-                          <div
-                            className={`flex-shrink-0 h-10 w-10 rounded-full ${getInitialsColor(member.name)} flex items-center justify-center mr-3`}
-                          >
-                            <span className="text-sm font-medium text-white">
-                              {getInitials(member.name)}
-                            </span>
-                          </div>
+                          {member.profile_picture ? (
+                            <img
+                              src={member.profile_picture}
+                              alt={member.name}
+                              className="flex-shrink-0 h-10 w-10 rounded-full object-cover mr-3 border border-gray-200"
+                            />
+                          ) : (
+                            <div
+                              className={`flex-shrink-0 h-10 w-10 rounded-full ${getInitialsColor(member.name)} flex items-center justify-center mr-3`}
+                            >
+                              <span className="text-sm font-medium text-white">
+                                {getInitials(member.name)}
+                              </span>
+                            </div>
+                          )}
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {member.name}
                           </div>
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {member.member_id ? (
+                          <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                            {member.member_id}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs italic">Not set</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {member.phone}
@@ -1196,17 +1231,34 @@ export default function LocalMembersPage() {
                             onChange={() => handleSelectMember(member.id)}
                             className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
                           />
-                          <div
-                            className={`flex-shrink-0 h-10 w-10 rounded-full ${getInitialsColor(member.name)} flex items-center justify-center mr-3`}
-                          >
-                            <span className="text-sm font-medium text-white">
-                              {getInitials(member.name)}
-                            </span>
-                          </div>
+                          {member.profile_picture ? (
+                            <img
+                              src={member.profile_picture}
+                              alt={member.name}
+                              className="flex-shrink-0 h-10 w-10 rounded-full object-cover mr-3 border border-gray-200"
+                            />
+                          ) : (
+                            <div
+                              className={`flex-shrink-0 h-10 w-10 rounded-full ${getInitialsColor(member.name)} flex items-center justify-center mr-3`}
+                            >
+                              <span className="text-sm font-medium text-white">
+                                {getInitials(member.name)}
+                              </span>
+                            </div>
+                          )}
                           <div className="text-sm font-medium text-gray-900 dark:text-white">
                             {member.name}
                           </div>
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                        {member.member_id ? (
+                          <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                            {member.member_id}
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 text-xs italic">Not set</span>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {member.phone || member.phone_number || "N/A"}
@@ -1365,9 +1417,29 @@ export default function LocalMembersPage() {
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center p-6 border-b border-gray-200 dark:border-gray-700">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Member Details - {selectedMember.name}
-                </h3>
+                <div className="flex items-center gap-4">
+                  {selectedMember.profile_picture ? (
+                    <img
+                      src={selectedMember.profile_picture}
+                      alt={selectedMember.name}
+                      className="h-14 w-14 rounded-full object-cover border-2 border-blue-200 shadow"
+                    />
+                  ) : (
+                    <div className={`h-14 w-14 rounded-full ${getInitialsColor(selectedMember.name)} flex items-center justify-center shadow`}>
+                      <span className="text-lg font-bold text-white">{getInitials(selectedMember.name)}</span>
+                    </div>
+                  )}
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      {selectedMember.name}
+                    </h3>
+                    {selectedMember.member_id && (
+                      <span className="inline-flex px-2 py-0.5 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700 mt-1">
+                        {selectedMember.member_id}
+                      </span>
+                    )}
+                  </div>
+                </div>
                 <button
                   onClick={() => setShowDetailsModal(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -1907,6 +1979,52 @@ export default function LocalMembersPage() {
                 </div>
 
                 <div className="space-y-6">
+                  {/* Profile Picture Upload */}
+                  <div className="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20 rounded-xl p-6">
+                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                      <i className="fas fa-camera text-gray-500 mr-2"></i>
+                      Profile Picture
+                    </h4>
+                    <div className="flex items-center gap-6">
+                      <div className="flex-shrink-0">
+                        {editForm.profile_picture_preview ? (
+                          <img
+                            src={
+                              editForm.profile_picture instanceof File
+                                ? URL.createObjectURL(editForm.profile_picture)
+                                : editForm.profile_picture_preview
+                            }
+                            alt="Preview"
+                            className="h-24 w-24 rounded-full object-cover border-4 border-white shadow-lg"
+                          />
+                        ) : (
+                          <div className={`h-24 w-24 rounded-full ${getInitialsColor(editForm.first_name + " " + editForm.last_name || "Member")} flex items-center justify-center border-4 border-white shadow-lg`}>
+                            <span className="text-2xl font-bold text-white">
+                              {getInitials(`${editForm.first_name} ${editForm.last_name}`) || "?"}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Upload Photo <span className="text-gray-400 text-xs">(JPG, PNG)</span>
+                        </label>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/jpg"
+                          onChange={(e) => {
+                            const file = e.target.files[0];
+                            if (file) {
+                              setEditForm({ ...editForm, profile_picture: file, profile_picture_preview: URL.createObjectURL(file) });
+                            }
+                          }}
+                          className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300 cursor-pointer"
+                        />
+                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave empty to keep existing photo</p>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Personal Information Section */}
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
                     <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">

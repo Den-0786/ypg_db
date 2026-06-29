@@ -372,6 +372,8 @@ export default function LocalDashboardLayout({
   });
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
+  const [congregationInitials, setCongregationInitials] = useState("");
+  const [initialsSaving, setInitialsSaving] = useState(false);
 
   // Security state management
   const [securityData, setSecurityData] = useState({
@@ -545,9 +547,48 @@ export default function LocalDashboardLayout({
     }
   };
 
+  const fetchCongregationInitials = async () => {
+    try {
+      const congregationId = localStorage.getItem("congregationId");
+      if (!congregationId) return;
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/congregation/initials/?congregation=${congregationId}`
+      );
+      const data = await res.json();
+      if (data.success) setCongregationInitials(data.initials || "");
+    } catch (e) {
+      console.error("Failed to fetch initials", e);
+    }
+  };
+
+  const saveCongregationInitials = async () => {
+    try {
+      setInitialsSaving(true);
+      const congregationId = localStorage.getItem("congregationId");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/congregation/initials/`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ congregation_id: congregationId, initials: congregationInitials }),
+        }
+      );
+      const data = await res.json();
+      if (data.success) {
+        setCongregationInitials(data.initials);
+        showSuccess("Congregation initials saved!");
+      } else {
+        showError(data.error || "Failed to save initials");
+      }
+    } catch (e) {
+      showError("Failed to save initials");
+    } finally {
+      setInitialsSaving(false);
+    }
+  };
+
   // Handle settings actions with toast messages
   const handleProfileUpdate = async () => {
-    // This will be called from the form submission
     const success = await updateProfile(profileData);
     if (success) {
       // Profile updated successfully
@@ -988,6 +1029,7 @@ export default function LocalDashboardLayout({
   useEffect(() => {
     if (settingsOpen && activeSettingsTab === "profile") {
       fetchProfile();
+      fetchCongregationInitials();
     }
   }, [settingsOpen, activeSettingsTab]);
   useEffect(() => {
@@ -1410,6 +1452,37 @@ export default function LocalDashboardLayout({
                               <option value="Data Manager">Data Manager</option>
                               <option value="Viewer">Viewer</option>
                             </select>
+                          </div>
+
+                          <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">
+                            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
+                              Congregation Initials
+                              <span className="ml-1 text-gray-400 text-xs font-normal">(used for member ID, e.g. AE)</span>
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={congregationInitials}
+                                onChange={(e) => setCongregationInitials(e.target.value.toUpperCase().slice(0, 10))}
+                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base uppercase tracking-widest"
+                                placeholder="e.g. AE"
+                                maxLength={10}
+                              />
+                              <button
+                                onClick={saveCongregationInitials}
+                                disabled={initialsSaving}
+                                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                              >
+                                {initialsSaving ? (
+                                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                                ) : (
+                                  "Save"
+                                )}
+                              </button>
+                            </div>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                              New members will get IDs like <span className="font-mono font-semibold">{congregationInitials || "AE"}/YPG/001</span>
+                            </p>
                           </div>
 
                           <button

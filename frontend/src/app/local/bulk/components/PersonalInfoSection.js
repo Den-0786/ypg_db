@@ -380,6 +380,46 @@ export default function PersonalInfoSection({
         </div>
       </div>
 
+      {/* Profile Picture Upload */}
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-4 mt-2">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+          Profile Picture <span className="text-gray-400 text-xs font-normal">(optional — JPG, PNG)</span>
+        </label>
+        <div className="flex items-center gap-5">
+          <div className="flex-shrink-0">
+            {currentMember.profile_picture_preview ? (
+              <img
+                src={currentMember.profile_picture_preview}
+                alt="Preview"
+                className="h-20 w-20 rounded-full object-cover border-2 border-blue-200 shadow"
+              />
+            ) : (
+              <div className="h-20 w-20 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center border-2 border-dashed border-blue-300 dark:border-blue-600">
+                <i className="fas fa-user text-blue-400 dark:text-blue-300 text-2xl"></i>
+              </div>
+            )}
+          </div>
+          <div className="flex-1">
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/jpg"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  setCurrentMember({
+                    ...currentMember,
+                    profile_picture: file,
+                    profile_picture_preview: URL.createObjectURL(file),
+                  });
+                }
+              }}
+              className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300 cursor-pointer"
+            />
+            <p className="text-xs text-gray-400 mt-1">Max 5MB. Leave empty to skip.</p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex justify-end pt-4">
         <button
           onClick={handleNextClick}

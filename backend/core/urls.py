@@ -113,6 +113,7 @@ urlpatterns = [
     path('api/settings/security/', views.api_settings_security, name='api_settings_security'),
     path('api/settings/website/', views.api_settings_website, name='api_settings_website'),
     path('api/validate-pin/', views.api_validate_pin, name='api_validate_pin'),
+    path('api/congregation/initials/', views.api_congregation_initials, name='api_congregation_initials'),
     path('api/get-current-pin/', views.api_get_current_pin, name='api_get_current_pin'),
     
     # Data Management API URLs

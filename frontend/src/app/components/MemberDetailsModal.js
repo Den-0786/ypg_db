@@ -15,18 +15,31 @@ export default function MemberDetailsModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex flex-col items-center justify-center p-6 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col items-center justify-center p-6 border-b border-gray-200 dark:border-gray-700 relative">
           <div className="flex flex-col items-center mb-4">
-            <div
-              className={`w-16 h-16 sm:w-20 sm:h-20 ${getInitialsColor(selectedMember.name)} rounded-full flex items-center justify-center mb-3`}
-            >
-              <span className="text-xl sm:text-2xl font-bold text-white">
-                {getInitials(selectedMember.name)}
-              </span>
-            </div>
+            {selectedMember.profile_picture ? (
+              <img
+                src={selectedMember.profile_picture}
+                alt={selectedMember.name}
+                className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-lg mb-3"
+              />
+            ) : (
+              <div
+                className={`w-20 h-20 sm:w-24 sm:h-24 ${getInitialsColor(selectedMember.name)} rounded-full flex items-center justify-center mb-3 shadow-lg`}
+              >
+                <span className="text-2xl sm:text-3xl font-bold text-white">
+                  {getInitials(selectedMember.name)}
+                </span>
+              </div>
+            )}
             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white text-center">
               {selectedMember.name}
             </h3>
+            {selectedMember.member_id && (
+              <span className="inline-flex px-3 py-1 mt-1 text-xs font-mono font-semibold rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                {selectedMember.member_id}
+              </span>
+            )}
           </div>
           <button
             onClick={() => setShowDetailsModal(false)}
