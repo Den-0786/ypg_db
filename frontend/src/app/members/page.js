@@ -74,6 +74,10 @@ export default function MembersPage() {
       const cleanedMembers = allMembers.filter(
         (m) => (m.name || "").toLowerCase() !== "john doe"
       );
+      console.log("DEBUG: storedCongregationName:", storedCongregationName);
+      console.log("DEBUG: allMembers count:", allMembers.length);
+      console.log("DEBUG: cleanedMembers count:", cleanedMembers.length);
+      console.log("DEBUG: Sample member congregation:", cleanedMembers[0]?.congregation);
       let filteredMembers = cleanedMembers;
       if (
         storedCongregationName &&
@@ -85,6 +89,7 @@ export default function MembersPage() {
             member.congregation === "District Office"
         );
       }
+      console.log("DEBUG: filteredMembers count:", filteredMembers.length);
 
       const executivesList = filteredMembers.filter(
         (member) => member.is_executive
