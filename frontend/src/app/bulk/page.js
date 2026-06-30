@@ -25,6 +25,7 @@ export default function BulkRegistrationPage() {
   const [members, setMembers] = useState([]);
   const [currentSection, setCurrentSection] = useState("personal");
   const [isBulkMode, setIsBulkMode] = useState(false); // false for single, true for bulk
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -138,9 +139,14 @@ export default function BulkRegistrationPage() {
       setCurrentSection("personal");
       showToast("Member added to list successfully!", "success");
     } else {
-      // Submit single member immediately
-      handleSubmitSingle();
+      // Show confirmation modal before submitting single member
+      setShowConfirmModal(true);
     }
+  };
+
+  const handleConfirmSubmit = () => {
+    setShowConfirmModal(false);
+    handleSubmitSingle();
   };
 
   const handleSubmitSingle = async () => {
@@ -419,6 +425,122 @@ export default function BulkRegistrationPage() {
             onRemoveMember={handleRemoveMember}
             onSubmitBulk={handleSubmit}
           />
+        )}
+
+        {/* Single Member Confirmation Modal */}
+        {showConfirmModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Confirm Member Information
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Please review the details before submitting.
+                </p>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Full Name</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.first_name} {currentMember.last_name}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Phone Number</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.phone_number}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Gender</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.gender}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Email</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.email || "N/A"}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Date of Birth</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.date_of_birth || "N/A"}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Place of Residence</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.place_of_residence}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Hometown</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.hometown}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Relative Contact</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.relative_contact}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Congregation</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.congregation}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Membership Status</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.membership_status}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Baptism</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.baptism}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Communicant</p>
+                    <p className="font-medium text-gray-900 dark:text-white">
+                      {currentMember.communicant}
+                    </p>
+                  </div>
+                </div>
+                {currentMember.profile_picture_preview && (
+                  <div className="flex items-center gap-3">
+                    <p className="text-xs text-gray-500 dark:text-gray-400">Profile Picture</p>
+                    <img
+                      src={currentMember.profile_picture_preview}
+                      alt="Profile preview"
+                      className="h-16 w-16 rounded-full object-cover border border-gray-200"
+                    />
+                  </div>
+                )}
+              </div>
+              <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white rounded-lg transition-colors"
+                >
+                  Edit
+                </button>
+                <button
+                  onClick={handleConfirmSubmit}
+                  className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                >
+                  Confirm & Submit
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </DashboardLayout>

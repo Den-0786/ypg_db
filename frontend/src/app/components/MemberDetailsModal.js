@@ -19,7 +19,11 @@ export default function MemberDetailsModal({
           <div className="flex flex-col items-center mb-4">
             {selectedMember.profile_picture ? (
               <img
-                src={selectedMember.profile_picture}
+                src={
+                  selectedMember.profile_picture.startsWith("http")
+                    ? selectedMember.profile_picture
+                    : `${process.env.NEXT_PUBLIC_API_BASE_URL || ""}${selectedMember.profile_picture}`
+                }
                 alt={selectedMember.name}
                 className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-lg mb-3"
               />

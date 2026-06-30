@@ -118,7 +118,11 @@ export default function MembersTable({
                       />
                       {member.profile_picture ? (
                         <img
-                          src={member.profile_picture}
+                          src={
+                            member.profile_picture.startsWith("http")
+                              ? member.profile_picture
+                              : `${process.env.NEXT_PUBLIC_API_BASE_URL || ""}${member.profile_picture}`
+                          }
                           alt={member.name}
                           className="flex-shrink-0 h-10 w-10 rounded-full object-cover mr-3 border border-gray-200"
                         />
