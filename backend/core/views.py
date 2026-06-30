@@ -3043,24 +3043,28 @@ def api_home_stats(request):
         # Get congregation list for dropdown (exclude district)
         congregations = list(Congregation.objects.filter(is_district=False).values_list('name', flat=True).order_by('name'))
 
-        # Fetch events this month from ypg_website API
-        total_events = 0
+        # Fetch events this month from ypg_website API (with cache fallback)
+        from django.core.cache import cache as _cache
+        import urllib.request
+        import json as _json
+        from datetime import datetime as dt, timezone as dt_tz
+
+        _cached_events = _cache.get('ypg_website_total_events')
+        total_events = _cached_events if _cached_events is not None else 0
         try:
-            import urllib.request
-            import json as _json
             website_api_url = os.environ.get('YPG_WEBSITE_API_URL', 'https://ypg-website.onrender.com')
             events_url = f"{website_api_url.rstrip('/')}/api/events/?excludeDeleted=true"
             req = urllib.request.Request(events_url, headers={'Accept': 'application/json'})
-            with urllib.request.urlopen(req, timeout=8) as resp:
+            with urllib.request.urlopen(req, timeout=20) as resp:
                 events_data = _json.loads(resp.read().decode())
             if events_data.get('success') and events_data.get('events'):
-                from datetime import datetime as dt, timezone as dt_tz
                 now = dt.now(dt_tz.utc)
                 month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
                 if now.month == 12:
                     month_end = now.replace(year=now.year + 1, month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
                 else:
                     month_end = now.replace(month=now.month + 1, day=1, hour=0, minute=0, second=0, microsecond=0)
+                count = 0
                 for ev in events_data['events']:
                     start_str = ev.get('start_date', '')
                     if start_str:
@@ -3069,11 +3073,15 @@ def api_home_stats(request):
                             if ev_date.tzinfo is None:
                                 ev_date = ev_date.replace(tzinfo=dt_tz.utc)
                             if month_start <= ev_date < month_end:
-                                total_events += 1
+                                count += 1
                         except Exception:
                             pass
+                total_events = count
+                # Cache the successful result for 30 minutes
+                _cache.set('ypg_website_total_events', total_events, 1800)
         except Exception:
-            total_events = 0
+            # Keep cached value if available, else 0
+            pass
 
         return JsonResponse({
             'success': True,
