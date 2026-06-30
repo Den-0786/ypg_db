@@ -121,17 +121,29 @@ export default function ExecutivesTable({
                         }}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded mr-3"
                       />
-                      <div
-                        className={`flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center mr-3`}
-                      >
-                        <span className="text-sm font-medium text-white">
-                          {member.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")
-                            .toUpperCase()}
-                        </span>
-                      </div>
+                      {member.profile_picture ? (
+                        <img
+                          src={
+                            member.profile_picture.startsWith("http")
+                              ? member.profile_picture
+                              : `${process.env.NEXT_PUBLIC_API_BASE_URL || ""}${member.profile_picture}`
+                          }
+                          alt={member.name}
+                          className="flex-shrink-0 h-10 w-10 rounded-full object-cover mr-3 border border-gray-200"
+                        />
+                      ) : (
+                        <div
+                          className={`flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center mr-3`}
+                        >
+                          <span className="text-sm font-medium text-white">
+                            {member.name
+                              .split(" ")
+                              .map((n) => n[0])
+                              .join("")
+                              .toUpperCase()}
+                          </span>
+                        </div>
+                      )}
                       <div className="text-sm font-medium text-gray-900 dark:text-white">
                         {member.name}
                       </div>
