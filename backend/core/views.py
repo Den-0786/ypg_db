@@ -1610,7 +1610,7 @@ def api_members(request):
             "executive_level": member.executive_level,
             "local_executive_position": member.local_executive_position,
             "district_executive_position": member.district_executive_position,
-            "profile_picture": member.profile_picture.url if member.profile_picture else None,
+            "profile_picture": request.build_absolute_uri(member.profile_picture.url) if member.profile_picture else None,
         }
         data.append(member_data)
 
