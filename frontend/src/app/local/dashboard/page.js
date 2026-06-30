@@ -211,7 +211,7 @@ export default function LocalDashboardPage() {
         {/* Statistics Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
             <div className="relative z-10 flex items-center justify-between">
               <div>
                 <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -227,7 +227,7 @@ export default function LocalDashboardPage() {
             </div>
           </div>
           <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 dark:from-green-400/10 dark:to-green-600/10 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-green-600/5 dark:from-green-400/20 dark:to-green-600/20 animate-pulse"></div>
             <div className="relative z-10 flex items-center justify-between">
               <div>
                 <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -243,7 +243,7 @@ export default function LocalDashboardPage() {
             </div>
           </div>
           <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-600/20 dark:from-orange-400/10 dark:to-orange-600/10 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-600/5 dark:from-orange-400/20 dark:to-orange-600/20 animate-pulse"></div>
             <div className="relative z-10 flex items-center justify-between">
               <div>
                 <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -259,7 +259,7 @@ export default function LocalDashboardPage() {
             </div>
           </div>
           <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-purple-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 dark:from-purple-400/10 dark:to-purple-600/10 animate-pulse"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-400/5 to-purple-600/5 dark:from-purple-400/20 dark:to-purple-600/20 animate-pulse"></div>
             <div className="relative z-10 flex items-center justify-between">
               <div>
                 <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -285,7 +285,7 @@ export default function LocalDashboardPage() {
             {/* Add New Member */}
             <div className="relative group">
               <div className="bg-blue-50 dark:bg-gray-700 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden rounded-lg p-4 transition-all duration-200 hover:shadow-md">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Add Member
@@ -303,7 +303,7 @@ export default function LocalDashboardPage() {
             {/* Record Attendance */}
             <div className="relative group">
               <div className="bg-green-50 dark:bg-gray-700 shadow-lg dark:shadow-green-500/20 relative overflow-hidden rounded-lg p-4 transition-all duration-200 hover:shadow-md">
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 dark:from-green-400/10 dark:to-green-600/10 animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-green-600/5 dark:from-green-400/20 dark:to-green-600/20 animate-pulse"></div>
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Record Attendance
@@ -321,7 +321,7 @@ export default function LocalDashboardPage() {
             {/* View Analytics */}
             <div className="relative group">
               <div className="bg-purple-50 dark:bg-gray-700 shadow-lg dark:shadow-purple-500/20 relative overflow-hidden rounded-lg p-4 transition-all duration-200 hover:shadow-md">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 dark:from-purple-400/10 dark:to-purple-600/10 animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/5 to-purple-600/5 dark:from-purple-400/20 dark:to-purple-600/20 animate-pulse"></div>
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     View Analytics
@@ -339,7 +339,7 @@ export default function LocalDashboardPage() {
             {/* Bulk Registration */}
             <div className="relative group">
               <div className="bg-orange-50 dark:bg-gray-700 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden rounded-lg p-4 transition-all duration-200 hover:shadow-md">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-600/20 dark:from-orange-400/10 dark:to-orange-600/10 animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-600/5 dark:from-orange-400/20 dark:to-orange-600/20 animate-pulse"></div>
                 <div className="relative z-10 flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Bulk Registration

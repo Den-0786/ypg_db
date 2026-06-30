@@ -9,7 +9,7 @@ import ToastNotification from "./components/ToastNotification";
 
 export default function LocalBulkAddPage() {
   const [members, setMembers] = useState([]);
-  const [isBulkMode, setIsBulkMode] = useState(true);
+  const [isBulkMode, setIsBulkMode] = useState(false);
   const [toast, setToast] = useState({
     show: false,
     message: "",

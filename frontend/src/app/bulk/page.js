@@ -24,7 +24,7 @@ export default function BulkRegistrationPage() {
   const [selectedCongregation, setSelectedCongregation] = useState("");
   const [members, setMembers] = useState([]);
   const [currentSection, setCurrentSection] = useState("personal");
-  const [isBulkMode, setIsBulkMode] = useState(true); // true for bulk, false for single
+  const [isBulkMode, setIsBulkMode] = useState(false); // false for single, true for bulk
   const [toast, setToast] = useState({
     show: false,
     message: "",

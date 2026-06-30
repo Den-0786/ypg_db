@@ -347,8 +347,7 @@ export default function LocalDashboardLayout({
   onBulkEdit = () => {},
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { theme: globalTheme, setTheme: setGlobalTheme, mounted } = useTheme();
-  const [theme, setTheme] = useState("light");
+  const { theme, setTheme, mounted } = useTheme();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);

@@ -685,7 +685,7 @@ export default function LocalMembersPage() {
           <div className="flex gap-4 min-w-max">
             {/* Total Members */}
             <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -703,7 +703,7 @@ export default function LocalMembersPage() {
 
             {/* Total Male */}
             <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -721,7 +721,7 @@ export default function LocalMembersPage() {
 
             {/* Total Female */}
             <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-pink-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 to-pink-600/20 dark:from-pink-400/10 dark:to-pink-600/10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-400/5 to-pink-600/5 dark:from-pink-400/20 dark:to-pink-600/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -739,7 +739,7 @@ export default function LocalMembersPage() {
 
             {/* Communicant */}
             <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-purple-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 dark:from-purple-400/10 dark:to-purple-600/10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400/5 to-purple-600/5 dark:from-purple-400/20 dark:to-purple-600/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -757,7 +757,7 @@ export default function LocalMembersPage() {
 
             {/* Confirmed */}
             <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-600/20 dark:from-orange-400/10 dark:to-orange-600/10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-600/5 dark:from-orange-400/20 dark:to-orange-600/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -775,7 +775,7 @@ export default function LocalMembersPage() {
 
             {/* Baptism */}
             <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-indigo-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-indigo-400/20 to-indigo-600/20 dark:from-indigo-400/10 dark:to-indigo-600/10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-400/5 to-indigo-600/5 dark:from-indigo-400/20 dark:to-indigo-600/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -793,7 +793,7 @@ export default function LocalMembersPage() {
 
             {/* Active Guilders */}
             <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-teal-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-teal-400/20 to-teal-600/20 dark:from-teal-400/10 dark:to-teal-600/10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-teal-400/5 to-teal-600/5 dark:from-teal-400/20 dark:to-teal-600/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -811,7 +811,7 @@ export default function LocalMembersPage() {
 
             {/* Distant Guilders */}
             <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-cyan-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/20 to-cyan-600/20 dark:from-cyan-400/10 dark:to-cyan-600/10 animate-pulse"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/5 to-cyan-600/5 dark:from-cyan-400/20 dark:to-cyan-600/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">

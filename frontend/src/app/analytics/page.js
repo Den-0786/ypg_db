@@ -710,107 +710,107 @@ export default function AnalyticsPage() {
           <div className="mb-8">
             {/* Large screens - Grid layout */}
             <div className="hidden lg:grid grid-cols-4 gap-3">
-              <div className="bg-blue-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Total Attendance</p>
-                    <p className="text-lg font-bold">
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Total Attendance</p>
+                  <p className="text-lg font-bold">
                       {chartData.sundayAttendance?.totalAttendance || 0}
                     </p>
-                  </div>
-                  <i className="fas fa-users text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-users text-xl text-blue-600 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
-              <div className="bg-green-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 dark:from-green-400/10 dark:to-green-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Average Attendance</p>
-                    <p className="text-lg font-bold">
+            </div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-green-600/5 dark:from-green-400/20 dark:to-green-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Average Attendance</p>
+                  <p className="text-lg font-bold">
                       {chartData.sundayAttendance?.averageAttendance || 0}
                     </p>
-                  </div>
-                  <i className="fas fa-chart-line text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-chart-line text-xl text-green-600 dark:text-green-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
-              <div className="bg-purple-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-purple-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 dark:from-purple-400/10 dark:to-purple-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Congregations</p>
-                    <p className="text-lg font-bold">
+            </div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-purple-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400/5 to-purple-600/5 dark:from-purple-400/20 dark:to-purple-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Congregations</p>
+                  <p className="text-lg font-bold">
                       {chartData.sundayAttendance?.congregationsCount || 0}
                     </p>
-                  </div>
-                  <i className="fas fa-church text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-church text-xl text-purple-600 dark:text-purple-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
-              <div className="bg-yellow-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-yellow-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-yellow-600/20 dark:from-yellow-400/10 dark:to-yellow-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Growth</p>
-                    <p className="text-lg font-bold">
+            </div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-yellow-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/5 to-yellow-600/5 dark:from-yellow-400/20 dark:to-yellow-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Growth</p>
+                  <p className="text-lg font-bold">
                       {chartData.sundayAttendance?.growth || 0}%
                     </p>
-                  </div>
-                  <i className="fas fa-arrow-up text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-arrow-up text-xl text-yellow-600 dark:text-yellow-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
+            </div>
             </div>
             {/* Small screens - Horizontal scrollable layout */}
             <div className="lg:hidden">
               <div className="overflow-x-auto">
                 <div className="flex space-x-3 min-w-max pb-2">
-                  <div className="bg-blue-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Total Attendance</p>
-                        <p className="text-lg font-bold">
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Total Attendance</p>
+                  <p className="text-lg font-bold">
                           {chartData.sundayAttendance?.totalAttendance || 0}
                         </p>
-                      </div>
-                      <i className="fas fa-users text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                  <div className="bg-green-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 dark:from-green-400/10 dark:to-green-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Average Attendance</p>
-                        <p className="text-lg font-bold">
+                </div>
+                <i className="fas fa-users text-xl text-blue-600 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-green-600/5 dark:from-green-400/20 dark:to-green-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Average Attendance</p>
+                  <p className="text-lg font-bold">
                           {chartData.sundayAttendance?.averageAttendance || 0}
                         </p>
-                      </div>
-                      <i className="fas fa-chart-line text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                  <div className="bg-purple-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-purple-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-purple-600/20 dark:from-purple-400/10 dark:to-purple-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Congregations</p>
-                        <p className="text-lg font-bold">
+                </div>
+                <i className="fas fa-chart-line text-xl text-green-600 dark:text-green-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-purple-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400/5 to-purple-600/5 dark:from-purple-400/20 dark:to-purple-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Congregations</p>
+                  <p className="text-lg font-bold">
                           {chartData.sundayAttendance?.congregationsCount || 0}
                         </p>
-                      </div>
-                      <i className="fas fa-church text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                  <div className="bg-yellow-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-yellow-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-yellow-600/20 dark:from-yellow-400/10 dark:to-yellow-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Growth</p>
-                        <p className="text-lg font-bold">
+                </div>
+                <i className="fas fa-church text-xl text-purple-600 dark:text-purple-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-yellow-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/5 to-yellow-600/5 dark:from-yellow-400/20 dark:to-yellow-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Growth</p>
+                  <p className="text-lg font-bold">
                           {chartData.sundayAttendance?.growth || 0}%
                         </p>
-                      </div>
-                      <i className="fas fa-arrow-up text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
+                </div>
+                <i className="fas fa-arrow-up text-xl text-yellow-600 dark:text-yellow-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
                 </div>
               </div>
             </div>
@@ -1010,179 +1010,179 @@ export default function AnalyticsPage() {
           <div className="mb-8">
             {/* Large screens - Grid layout */}
             <div className="hidden lg:grid grid-cols-6 gap-3">
-              <div className="bg-green-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 dark:from-green-400/10 dark:to-green-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Total Members</p>
-                    <p className="text-lg font-bold">
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-green-600/5 dark:from-green-400/20 dark:to-green-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Total Members</p>
+                  <p className="text-lg font-bold">
                       {chartData.membersDatabase?.totalMembers || 0}
                     </p>
-                  </div>
-                  <i className="fas fa-users text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-users text-xl text-green-600 dark:text-green-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
-              <div className="bg-blue-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Male Members</p>
-                    <p className="text-lg font-bold">
+            </div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Male Members</p>
+                  <p className="text-lg font-bold">
                       {chartData.membersDatabase?.genderDistribution?.reduce(
                         (sum, item) => sum + item.male,
                         0
                       ) || 0}
                     </p>
-                  </div>
-                  <i className="fas fa-mars text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-mars text-xl text-blue-600 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
-              <div className="bg-pink-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-pink-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 to-pink-600/20 dark:from-pink-400/10 dark:to-pink-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Female Members</p>
-                    <p className="text-lg font-bold">
+            </div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-pink-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-400/5 to-pink-600/5 dark:from-pink-400/20 dark:to-pink-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Female Members</p>
+                  <p className="text-lg font-bold">
                       {chartData.membersDatabase?.genderDistribution?.reduce(
                         (sum, item) => sum + item.female,
                         0
                       ) || 0}
                     </p>
-                  </div>
-                  <i className="fas fa-venus text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-venus text-xl text-pink-600 dark:text-pink-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
-              <div className="bg-orange-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-600/20 dark:from-orange-400/10 dark:to-orange-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Active Guilders</p>
-                    <p className="text-lg font-bold">
+            </div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-600/5 dark:from-orange-400/20 dark:to-orange-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Active Guilders</p>
+                  <p className="text-lg font-bold">
                       {chartData.membersDatabase?.congregations?.reduce(
                         (sum, c) => sum + (c.active_members || 0),
                         0
                       ) || 0}
                     </p>
-                  </div>
-                  <i className="fas fa-user-check text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-user-check text-xl text-orange-600 dark:text-orange-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
-              <div className="bg-red-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-red-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-red-600/20 dark:from-red-400/10 dark:to-red-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Inactive Guilders</p>
-                    <p className="text-lg font-bold">
+            </div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-red-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-red-400/5 to-red-600/5 dark:from-red-400/20 dark:to-red-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Inactive Guilders</p>
+                  <p className="text-lg font-bold">
                       {chartData.membersDatabase?.congregations?.reduce(
                         (sum, c) => sum + (c.inactive_members || 0),
                         0
                       ) || 0}
                     </p>
-                  </div>
-                  <i className="fas fa-user-times text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-user-times text-xl text-red-600 dark:text-red-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
-              <div className="bg-yellow-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-yellow-500/20 relative overflow-hidden group">
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-yellow-600/20 dark:from-yellow-400/10 dark:to-yellow-600/10 animate-pulse"></div>
-                <div className="relative z-10 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs opacity-90">Growth</p>
-                    <p className="text-lg font-bold">
+            </div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-yellow-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/5 to-yellow-600/5 dark:from-yellow-400/20 dark:to-yellow-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Growth</p>
+                  <p className="text-lg font-bold">
                       {chartData.sundayAttendance?.growth || 0}%
                     </p>
-                  </div>
-                  <i className="fas fa-arrow-up text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
+                <i className="fas fa-arrow-up text-xl text-yellow-600 dark:text-yellow-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
+            </div>
             </div>
             {/* Small screens - Horizontal scrollable layout */}
             <div className="lg:hidden">
               <div className="overflow-x-auto">
                 <div className="flex space-x-3 min-w-max pb-2">
-                  <div className="bg-green-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-green-600/20 dark:from-green-400/10 dark:to-green-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Total Members</p>
-                        <p className="text-lg font-bold">
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-green-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-green-400/5 to-green-600/5 dark:from-green-400/20 dark:to-green-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Total Members</p>
+                  <p className="text-lg font-bold">
                           {chartData.membersDatabase?.totalMembers || 0}
                         </p>
-                      </div>
-                      <i className="fas fa-users text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                  <div className="bg-blue-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Male Members</p>
-                        <p className="text-lg font-bold">
+                </div>
+                <i className="fas fa-users text-xl text-green-600 dark:text-green-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Male Members</p>
+                  <p className="text-lg font-bold">
                           {chartData.membersDatabase?.genderDistribution?.reduce(
                             (sum, item) => sum + item.male,
                             0
                           ) || 0}
                         </p>
-                      </div>
-                      <i className="fas fa-mars text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                  <div className="bg-pink-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-pink-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 to-pink-600/20 dark:from-pink-400/10 dark:to-pink-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Female Members</p>
-                        <p className="text-lg font-bold">
+                </div>
+                <i className="fas fa-mars text-xl text-blue-600 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-pink-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-400/5 to-pink-600/5 dark:from-pink-400/20 dark:to-pink-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Female Members</p>
+                  <p className="text-lg font-bold">
                           {chartData.membersDatabase?.genderDistribution?.reduce(
                             (sum, item) => sum + item.female,
                             0
                           ) || 0}
                         </p>
-                      </div>
-                      <i className="fas fa-venus text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                  <div className="bg-orange-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-orange-600/20 dark:from-orange-400/10 dark:to-orange-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Active Guilders</p>
-                        <p className="text-lg font-bold">
+                </div>
+                <i className="fas fa-venus text-xl text-pink-600 dark:text-pink-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-600/5 dark:from-orange-400/20 dark:to-orange-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Active Guilders</p>
+                  <p className="text-lg font-bold">
                           {chartData.membersDatabase?.congregations?.reduce(
                             (sum, c) => sum + (c.active_members || 0),
                             0
                           ) || 0}
                         </p>
-                      </div>
-                      <i className="fas fa-user-check text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                  <div className="bg-red-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-red-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-red-400/20 to-red-600/20 dark:from-red-400/10 dark:to-red-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Inactive Guilders</p>
-                        <p className="text-lg font-bold">
+                </div>
+                <i className="fas fa-user-check text-xl text-orange-600 dark:text-orange-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-red-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-red-400/5 to-red-600/5 dark:from-red-400/20 dark:to-red-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Inactive Guilders</p>
+                  <p className="text-lg font-bold">
                           {chartData.membersDatabase?.congregations?.reduce(
                             (sum, c) => sum + (c.inactive_members || 0),
                             0
                           ) || 0}
                         </p>
-                      </div>
-                      <i className="fas fa-user-times text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
-                  <div className="bg-yellow-500 dark:bg-gray-800 text-white rounded-lg p-3 shadow-lg dark:shadow-yellow-500/20 relative overflow-hidden group flex-shrink-0 w-40">
-                    <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-yellow-600/20 dark:from-yellow-400/10 dark:to-yellow-600/10 animate-pulse"></div>
-                    <div className="relative z-10 flex items-center justify-between">
-                      <div>
-                        <p className="text-xs opacity-90">Growth</p>
-                        <p className="text-lg font-bold">
+                </div>
+                <i className="fas fa-user-times text-xl text-red-600 dark:text-red-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-yellow-500/20 relative overflow-hidden group flex-shrink-0 w-40">
+              <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/5 to-yellow-600/5 dark:from-yellow-400/20 dark:to-yellow-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Growth</p>
+                  <p className="text-lg font-bold">
                           {chartData.sundayAttendance?.growth || 0}%
                         </p>
-                      </div>
-                      <i className="fas fa-arrow-up text-xl opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
-                    </div>
-                  </div>
+                </div>
+                <i className="fas fa-arrow-up text-xl text-yellow-600 dark:text-yellow-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
                 </div>
               </div>
             </div>
@@ -1236,7 +1236,7 @@ export default function AnalyticsPage() {
                       key={index}
                       className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group"
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
+                      <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
                       <div className="relative z-10">
                         <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3 text-center">
                           {item.congregation}
@@ -1280,7 +1280,7 @@ export default function AnalyticsPage() {
                           key={index}
                           className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group flex-shrink-0 w-48"
                         >
-                          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-400/10 dark:to-blue-600/10 animate-pulse"></div>
+                          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
                           <div className="relative z-10">
                             <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3 text-center">
                               {item.congregation}
