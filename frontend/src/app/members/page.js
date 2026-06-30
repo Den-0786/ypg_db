@@ -90,6 +90,7 @@ export default function MembersPage() {
         );
       }
       console.log("DEBUG: filteredMembers count:", filteredMembers.length);
+      console.log("DEBUG: Sample member is_executive:", filteredMembers[0]?.is_executive);
 
       const executivesList = filteredMembers.filter(
         (member) => member.is_executive
@@ -97,6 +98,9 @@ export default function MembersPage() {
       const regularMembers = filteredMembers.filter(
         (member) => !member.is_executive
       );
+
+      console.log("DEBUG: executivesList count:", executivesList.length);
+      console.log("DEBUG: regularMembers count:", regularMembers.length);
 
       setExecutives(executivesList);
       setMembers(regularMembers);
