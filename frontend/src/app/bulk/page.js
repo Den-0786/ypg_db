@@ -53,6 +53,8 @@ export default function BulkRegistrationPage() {
     confirmation: "",
     baptism: "",
     communicant: "",
+    profile_picture: null,
+    profile_picture_preview: "",
   });
 
   const showToast = (message, type = "success") => {
@@ -154,21 +156,47 @@ export default function BulkRegistrationPage() {
         is_communicant:
           currentMember.communicant === "Yes" ||
           currentMember.communicant === true,
-        // Remove the old field names
-        baptism: undefined,
-        confirmation: undefined,
-        communicant: undefined,
       };
+
+      // Remove the old field names and frontend-only preview
+      delete memberData.baptism;
+      delete memberData.confirmation;
+      delete memberData.communicant;
+      delete memberData.profile_picture_preview;
+
+      const hasProfilePicture = memberData.profile_picture instanceof File;
+      let body;
+      const headers = {
+        "X-CSRFToken": getCookie("csrftoken"),
+      };
+
+      if (hasProfilePicture) {
+        const formData = new FormData();
+        const profilePictureFile = memberData.profile_picture;
+        delete memberData.profile_picture;
+
+        for (const [key, value] of Object.entries(memberData)) {
+          if (value !== undefined && value !== null && value !== "") {
+            formData.append(
+              key,
+              value === true ? "true" : value === false ? "false" : value
+            );
+          }
+        }
+        formData.append("profile_picture", profilePictureFile);
+        body = formData;
+      } else {
+        delete memberData.profile_picture;
+        headers["Content-Type"] = "application/json";
+        body = JSON.stringify(memberData);
+      }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/add/`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": getCookie("csrftoken"),
-          },
-          body: JSON.stringify(memberData),
+          headers,
+          body,
         }
       );
 
@@ -198,6 +226,8 @@ export default function BulkRegistrationPage() {
           confirmation: "",
           baptism: "",
           communicant: "",
+          profile_picture: null,
+          profile_picture_preview: "",
         });
         setCurrentSection("personal");
       } else {
