@@ -40,6 +40,7 @@ export default function MembersPage() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedMember, setSelectedMember] = useState(null);
   const [editForm, setEditForm] = useState({});
+  const [editFormErrors, setEditFormErrors] = useState({});
 
   const [totalMembers, setTotalMembers] = useState(0);
   const [totalMale, setTotalMale] = useState(0);
@@ -200,6 +201,7 @@ export default function MembersPage() {
       confirmation: member.confirmation || (member.is_confirmed ? "Yes" : "No"),
       communicant: member.communicant || (member.is_communicant ? "Yes" : "No"),
     });
+    setEditFormErrors({});
     setPendingAction("edit");
     setPinModalConfig({
       title: "Enter PIN for Edit Operation",

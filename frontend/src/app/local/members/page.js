@@ -65,6 +65,7 @@ export default function LocalMembersPage() {
     profile_picture: null,
     profile_picture_preview: null,
   });
+  const [editFormErrors, setEditFormErrors] = useState({});
 
   // Fetch data for congregation
   useEffect(() => {
@@ -218,6 +219,7 @@ export default function LocalMembersPage() {
       profile_picture: null,
       profile_picture_preview: member.profile_picture || null,
     });
+    setEditFormErrors({});
     setSelectedMember(member);
     setShowEditModal(true);
   };
