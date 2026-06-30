@@ -95,6 +95,8 @@ export default function MembersPage() {
 
       setExecutives(executivesList);
       setMembers(regularMembers);
+      console.log("DEBUG: District members data sample:", regularMembers[0]);
+      console.log("DEBUG: Has profile_picture?", !!regularMembers[0]?.profile_picture);
 
       setTotalMembers(filteredMembers.length);
       setTotalMale(filteredMembers.filter((m) => m.gender === "Male").length);
