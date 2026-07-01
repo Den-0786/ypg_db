@@ -93,7 +93,7 @@ export default function BulkEditModal({
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
           <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-            <i className="fas fa-edit text-orange-500 mr-2"></i>
+            <i className="fas fa-edit text-blue-500 mr-2"></i>
             Bulk Edit Members ({selectedMembers.length} selected)
           </h3>
           <button
@@ -106,15 +106,15 @@ export default function BulkEditModal({
 
         <div className="p-6 space-y-6">
           {/* Selected Members Preview */}
-          <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4">
-            <h4 className="text-sm font-semibold text-orange-900 dark:text-orange-200 mb-2">
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+            <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2">
               Selected Members:
             </h4>
             <div className="flex flex-wrap gap-2">
               {getSelectedMembersInfo().map((member) => (
                 <span
                   key={member.id}
-                  className="bg-orange-200 dark:bg-orange-800 text-orange-900 dark:text-orange-200 px-2 py-1 rounded text-xs"
+                  className="bg-blue-200 dark:bg-blue-800 text-blue-900 dark:text-blue-200 px-2 py-1 rounded text-xs"
                 >
                   {member.first_name} {member.last_name}
                 </span>
@@ -133,7 +133,7 @@ export default function BulkEditModal({
                 onChange={(e) =>
                   handleInputChange("membership_status", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               >
                 <option value="">No Change</option>
                 <option value="Active">Active</option>
@@ -151,7 +151,7 @@ export default function BulkEditModal({
                 onChange={(e) =>
                   handleInputChange("executive_position", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               >
                 <option value="">No Change</option>
                 <option value="President">President</option>
@@ -172,7 +172,7 @@ export default function BulkEditModal({
                 onChange={(e) =>
                   handleInputChange("attends_communion", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               >
                 <option value="">No Change</option>
                 <option value="true">Yes</option>
@@ -189,7 +189,7 @@ export default function BulkEditModal({
                 onChange={(e) =>
                   handleInputChange("congregation", e.target.value)
                 }
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               >
                 <option value="">No Change</option>
                 {congregations.map((congregation) => (
@@ -266,7 +266,7 @@ export default function BulkEditModal({
             </button>
             <button
               onClick={handleSave}
-              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
               <i className="fas fa-save mr-2"></i>
               Save Changes

@@ -100,14 +100,14 @@ export default function DashboardPage() {
 
       <div className="space-y-6">
         {/* Welcome Message Card */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg p-6 text-white shadow-lg">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg p-6 text-white shadow-lg">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
-                <i className="fas fa-church text-orange-200"></i>
+                <i className="fas fa-church text-blue-200"></i>
                 You Are Welcome
               </h2>
-              <p className="text-orange-100 text-lg mb-4">
+              <p className="text-blue-100 text-lg mb-4">
                 Grace and leadership go hand in hand. You&apos;re logged in as a
                 District Admin. View, manage and check the trends of the
                 district guild across the{" "}
@@ -138,7 +138,7 @@ export default function DashboardPage() {
         {/* Statistics Cards */}
         <div className="overflow-x-auto pb-2">
           <div className="flex gap-3 sm:gap-6 lg:grid lg:grid-cols-4 min-w-max lg:min-w-0">
-            <div className="bg-white dark:bg-gray-800 shadow-lg border-t-4 border-orange-500 relative overflow-hidden group rounded-lg p-3 sm:p-4 lg:p-6 flex-shrink-0 w-48 sm:w-auto lg:w-auto">
+            <div className="bg-white dark:bg-gray-800 shadow-lg border-t-4 border-blue-500 relative overflow-hidden group rounded-lg p-3 sm:p-4 lg:p-6 flex-shrink-0 w-48 sm:w-auto lg:w-auto">
               <div className="relative z-10 flex items-center justify-between">
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
@@ -149,12 +149,12 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="ml-2 flex-shrink-0">
-                  <i className="fas fa-users text-sm sm:text-xl lg:text-2xl text-orange-500 group-hover:scale-110 transition-transform duration-200"></i>
+                  <i className="fas fa-users text-sm sm:text-xl lg:text-2xl text-blue-500 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 shadow-lg border-t-4 border-orange-500 relative overflow-hidden group rounded-lg p-3 sm:p-4 lg:p-6 flex-shrink-0 w-48 sm:w-auto lg:w-auto">
+            <div className="bg-white dark:bg-gray-800 shadow-lg border-t-4 border-blue-500 relative overflow-hidden group rounded-lg p-3 sm:p-4 lg:p-6 flex-shrink-0 w-48 sm:w-auto lg:w-auto">
               <div className="relative z-10 flex items-center justify-between">
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
@@ -165,12 +165,12 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="ml-2 flex-shrink-0">
-                  <i className="fas fa-church text-sm sm:text-xl lg:text-2xl text-orange-500 group-hover:scale-110 transition-transform duration-200"></i>
+                  <i className="fas fa-church text-sm sm:text-xl lg:text-2xl text-blue-500 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 shadow-lg border-t-4 border-orange-500 relative overflow-hidden group rounded-lg p-3 sm:p-4 lg:p-6 flex-shrink-0 w-48 sm:w-auto lg:w-auto">
+            <div className="bg-white dark:bg-gray-800 shadow-lg border-t-4 border-blue-500 relative overflow-hidden group rounded-lg p-3 sm:p-4 lg:p-6 flex-shrink-0 w-48 sm:w-auto lg:w-auto">
               <div className="relative z-10 flex items-center justify-between">
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
@@ -181,12 +181,12 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="ml-2 flex-shrink-0">
-                  <i className="fas fa-calendar-check text-sm sm:text-xl lg:text-2xl text-orange-500 group-hover:scale-110 transition-transform duration-200"></i>
+                  <i className="fas fa-calendar-check text-sm sm:text-xl lg:text-2xl text-blue-500 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 shadow-lg border-t-4 border-orange-500 relative overflow-hidden group rounded-lg p-3 sm:p-4 lg:p-6 flex-shrink-0 w-48 sm:w-auto lg:w-auto">
+            <div className="bg-white dark:bg-gray-800 shadow-lg border-t-4 border-blue-500 relative overflow-hidden group rounded-lg p-3 sm:p-4 lg:p-6 flex-shrink-0 w-48 sm:w-auto lg:w-auto">
               <div className="relative z-10 flex items-center justify-between">
                 <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
@@ -199,7 +199,7 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="ml-2 flex-shrink-0">
-                  <i className="fas fa-user-plus text-sm sm:text-xl lg:text-2xl text-orange-500 group-hover:scale-110 transition-transform duration-200"></i>
+                  <i className="fas fa-user-plus text-sm sm:text-xl lg:text-2xl text-blue-500 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
               </div>
             </div>
@@ -211,17 +211,17 @@ export default function DashboardPage() {
         {/* Quick Actions */}
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            <i className="fas fa-bolt text-orange-500 mr-2"></i>
+            <i className="fas fa-bolt text-blue-500 mr-2"></i>
             Quick Actions
           </h3>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="relative group">
-              <div className="bg-orange-50 dark:bg-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-md border-l-4 border-orange-500">
+              <div className="bg-blue-50 dark:bg-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-md border-l-4 border-blue-500">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Add Member
                   </span>
-                  <i className="fas fa-user-plus text-lg text-orange-500"></i>
+                  <i className="fas fa-user-plus text-lg text-blue-500"></i>
                 </div>
               </div>
               <div className="absolute z-20 w-64 p-3 text-sm text-white bg-gray-800 dark:bg-gray-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
@@ -230,12 +230,12 @@ export default function DashboardPage() {
             </div>
 
             <div className="relative group">
-              <div className="bg-orange-50 dark:bg-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-md border-l-4 border-orange-500">
+              <div className="bg-blue-50 dark:bg-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-md border-l-4 border-blue-500">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Record Attendance
                   </span>
-                  <i className="fas fa-clipboard-check text-lg text-orange-500"></i>
+                  <i className="fas fa-clipboard-check text-lg text-blue-500"></i>
                 </div>
               </div>
               <div className="absolute z-20 w-64 p-3 text-sm text-white bg-gray-800 dark:bg-gray-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
@@ -244,12 +244,12 @@ export default function DashboardPage() {
             </div>
 
             <div className="relative group">
-              <div className="bg-orange-50 dark:bg-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-md border-l-4 border-orange-500">
+              <div className="bg-blue-50 dark:bg-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-md border-l-4 border-blue-500">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     View Analytics
                   </span>
-                  <i className="fas fa-chart-bar text-lg text-orange-500"></i>
+                  <i className="fas fa-chart-bar text-lg text-blue-500"></i>
                 </div>
               </div>
               <div className="absolute z-20 w-64 p-3 text-sm text-white bg-gray-800 dark:bg-gray-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bottom-full mb-2 left-1/2 transform -translate-x-1/2">
@@ -258,12 +258,12 @@ export default function DashboardPage() {
             </div>
 
             <div className="relative group">
-              <div className="bg-orange-50 dark:bg-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-md border-l-4 border-orange-500">
+              <div className="bg-blue-50 dark:bg-gray-700 rounded-lg p-4 transition-all duration-200 hover:shadow-md border-l-4 border-blue-500">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Bulk Registration
                   </span>
-                  <i className="fas fa-users text-lg text-orange-500"></i>
+                  <i className="fas fa-users text-lg text-blue-500"></i>
                 </div>
               </div>
               <div className="absolute z-20 w-64 p-3 text-sm text-white bg-gray-800 dark:bg-gray-900 rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 bottom-full mb-2 left-1/2 transform -translate-x-1/2">

@@ -6,7 +6,7 @@ export default function ModeToggle({ isBulkMode, setIsBulkMode }) {
         onClick={() => setIsBulkMode(false)}
         className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
           !isBulkMode
-            ? "bg-orange-500 text-white shadow-md"
+            ? "bg-blue-500 text-white shadow-md"
             : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
         }`}
       >
@@ -17,7 +17,7 @@ export default function ModeToggle({ isBulkMode, setIsBulkMode }) {
         onClick={() => setIsBulkMode(true)}
         className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 flex items-center ${
           isBulkMode
-            ? "bg-orange-500 text-white shadow-md"
+            ? "bg-blue-500 text-white shadow-md"
             : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
         }`}
       >

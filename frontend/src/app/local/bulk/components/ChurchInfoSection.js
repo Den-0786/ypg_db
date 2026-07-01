@@ -139,7 +139,7 @@ export default function ChurchInfoSection({
                     position: e.target.checked ? currentMember.position : "",
                   })
                 }
-                className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded"
+                className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label
                 htmlFor="is_executive_inline"
@@ -163,7 +163,7 @@ export default function ChurchInfoSection({
                     position: positionDisplay,
                   });
                 }}
-                className="flex-1 px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+                className="flex-1 px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
               >
                 <option value="" className="text-gray-800 dark:text-white">
                   Select Position
@@ -227,7 +227,7 @@ export default function ChurchInfoSection({
                     position: e.target.value,
                   })
                 }
-                className="flex-1 px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+                className="flex-1 px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
                 placeholder="Member, Elder, etc."
               />
             )}
@@ -246,7 +246,7 @@ export default function ChurchInfoSection({
                 membership_status: e.target.value,
               })
             }
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
           >
             <option value="Active" className="text-gray-800 dark:text-white">
               Active
@@ -269,7 +269,7 @@ export default function ChurchInfoSection({
                 confirmation: e.target.value,
               })
             }
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
             required
           >
             <option value="" className="text-gray-800 dark:text-white">
@@ -296,7 +296,7 @@ export default function ChurchInfoSection({
                 baptism: e.target.value,
               })
             }
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
             required
           >
             <option value="" className="text-gray-800 dark:text-white">
@@ -323,7 +323,7 @@ export default function ChurchInfoSection({
                 communicant: e.target.value,
               })
             }
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
             required
           >
             <option value="" className="text-gray-800 dark:text-white">

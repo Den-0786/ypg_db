@@ -3826,14 +3826,137 @@ def api_export_pdf(request):
     try:
         data = json.loads(request.body)
         export_type = data.get('type', 'all')
-        
-        # For now, return a message (PDF export would require additional libraries)
-        return JsonResponse({
-            'success': True,
-            'message': f'PDF export for {export_type} data is not yet implemented',
-            'note': 'PDF export requires additional libraries like reportlab or weasyprint'
-        })
-        
+
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4)
+        elements = []
+
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(
+            "CustomTitle",
+            parent=styles["Heading1"],
+            fontSize=16,
+            spaceAfter=30,
+            alignment=1,
+        )
+
+        if export_type == 'members':
+            elements.append(Paragraph("YPG Members Report", title_style))
+            elements.append(Spacer(1, 20))
+            members = Guilder.objects.all().order_by("congregation__name", "first_name")
+            table_data = [["Name", "Phone", "Congregation", "Status", "Gender"]]
+            for m in members:
+                table_data.append([
+                    f"{m.first_name} {m.last_name}",
+                    m.phone_number or "",
+                    m.congregation.name if m.congregation else "",
+                    m.membership_status or "",
+                    m.gender or "",
+                ])
+            pdf_table = Table(table_data)
+
+        elif export_type == 'attendance':
+            elements.append(Paragraph("YPG Attendance Report", title_style))
+            elements.append(Spacer(1, 20))
+            records = SundayAttendance.objects.all().order_by("-date")
+            table_data = [["Date", "Congregation", "Male", "Female", "Total"]]
+            for r in records:
+                table_data.append([
+                    r.date.strftime("%Y-%m-%d"),
+                    r.congregation.name if r.congregation else "",
+                    str(r.male_count),
+                    str(r.female_count),
+                    str(r.total_count),
+                ])
+            pdf_table = Table(table_data)
+
+        else:  # all
+            elements.append(Paragraph("YPG Data Report", title_style))
+            elements.append(Spacer(1, 20))
+
+            # Members section
+            elements.append(Paragraph("Members", styles["Heading2"]))
+            elements.append(Spacer(1, 10))
+            members = Guilder.objects.all().order_by("congregation__name", "first_name")
+            members_data = [["Name", "Phone", "Congregation", "Status", "Gender"]]
+            for m in members:
+                members_data.append([
+                    f"{m.first_name} {m.last_name}",
+                    m.phone_number or "",
+                    m.congregation.name if m.congregation else "",
+                    m.membership_status or "",
+                    m.gender or "",
+                ])
+            members_table = Table(members_data)
+            members_table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, 0), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                ("FONTSIZE", (0, 1), (-1, -1), 8),
+            ]))
+            elements.append(members_table)
+            elements.append(Spacer(1, 20))
+
+            # Attendance section
+            elements.append(Paragraph("Attendance", styles["Heading2"]))
+            elements.append(Spacer(1, 10))
+            records = SundayAttendance.objects.all().order_by("-date")
+            att_data = [["Date", "Congregation", "Male", "Female", "Total"]]
+            for r in records:
+                att_data.append([
+                    r.date.strftime("%Y-%m-%d"),
+                    r.congregation.name if r.congregation else "",
+                    str(r.male_count),
+                    str(r.female_count),
+                    str(r.total_count),
+                ])
+            att_table = Table(att_data)
+            att_table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, 0), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                ("GRID", (0, 0), (-1, -1), 1, colors.black),
+                ("FONTSIZE", (0, 1), (-1, -1), 8),
+            ]))
+            elements.append(att_table)
+
+            doc.build(elements)
+            pdf_bytes = buffer.getvalue()
+            buffer.close()
+
+            response = HttpResponse(pdf_bytes, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="ypg_data_all_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf"'
+            return response
+
+        # Style for members/attendance only exports
+        pdf_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("FONTSIZE", (0, 0), (-1, 0), 10),
+            ("BOTTOMPADDING", (0, 0), (-1, 0), 8),
+            ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+            ("GRID", (0, 0), (-1, -1), 1, colors.black),
+            ("FONTSIZE", (0, 1), (-1, -1), 8),
+        ]))
+        elements.append(pdf_table)
+
+        doc.build(elements)
+        pdf_bytes = buffer.getvalue()
+        buffer.close()
+
+        filename = f'ypg_data_{export_type}_{timezone.now().strftime("%Y%m%d_%H%M%S")}.pdf'
+        response = HttpResponse(pdf_bytes, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+
     except Exception as e:
         return JsonResponse({
             'success': False,

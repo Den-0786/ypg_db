@@ -43,7 +43,7 @@ export default function MembersTable({
                       members.length > 0
                     }
                     onChange={handleSelectAll}
-                    className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded mr-2"
+                    className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-2"
                   />
                   Name
                 </div>
@@ -119,7 +119,7 @@ export default function MembersTable({
                             onSelect([...selectedMembers, member.id]);
                           }
                         }}
-                        className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded mr-3"
+                        className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-3"
                       />
                       {member.profile_picture ? (
                         <img
@@ -132,7 +132,7 @@ export default function MembersTable({
                           className="flex-shrink-0 h-10 w-10 rounded-full object-cover mr-3 border border-gray-200"
                         />
                       ) : (
-                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-orange-500 flex items-center justify-center mr-3">
+                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center mr-3">
                           <span className="text-sm font-medium text-white">
                             {member.name
                               .split(" ")
@@ -149,7 +149,7 @@ export default function MembersTable({
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                     {member.member_id ? (
-                      <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300 border border-orange-200 dark:border-orange-600">
+                      <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
                         {member.member_id}
                       </span>
                     ) : (
@@ -204,7 +204,7 @@ export default function MembersTable({
                     <div className="flex items-center space-x-3 sm:space-x-2">
                       <button
                         onClick={() => onView(member)}
-                        className="text-orange-500 hover:text-orange-900 dark:text-orange-400 dark:hover:text-orange-300 p-2 rounded"
+                        className="text-blue-500 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 p-2 rounded"
                         title="View Details"
                       >
                         <i className="fas fa-eye mr-1"></i>View

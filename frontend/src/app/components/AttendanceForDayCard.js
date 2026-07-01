@@ -36,20 +36,20 @@ export default function AttendanceForDayCard({
         <div className="overflow-x-auto">
           <div className="flex gap-6 min-w-[800px]">
             {/* Male Attendance */}
-            <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800 w-64 flex-shrink-0">
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800 w-64 flex-shrink-0">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <div className="bg-orange-100 dark:bg-orange-800 rounded-lg p-2">
-                    <i className="fas fa-male text-orange-500 dark:text-orange-400 text-lg"></i>
+                  <div className="bg-blue-100 dark:bg-blue-800 rounded-lg p-2">
+                    <i className="fas fa-male text-blue-500 dark:text-blue-400 text-lg"></i>
                   </div>
-                  <div className="text-orange-500 dark:text-orange-400 text-sm font-medium">
+                  <div className="text-blue-500 dark:text-blue-400 text-sm font-medium">
                     Male
                   </div>
                 </div>
                 <div className="text-gray-900 dark:text-white text-xl font-bold">
                   {attendanceData.male || 0}
                 </div>
-                <div className="text-orange-500 dark:text-orange-400 text-xs">
+                <div className="text-blue-500 dark:text-blue-400 text-xs">
                   <i className="fas fa-users mr-1"></i>
                   Present
                 </div>
@@ -104,7 +104,7 @@ export default function AttendanceForDayCard({
       <div className="mt-4 text-center">
         <div className="text-gray-600 dark:text-gray-400 text-sm">
           <div className="flex items-center justify-center">
-            <i className="fas fa-clock mr-2 text-orange-500"></i>
+            <i className="fas fa-clock mr-2 text-blue-500"></i>
             <span>Service Time: {serviceTime}</span>
           </div>
         </div>

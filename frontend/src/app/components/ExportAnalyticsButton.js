@@ -50,7 +50,7 @@ export default function ExportAnalyticsButton({
   return (
     <button
       onClick={handleExport}
-      className={`w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-600 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-600 transition rounded-t-lg ${className}`}
+      className={`w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-blue-700 transition rounded-t-lg ${className}`}
       aria-label={label}
       disabled={loading}
     >

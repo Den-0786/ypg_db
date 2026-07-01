@@ -350,7 +350,7 @@ export default function MembersPage() {
 
   const getInitialsColor = (name) => {
     const colors = [
-      "bg-orange-500",
+      "bg-blue-500",
       "bg-green-500",
       "bg-purple-500",
       "bg-pink-500",
@@ -364,7 +364,7 @@ export default function MembersPage() {
     return (
       <DashboardLayout currentPage="Members">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
       </DashboardLayout>
     );
@@ -374,7 +374,7 @@ export default function MembersPage() {
     <DashboardLayout currentPage="Members">
       <div className="space-y-6">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl shadow-xl overflow-hidden relative">
+        <div className="bg-gradient-to-r from-blue-500 to-blue-700 rounded-xl shadow-xl overflow-hidden relative">
           <div className="relative z-10 p-6 lg:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div className="mb-4 lg:mb-0">
@@ -414,7 +414,7 @@ export default function MembersPage() {
         {/* Statistics Cards */}
         <div className="overflow-x-auto">
           <div className="flex gap-6 min-w-max md:grid md:grid-cols-4 md:min-w-0">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-orange-500">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-blue-500">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -424,11 +424,11 @@ export default function MembersPage() {
                     {totalMembers}
                   </p>
                 </div>
-                <i className="fas fa-users text-2xl text-orange-500"></i>
+                <i className="fas fa-users text-2xl text-blue-500"></i>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-orange-500">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-blue-500">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -438,11 +438,11 @@ export default function MembersPage() {
                     {totalMale}
                   </p>
                 </div>
-                <i className="fas fa-male text-2xl text-orange-500"></i>
+                <i className="fas fa-male text-2xl text-blue-500"></i>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-orange-500">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-blue-500">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -452,11 +452,11 @@ export default function MembersPage() {
                     {totalFemale}
                   </p>
                 </div>
-                <i className="fas fa-female text-2xl text-orange-500"></i>
+                <i className="fas fa-female text-2xl text-blue-500"></i>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-orange-500">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-blue-500">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
@@ -466,7 +466,7 @@ export default function MembersPage() {
                     {totalCongregations}
                   </p>
                 </div>
-                <i className="fas fa-church text-2xl text-orange-500"></i>
+                <i className="fas fa-church text-2xl text-blue-500"></i>
               </div>
             </div>
           </div>
@@ -486,9 +486,9 @@ export default function MembersPage() {
               </span>
               <button
                 onClick={handleExecutiveViewToggle}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                   executiveView === "local"
-                    ? "bg-orange-500"
+                    ? "bg-blue-500"
                     : "bg-gray-200 dark:bg-gray-700"
                 }`}
               >
@@ -573,7 +573,7 @@ export default function MembersPage() {
                 placeholder="Search by name, phone, congregation..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               {searchTerm && (
                 <button
@@ -621,13 +621,13 @@ export default function MembersPage() {
             <div className="p-4 sm:p-6">
               <div className="space-y-4 sm:space-y-6">
                 {/* Personal & Contact Information */}
-                <div className="bg-gradient-to-br from-orange-50 to-indigo-50 dark:from-orange-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Personal Information */}
                     <div>
                       <div className="flex items-center mb-3 sm:mb-4">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
-                          <i className="fas fa-user text-orange-500 dark:text-orange-400 text-sm sm:text-base"></i>
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
+                          <i className="fas fa-user text-blue-500 dark:text-blue-400 text-sm sm:text-base"></i>
                         </div>
                         <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                           Personal Information
@@ -679,7 +679,7 @@ export default function MembersPage() {
                             <span
                               className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                 selectedMember.gender === "Male"
-                                  ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                                  ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                                   : "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200"
                               }`}
                             >
@@ -805,8 +805,8 @@ export default function MembersPage() {
                     {/* Professional Information */}
                     <div>
                       <div className="flex items-center mb-3 sm:mb-4">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
-                          <i className="fas fa-briefcase text-orange-600 dark:text-orange-400 text-sm sm:text-base"></i>
+                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
+                          <i className="fas fa-briefcase text-blue-700 dark:text-blue-400 text-sm sm:text-base"></i>
                         </div>
                         <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                           Professional Information
@@ -830,7 +830,7 @@ export default function MembersPage() {
                 </div>
 
                 {/* Church & Religious Information */}
-                <div className="bg-gradient-to-br from-indigo-50 to-orange-50 dark:from-indigo-900/20 dark:to-orange-900/20 rounded-xl p-4 sm:p-6">
+                <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl p-4 sm:p-6">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Church Information */}
                     <div>
@@ -968,7 +968,7 @@ export default function MembersPage() {
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  <i className="fas fa-edit text-orange-500 mr-2"></i>
+                  <i className="fas fa-edit text-blue-500 mr-2"></i>
                   Edit Member - {selectedMember.name}
                 </h3>
                 <button
@@ -980,9 +980,9 @@ export default function MembersPage() {
               </div>
               <div className="space-y-6">
                 {/* Personal Information Section */}
-                <div className="bg-gradient-to-br from-orange-50 to-indigo-50 dark:from-orange-900/20 dark:to-indigo-900/20 rounded-xl p-6">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                    <i className="fas fa-user text-orange-500 mr-2"></i>
+                    <i className="fas fa-user text-blue-500 mr-2"></i>
                     Personal Information
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -999,7 +999,7 @@ export default function MembersPage() {
                             first_name: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       />
                     </div>
@@ -1017,7 +1017,7 @@ export default function MembersPage() {
                             last_name: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       />
                     </div>
@@ -1035,7 +1035,7 @@ export default function MembersPage() {
                             phone_number: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="0XXXXXXXXX"
                         required
                       />
@@ -1050,7 +1050,7 @@ export default function MembersPage() {
                         onChange={(e) =>
                           setEditForm({ ...editForm, gender: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       >
                         <option value="">Select Gender</option>
@@ -1069,7 +1069,7 @@ export default function MembersPage() {
                         onChange={(e) =>
                           setEditForm({ ...editForm, email: e.target.value })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="email@example.com"
                       />
                     </div>
@@ -1127,7 +1127,7 @@ export default function MembersPage() {
                             date_of_birth: selectedDate,
                           });
                         }}
-                        className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                        className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                           editFormErrors.date_of_birth
                             ? "border-red-500 focus:ring-red-500"
                             : "border-gray-300 dark:border-gray-600"
@@ -1154,7 +1154,7 @@ export default function MembersPage() {
                             place_of_residence: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="City/Town"
                         required
                       />
@@ -1173,7 +1173,7 @@ export default function MembersPage() {
                             residential_address: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Residential address"
                       />
                     </div>
@@ -1191,7 +1191,7 @@ export default function MembersPage() {
                             profession: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Student, Teacher, etc."
                       />
                     </div>
@@ -1209,7 +1209,7 @@ export default function MembersPage() {
                             hometown: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Hometown"
                         required
                       />
@@ -1228,7 +1228,7 @@ export default function MembersPage() {
                             relative_contact: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="0XXXXXXXXX"
                         required
                       />
@@ -1237,7 +1237,7 @@ export default function MembersPage() {
                 </div>
 
                 {/* Church Information Section */}
-                <div className="bg-gradient-to-br from-indigo-50 to-orange-50 dark:from-indigo-900/20 dark:to-orange-900/20 rounded-xl p-6">
+                <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl p-6">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                     <i className="fas fa-church text-indigo-500 mr-2"></i>
                     Church Information
@@ -1255,7 +1255,7 @@ export default function MembersPage() {
                             congregation: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       >
                         <option value="">Select Congregation</option>
@@ -1287,7 +1287,7 @@ export default function MembersPage() {
                             position: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Member, Elder, etc."
                       />
                     </div>
@@ -1304,7 +1304,7 @@ export default function MembersPage() {
                             membership_status: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
@@ -1323,7 +1323,7 @@ export default function MembersPage() {
                             confirmation: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       >
                         <option value="">Select Confirmation Status</option>
@@ -1344,7 +1344,7 @@ export default function MembersPage() {
                             baptism: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       >
                         <option value="">Select Baptism Status</option>
@@ -1365,7 +1365,7 @@ export default function MembersPage() {
                             communicant: e.target.value,
                           })
                         }
-                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       >
                         <option value="">Select Communicant Status</option>
@@ -1389,7 +1389,7 @@ export default function MembersPage() {
                               is_executive: e.target.checked,
                             })
                           }
-                          className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
                         />
                         <label
                           htmlFor="is_executive"
@@ -1413,7 +1413,7 @@ export default function MembersPage() {
                                   executive_level: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             >
                               <option value="">Select Level</option>
                               <option value="local">Local</option>
@@ -1435,7 +1435,7 @@ export default function MembersPage() {
                                   executive_position: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               placeholder="President, Secretary, etc."
                             />
                           </div>
@@ -1453,7 +1453,7 @@ export default function MembersPage() {
                                   district_executive_position: e.target.value,
                                 })
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               placeholder="District position"
                             />
                           </div>
@@ -1473,7 +1473,7 @@ export default function MembersPage() {
                 </button>
                 <button
                   onClick={handleSaveMemberEdit}
-                  className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg transition-colors"
                 >
                   <i className="fas fa-save mr-2"></i>
                   Save Changes

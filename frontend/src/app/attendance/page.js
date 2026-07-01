@@ -527,7 +527,7 @@ export default function AttendancePage() {
   if (loading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
       </div>
     );
   }
@@ -694,11 +694,11 @@ export default function AttendancePage() {
     <div className="relative quick-actions-dropdown">
       <button
         onClick={() => setShowQuickActions(!showQuickActions)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-orange-50 text-orange-600 rounded-lg shadow-sm border border-orange-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-orange-400"
+        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-blue-50 text-blue-700 rounded-lg shadow-sm border border-blue-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400"
         aria-haspopup="true"
         aria-expanded={showQuickActions}
       >
-        <i className="fas fa-bolt text-orange-500"></i>
+        <i className="fas fa-bolt text-blue-500"></i>
         Quick Actions
         <i
           className={`fas fa-chevron-${showQuickActions ? "up" : "down"} text-xs ml-1`}
@@ -708,7 +708,7 @@ export default function AttendancePage() {
         <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-2 animate-fadeIn">
           <button
             onClick={printTable}
-            className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-600 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-600 transition"
+            className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-blue-700 transition"
           >
             <i className="fas fa-print"></i> Print Table
           </button>
@@ -784,7 +784,7 @@ export default function AttendancePage() {
           <button
             onClick={handleDeleteMonthlyRecords}
             disabled={selectedMonthlyRecords.length === 0}
-            className={`w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-700 transition ${selectedMonthlyRecords.length === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
+            className={`w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-orange-700 transition ${selectedMonthlyRecords.length === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
           >
             <i className="fas fa-calendar-alt"></i> Delete Monthly Selected
           </button>
@@ -853,8 +853,8 @@ export default function AttendancePage() {
       )}
       <div className="space-y-6">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-orange-500 to-purple-600 dark:from-orange-600 dark:to-purple-700 rounded-xl shadow-xl overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-purple-400/20 animate-pulse"></div>
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-700 dark:to-purple-700 rounded-xl shadow-xl overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 animate-pulse"></div>
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
 
@@ -881,7 +881,7 @@ export default function AttendancePage() {
                 </div>
                 <div className="bg-white/20 backdrop-blur-sm rounded-lg p-3 text-center">
                   <div className="text-white text-xs opacity-90">Day</div>
-                  <div className="text-orange-300 font-semibold">
+                  <div className="text-blue-300 font-semibold">
                     {new Date().toLocaleDateString("en-US", {
                       weekday: "long",
                     })}
@@ -914,7 +914,7 @@ export default function AttendancePage() {
               )}
 
               <div className="mt-2">
-                <span className="inline-block bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 px-3 py-1 rounded-full text-xs font-semibold mr-2">
+                <span className="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-xs font-semibold mr-2">
                   This Sunday Progress: {sundayProgress}
                 </span>
               </div>
@@ -1021,7 +1021,7 @@ export default function AttendancePage() {
             <select
               value={selectedCongregation}
               onChange={(e) => setSelectedCongregation(e.target.value)}
-              className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+              className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
               aria-label="Filter by congregation"
             >
               <option value="" className="text-gray-800 dark:text-white">
@@ -1046,7 +1046,7 @@ export default function AttendancePage() {
               <select
                 value={selectedWeek}
                 onChange={(e) => setSelectedWeek(e.target.value)}
-                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
                 aria-label="Filter by week"
               >
                 <option value="All" className="text-gray-800 dark:text-white">
@@ -1068,7 +1068,7 @@ export default function AttendancePage() {
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(e.target.value)}
-                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
                 aria-label="Filter by month"
               >
                 <option value="All" className="text-gray-800 dark:text-white">
@@ -1092,7 +1092,7 @@ export default function AttendancePage() {
               <select
                 value={selectedYear}
                 onChange={(e) => setSelectedYear(e.target.value)}
-                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
                 aria-label="Filter by year"
               >
                 <option value="All" className="text-gray-800 dark:text-white">
@@ -1117,14 +1117,14 @@ export default function AttendancePage() {
           <div className="flex justify-between min-w-max p-1 gap-4">
             {/* Total Male Card */}
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 min-w-[280px] relative overflow-hidden border border-gray-200 dark:border-gray-700">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-300/5 dark:from-orange-300/10 dark:to-orange-200/10 animate-pulse"></div>
-              <div className="absolute top-0 right-0 w-20 h-20 bg-orange-100/30 dark:bg-orange-400/10 rounded-full -mr-10 -mt-10"></div>
-              <div className="absolute bottom-0 left-0 w-16 h-16 bg-orange-100/30 dark:bg-orange-400/10 rounded-full -ml-8 -mb-8"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-300/5 dark:from-blue-300/10 dark:to-blue-200/10 animate-pulse"></div>
+              <div className="absolute top-0 right-0 w-20 h-20 bg-blue-100/30 dark:bg-blue-400/10 rounded-full -mr-10 -mt-10"></div>
+              <div className="absolute bottom-0 left-0 w-16 h-16 bg-blue-100/30 dark:bg-blue-400/10 rounded-full -ml-8 -mb-8"></div>
 
               <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="bg-orange-100 dark:bg-orange-900/30 rounded-lg p-3">
-                    <i className="fas fa-mars text-orange-500 dark:text-orange-400 text-xl"></i>
+                  <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3">
+                    <i className="fas fa-mars text-blue-500 dark:text-blue-400 text-xl"></i>
                   </div>
                   <div className="text-right">
                     <div className="text-gray-600 dark:text-gray-400 text-sm">
@@ -1253,7 +1253,7 @@ export default function AttendancePage() {
                         type="checkbox"
                         checked={selectAll}
                         onChange={handleSelectAll}
-                        className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                        className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                         title="Select all records"
                       />
                     </th>
@@ -1308,7 +1308,7 @@ export default function AttendancePage() {
                               type="checkbox"
                               checked={selectedRecords.includes(record.id)}
                               onChange={() => handleSelectRecord(record.id)}
-                              className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                              className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                             />
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
@@ -1324,14 +1324,14 @@ export default function AttendancePage() {
                             {record.female_count}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200">
                               {record.total_count}
                             </span>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div className="flex space-x-3 sm:space-x-2">
                               <button
-                                className="text-orange-500 hover:text-orange-900 transition-colors duration-200 p-2 rounded"
+                                className="text-blue-500 hover:text-blue-900 transition-colors duration-200 p-2 rounded"
                                 title="View attendance details"
                                 onClick={() => handleViewRecord(record)}
                               >
@@ -1363,14 +1363,14 @@ export default function AttendancePage() {
 
         {/* Current Month Summary by Congregation */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 relative overflow-hidden border border-gray-200 dark:border-gray-700">
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-300/5 dark:from-orange-300/10 dark:to-orange-200/10 animate-pulse"></div>
-          <div className="absolute top-0 right-0 w-20 h-20 bg-orange-100/30 dark:bg-orange-400/10 rounded-full -mr-10 -mt-10"></div>
-          <div className="absolute bottom-0 left-0 w-16 h-16 bg-orange-100/30 dark:bg-orange-400/10 rounded-full -ml-8 -mb-8"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-300/5 dark:from-blue-300/10 dark:to-blue-200/10 animate-pulse"></div>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-blue-100/30 dark:bg-blue-400/10 rounded-full -mr-10 -mt-10"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 bg-blue-100/30 dark:bg-blue-400/10 rounded-full -ml-8 -mb-8"></div>
 
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-6">
-              <div className="bg-orange-100 dark:bg-orange-900/30 rounded-lg p-3">
-                <i className="fas fa-calendar-alt text-orange-600 dark:text-orange-400 text-xl"></i>
+              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3">
+                <i className="fas fa-calendar-alt text-blue-700 dark:text-blue-400 text-xl"></i>
               </div>
               <div className="text-right">
                 <div className="text-gray-600 dark:text-gray-400 text-sm">
@@ -1392,7 +1392,7 @@ export default function AttendancePage() {
                         type="checkbox"
                         checked={selectAllMonthly}
                         onChange={handleSelectAllMonthly}
-                        className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                        className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                         title="Select all monthly records"
                       />
                     </th>
@@ -1448,13 +1448,13 @@ export default function AttendancePage() {
                               onChange={() =>
                                 handleSelectMonthlyRecord(congName)
                               }
-                              className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                              className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                             />
                           </td>
                           <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {congName}
                           </td>
-                          <td className="px-6 py-4 text-center text-orange-500 dark:text-orange-400 font-semibold">
+                          <td className="px-6 py-4 text-center text-blue-500 dark:text-blue-400 font-semibold">
                             {data.male.toLocaleString()}
                           </td>
                           <td className="px-6 py-4 text-center text-pink-600 dark:text-pink-400 font-semibold">
@@ -1466,7 +1466,7 @@ export default function AttendancePage() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div className="flex space-x-3 sm:space-x-2 justify-center">
                               <button
-                                className="text-orange-500 hover:text-orange-900 transition-colors duration-200 p-2 rounded"
+                                className="text-blue-500 hover:text-blue-900 transition-colors duration-200 p-2 rounded"
                                 title="View monthly details"
                                 onClick={() =>
                                   handleViewMonthlyRecord(congName, data)
@@ -1527,7 +1527,7 @@ export default function AttendancePage() {
                         type="checkbox"
                         checked={selectAllYearly}
                         onChange={handleSelectAllYearly}
-                        className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                        className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                         title="Select all yearly records"
                       />
                     </th>
@@ -1581,13 +1581,13 @@ export default function AttendancePage() {
                               onChange={() =>
                                 handleSelectYearlyRecord(congName)
                               }
-                              className="rounded border-gray-300 text-orange-500 focus:ring-orange-500"
+                              className="rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                             />
                           </td>
                           <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {congName}
                           </td>
-                          <td className="px-6 py-4 text-center text-orange-500 dark:text-orange-400 font-semibold">
+                          <td className="px-6 py-4 text-center text-blue-500 dark:text-blue-400 font-semibold">
                             {data.male.toLocaleString()}
                           </td>
                           <td className="px-6 py-4 text-center text-pink-600 dark:text-pink-400 font-semibold">
@@ -1599,7 +1599,7 @@ export default function AttendancePage() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div className="flex space-x-3 sm:space-x-2 justify-center">
                               <button
-                                className="text-orange-500 hover:text-orange-900 transition-colors duration-200 p-2 rounded"
+                                className="text-blue-500 hover:text-blue-900 transition-colors duration-200 p-2 rounded"
                                 title="View yearly details"
                                 onClick={() =>
                                   handleViewYearlyRecord(congName, data)
@@ -1664,7 +1664,7 @@ export default function AttendancePage() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    <i className="fas fa-eye text-orange-500 mr-2"></i>
+                    <i className="fas fa-eye text-blue-500 mr-2"></i>
                     Attendance Record Details
                   </h3>
                   <button
@@ -1698,7 +1698,7 @@ export default function AttendancePage() {
                         <span className="text-gray-600 dark:text-gray-400">
                           Male Count:
                         </span>
-                        <span className="ml-2 font-medium text-orange-500 dark:text-orange-400">
+                        <span className="ml-2 font-medium text-blue-500 dark:text-blue-400">
                           {selectedRecord.male_count}
                         </span>
                       </div>
@@ -1762,7 +1762,7 @@ export default function AttendancePage() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    <i className="fas fa-calendar-alt text-orange-500 mr-2"></i>
+                    <i className="fas fa-calendar-alt text-blue-500 mr-2"></i>
                     Monthly Summary Details
                   </h3>
                   <button
@@ -1799,7 +1799,7 @@ export default function AttendancePage() {
                         <span className="text-gray-600 dark:text-gray-400">
                           Male Count:
                         </span>
-                        <span className="ml-2 font-medium text-orange-500 dark:text-orange-400">
+                        <span className="ml-2 font-medium text-blue-500 dark:text-blue-400">
                           {selectedMonthlyRecord.male.toLocaleString()}
                         </span>
                       </div>
@@ -1877,7 +1877,7 @@ export default function AttendancePage() {
                         <span className="text-gray-600 dark:text-gray-400">
                           Male Count:
                         </span>
-                        <span className="ml-2 font-medium text-orange-500 dark:text-orange-400">
+                        <span className="ml-2 font-medium text-blue-500 dark:text-blue-400">
                           {selectedYearlyRecord.male.toLocaleString()}
                         </span>
                       </div>

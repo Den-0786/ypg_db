@@ -631,33 +631,37 @@ export default function DashboardLayout({
         }
       );
 
-      const data = await response.json();
+      const contentType = response.headers.get("content-type") || "";
 
-      if (data.success) {
-        if (format === "csv" || format === "excel") {
-          const mimeType = format === "excel"
-            ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            : "text/csv";
-          const ext = format === "excel" ? "xlsx" : "csv";
-          const filename = data.filename || `members-export.${ext}`;
-          const blob = new Blob([data.data], { type: mimeType });
-          const saved = await saveFileWithPicker(blob, filename, mimeType);
-          if (saved) {
-            showSuccess(`${format.toUpperCase()} export completed successfully!`);
-          }
-        } else if (format === "pdf" && data.pdf_url) {
-          const pdfResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${data.pdf_url}`);
-          const pdfBlob = await pdfResponse.blob();
-          const filename = data.filename || "members-export.pdf";
-          const saved = await saveFileWithPicker(pdfBlob, filename, "application/pdf");
-          if (saved) {
-            showSuccess("PDF export completed successfully!");
-          }
-        } else {
-          showSuccess(data.message);
+      if (format === "pdf" && contentType.includes("application/pdf")) {
+        const pdfBlob = await response.blob();
+        const disposition = response.headers.get("content-disposition") || "";
+        const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
+        const filename = filenameMatch ? filenameMatch[1] : "members-export.pdf";
+        const saved = await saveFileWithPicker(pdfBlob, filename, "application/pdf");
+        if (saved) {
+          showSuccess("PDF export completed successfully!");
         }
       } else {
-        showError(data.error || "Export failed");
+        const data = await response.json();
+        if (data.success) {
+          if (format === "csv" || format === "excel") {
+            const mimeType = format === "excel"
+              ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              : "text/csv";
+            const ext = format === "excel" ? "xlsx" : "csv";
+            const filename = data.filename || `members-export.${ext}`;
+            const blob = new Blob([data.data], { type: mimeType });
+            const saved = await saveFileWithPicker(blob, filename, mimeType);
+            if (saved) {
+              showSuccess(`${format.toUpperCase()} export completed successfully!`);
+            }
+          } else {
+            showSuccess(data.message);
+          }
+        } else {
+          showError(data.error || "Export failed");
+        }
       }
     } catch (error) {
       console.error("Export error:", error);
@@ -1013,14 +1017,14 @@ export default function DashboardLayout({
     >
       {/* Header */}
       <header
-        className={`${mounted && theme === "dark" ? "bg-gray-800" : "bg-orange-500"} shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
+        className={`${mounted && theme === "dark" ? "bg-gray-800" : "bg-blue-500"} shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
       >
         <div className="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-6">
           <div className="relative lg:hidden">
             <button
               data-sidebar-toggle
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-white hover:text-orange-200 transition-colors mr-2 lg:hidden focus:outline-none"
+              className="text-white hover:text-blue-200 transition-colors mr-2 lg:hidden focus:outline-none"
               aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
               onFocus={(e) => {
                 const el = document.getElementById("sidebar-tooltip");
@@ -1139,7 +1143,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "profile" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "profile" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-user mr-2"></i>Profile
                     </button>
@@ -1151,7 +1155,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "security" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "security" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-shield-alt mr-2"></i>Security
                     </button>
@@ -1163,7 +1167,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "privacy" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "privacy" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-user-secret mr-2"></i>Privacy
                     </button>
@@ -1175,7 +1179,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "notifications" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "notifications" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-bell mr-2"></i>Notifications
                     </button>
@@ -1187,7 +1191,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "appearance" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "appearance" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-palette mr-2"></i>Appearance
                     </button>
@@ -1199,7 +1203,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "data" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "data" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-database mr-2"></i>Data Management
                     </button>
@@ -1211,7 +1215,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "about" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "about" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-info-circle mr-2"></i>About
                     </button>
@@ -1223,7 +1227,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "reminders" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "reminders" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-bell mr-2"></i>Reminder Messages
                     </button>
@@ -1235,7 +1239,7 @@ export default function DashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "website" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "website" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-globe mr-2"></i>Website Content
                     </button>
@@ -1262,7 +1266,7 @@ export default function DashboardLayout({
                                 fullName: e.target.value,
                               }))
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                             disabled={profileLoading}
                           />
                         </div>
@@ -1279,7 +1283,7 @@ export default function DashboardLayout({
                                 email: e.target.value,
                               }))
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                             disabled={profileLoading}
                           />
                         </div>
@@ -1296,7 +1300,7 @@ export default function DashboardLayout({
                                 phone: e.target.value,
                               }))
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                             disabled={profileLoading}
                           />
                         </div>
@@ -1312,7 +1316,7 @@ export default function DashboardLayout({
                                 role: e.target.value,
                               }))
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                             disabled={profileLoading}
                           >
                             <option value="System Administrator">
@@ -1325,7 +1329,7 @@ export default function DashboardLayout({
                         <button
                           onClick={handleProfileUpdate}
                           disabled={profileLoading}
-                          className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {profileLoading ? (
                             <>
@@ -1352,14 +1356,14 @@ export default function DashboardLayout({
                         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                           <button
                             onClick={() => setSecurityMethod("password")}
-                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${securityMethod === "password" ? "bg-orange-500 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"}`}
+                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${securityMethod === "password" ? "bg-blue-500 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"}`}
                           >
                             <i className="fas fa-key mr-2"></i>Username &
                             Password
                           </button>
                           <button
                             onClick={() => setSecurityMethod("pin")}
-                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${securityMethod === "pin" ? "bg-orange-500 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"}`}
+                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${securityMethod === "pin" ? "bg-blue-500 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"}`}
                           >
                             <i className="fas fa-mobile-alt mr-2"></i>PIN
                             Authentication
@@ -1385,7 +1389,7 @@ export default function DashboardLayout({
                                   username: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                               disabled={securityLoading}
                             />
                             <button
@@ -1417,7 +1421,7 @@ export default function DashboardLayout({
                                     currentPassword: e.target.value,
                                   }))
                                 }
-                                className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                 disabled={securityLoading}
                               />
                               <button
@@ -1480,7 +1484,7 @@ export default function DashboardLayout({
                                     newPassword: e.target.value,
                                   }))
                                 }
-                                className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                 disabled={securityLoading}
                               />
                               <button
@@ -1543,7 +1547,7 @@ export default function DashboardLayout({
                                     confirmPassword: e.target.value,
                                   }))
                                 }
-                                className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                 disabled={securityLoading}
                               />
                               <button
@@ -1616,7 +1620,7 @@ export default function DashboardLayout({
                           <button
                             onClick={handlePasswordUpdate}
                             disabled={securityLoading}
-                            className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {securityLoading ? (
                               <>
@@ -1661,7 +1665,7 @@ export default function DashboardLayout({
                                     }))
                                   }
                                   placeholder="Enter 4-digit PIN"
-                                  className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                  className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                   disabled={securityLoading}
                                 />
                                 <button
@@ -1726,7 +1730,7 @@ export default function DashboardLayout({
                                     }))
                                   }
                                   placeholder="Enter 4-digit PIN"
-                                  className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                  className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                   disabled={securityLoading}
                                 />
                                 <button
@@ -1789,7 +1793,7 @@ export default function DashboardLayout({
                                     }))
                                   }
                                   placeholder="Confirm 4-digit PIN"
-                                  className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                  className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                   disabled={securityLoading}
                                 />
                                 <button
@@ -1863,7 +1867,7 @@ export default function DashboardLayout({
                               type="button"
                               onClick={handlePinUpdate}
                               disabled={securityLoading}
-                              className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {securityLoading ? (
                                 <>
@@ -1956,7 +1960,7 @@ export default function DashboardLayout({
                             className="rounded"
                           />
                         </div>
-                        <button className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base">
+                        <button className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base">
                           Save Preferences
                         </button>
                       </div>
@@ -1975,7 +1979,7 @@ export default function DashboardLayout({
                           <select
                             value={theme}
                             onChange={(e) => setTheme(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                           >
                             <option value="light">Light Mode</option>
                             <option value="dark">Dark Mode</option>
@@ -1986,7 +1990,7 @@ export default function DashboardLayout({
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Language
                           </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
+                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
                             <option>English</option>
                             <option>Twi</option>
                             <option>Ga</option>
@@ -1997,13 +2001,13 @@ export default function DashboardLayout({
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Font Size
                           </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
+                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
                             <option>Small</option>
                             <option>Medium</option>
                             <option>Large</option>
                           </select>
                         </div>
-                        <button className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base">
+                        <button className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base">
                           Apply Changes
                         </button>
                       </div>
@@ -2015,31 +2019,31 @@ export default function DashboardLayout({
                         Data Management
                       </h3>
                       <div className="space-y-3 sm:space-y-4">
-                        <div className="p-4 bg-orange-50 dark:bg-orange-900 rounded-lg">
-                          <h4 className="text-xs sm:text-sm font-medium text-orange-900 dark:text-orange-100 mb-2">
+                        <div className="p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
+                          <h4 className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
                             Export Data
                           </h4>
-                          <p className="text-xs text-orange-700 dark:text-orange-300 mb-3">
+                          <p className="text-xs text-orange-700 dark:text-blue-300 mb-3">
                             Download your data in various formats
                           </p>
                           <div className="space-y-2">
                             <button
                               onClick={() => handleExportData("csv", "all")}
-                              className="w-full text-left px-3 py-2 bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300 rounded text-sm hover:bg-orange-200 dark:hover:bg-orange-600 transition-colors"
+                              className="w-full text-left px-3 py-2 bg-blue-100 dark:bg-blue-800 text-orange-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
                             >
                               <i className="fas fa-download mr-2"></i>Export as
                               CSV
                             </button>
                             <button
                               onClick={() => handleExportData("excel", "all")}
-                              className="w-full text-left px-3 py-2 bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300 rounded text-sm hover:bg-orange-200 dark:hover:bg-orange-600 transition-colors"
+                              className="w-full text-left px-3 py-2 bg-blue-100 dark:bg-blue-800 text-orange-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
                             >
                               <i className="fas fa-file-excel mr-2"></i>Export
                               as Excel
                             </button>
                             <button
                               onClick={() => handleExportData("pdf", "all")}
-                              className="w-full text-left px-3 py-2 bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300 rounded text-sm hover:bg-orange-200 dark:hover:bg-orange-600 transition-colors"
+                              className="w-full text-left px-3 py-2 bg-blue-100 dark:bg-blue-800 text-orange-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
                             >
                               <i className="fas fa-file-pdf mr-2"></i>Export as
                               PDF
@@ -2158,7 +2162,7 @@ export default function DashboardLayout({
                         </h3>
                         <button
                           onClick={handleSaveReminderSettings}
-                          className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm"
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
                         >
                           <i className="fas fa-save mr-2"></i>Save Settings
                         </button>
@@ -2168,8 +2172,8 @@ export default function DashboardLayout({
                         <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center">
-                              <div className="bg-orange-100 dark:bg-orange-900/30 rounded-lg p-2 mr-3">
-                                <i className="fas fa-bell text-orange-600 dark:text-orange-400"></i>
+                              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-2 mr-3">
+                                <i className="fas fa-bell text-blue-700 dark:text-blue-400"></i>
                               </div>
                               <div>
                                 <h4 className="text-sm font-medium text-gray-900 dark:text-white">
@@ -2196,7 +2200,7 @@ export default function DashboardLayout({
                                 }
                                 className="sr-only peer"
                               />
-                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                             </label>
                           </div>
                           <div className="space-y-3">
@@ -2216,7 +2220,7 @@ export default function DashboardLayout({
                                     e.target.value
                                   )
                                 }
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
                               />
                             </div>
                             <div>
@@ -2236,7 +2240,7 @@ export default function DashboardLayout({
                                   )
                                 }
                                 rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
                                 placeholder="Use {congregation}, {date}, {day} as placeholders"
                               />
                               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -2362,7 +2366,7 @@ export default function DashboardLayout({
                                 onClick={() =>
                                   handleSendReminder("attendance_reminder")
                                 }
-                                className="px-3 py-1 bg-orange-500 text-white rounded text-xs hover:bg-orange-600 transition-colors"
+                                className="px-3 py-1 bg-blue-500 text-white rounded text-xs hover:bg-blue-700 transition-colors"
                               >
                                 <i className="fas fa-paper-plane mr-1"></i>Send
                                 Message
@@ -2402,7 +2406,7 @@ export default function DashboardLayout({
                                 }
                                 className="sr-only peer"
                               />
-                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                             </label>
                           </div>
                           <div className="space-y-3">
@@ -2420,7 +2424,7 @@ export default function DashboardLayout({
                                     e.target.value
                                   )
                                 }
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
                               />
                             </div>
                             <div>
@@ -2440,7 +2444,7 @@ export default function DashboardLayout({
                                   )
                                 }
                                 rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
                                 placeholder="Use {name} as placeholder"
                               />
                               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -2489,7 +2493,7 @@ export default function DashboardLayout({
                                 }
                                 className="sr-only peer"
                               />
-                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                             </label>
                           </div>
                           <div className="space-y-3">
@@ -2507,7 +2511,7 @@ export default function DashboardLayout({
                                     e.target.value
                                   )
                                 }
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
                               />
                             </div>
                             <div>
@@ -2527,7 +2531,7 @@ export default function DashboardLayout({
                                   )
                                 }
                                 rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
                                 placeholder="Use {name}, {congregation} as placeholders"
                               />
                               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -2578,7 +2582,7 @@ export default function DashboardLayout({
                                 }
                                 className="sr-only peer"
                               />
-                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-300 dark:peer-focus:ring-orange-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-orange-500"></div>
+                              <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-blue-500"></div>
                             </label>
                           </div>
                           <div className="space-y-3">
@@ -2599,7 +2603,7 @@ export default function DashboardLayout({
                                     e.target.value
                                   )
                                 }
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
                               />
                             </div>
                             <div>
@@ -2619,7 +2623,7 @@ export default function DashboardLayout({
                                   )
                                 }
                                 rows={3}
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 dark:text-white text-xs bg-white dark:bg-gray-700"
                                 placeholder="Use {date}, {day}, {location} as placeholders"
                               />
                               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
@@ -2649,7 +2653,7 @@ export default function DashboardLayout({
                         <button
                           onClick={handleWebsiteUpdate}
                           disabled={websiteLoading}
-                          className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           {websiteLoading ? (
                             <>
@@ -2678,7 +2682,7 @@ export default function DashboardLayout({
                                 about: e.target.value,
                               }))
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                           />
                         </div>
                         <div>
@@ -2694,7 +2698,7 @@ export default function DashboardLayout({
                                 mission: e.target.value,
                               }))
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                           />
                         </div>
                         <div>
@@ -2710,7 +2714,7 @@ export default function DashboardLayout({
                                 vision: e.target.value,
                               }))
                             }
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                           />
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
@@ -2727,7 +2731,7 @@ export default function DashboardLayout({
                                   contact_email: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                             />
                           </div>
                           <div>
@@ -2743,7 +2747,7 @@ export default function DashboardLayout({
                                   contact_phone: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                             />
                           </div>
                         </div>
@@ -2813,30 +2817,35 @@ function MembersQuickActionsDropdown({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "all" }),
       });
-      const data = await response.json();
-      if (data.success) {
-        if (formatLower === "csv" || formatLower === "excel") {
-          const mimeType = formatLower === "excel"
-            ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            : "text/csv";
-          const ext = formatLower === "excel" ? "xlsx" : "csv";
-          const filename = data.filename || `members-export.${ext}`;
-          const blob = new Blob([data.data], { type: mimeType });
-          const saved = await saveFileWithPicker(blob, filename, mimeType);
-          if (saved) {
-            if (window.showToast) window.showToast(`${format} export completed!`, "success");
-          }
-        } else if (formatLower === "pdf" && data.pdf_url) {
-          const pdfResponse = await fetch(`${baseUrl}${data.pdf_url}`);
-          const pdfBlob = await pdfResponse.blob();
-          const filename = data.filename || "members-export.pdf";
-          const saved = await saveFileWithPicker(pdfBlob, filename, "application/pdf");
-          if (saved) {
-            if (window.showToast) window.showToast(`${format} export completed!`, "success");
-          }
+      const contentType = response.headers.get("content-type") || "";
+
+      if (formatLower === "pdf" && contentType.includes("application/pdf")) {
+        const pdfBlob = await response.blob();
+        const disposition = response.headers.get("content-disposition") || "";
+        const filenameMatch = disposition.match(/filename="?([^"]+)"?/);
+        const filename = filenameMatch ? filenameMatch[1] : "members-export.pdf";
+        const saved = await saveFileWithPicker(pdfBlob, filename, "application/pdf");
+        if (saved) {
+          if (window.showToast) window.showToast(`${format} export completed!`, "success");
         }
       } else {
-        if (window.showToast) window.showToast(data.error || "Export failed", "error");
+        const data = await response.json();
+        if (data.success) {
+          if (formatLower === "csv" || formatLower === "excel") {
+            const mimeType = formatLower === "excel"
+              ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              : "text/csv";
+            const ext = formatLower === "excel" ? "xlsx" : "csv";
+            const filename = data.filename || `members-export.${ext}`;
+            const blob = new Blob([data.data], { type: mimeType });
+            const saved = await saveFileWithPicker(blob, filename, mimeType);
+            if (saved) {
+              if (window.showToast) window.showToast(`${format} export completed!`, "success");
+            }
+          }
+        } else {
+          if (window.showToast) window.showToast(data.error || "Export failed", "error");
+        }
       }
     } catch (error) {
       console.error("Export error:", error);
@@ -2850,11 +2859,11 @@ function MembersQuickActionsDropdown({
       <div className="relative ml-2" ref={ref}>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-orange-50 text-orange-700 rounded-lg shadow-sm border border-orange-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-orange-400"
+          className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-blue-50 text-orange-700 rounded-lg shadow-sm border border-blue-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400"
           aria-haspopup="true"
           aria-expanded={open}
         >
-          <i className="fas fa-bolt text-orange-500"></i>
+          <i className="fas fa-bolt text-blue-500"></i>
           Quick Actions
           <i
             className={`fas fa-chevron-${open ? "up" : "down"} text-xs ml-1`}
@@ -2864,7 +2873,7 @@ function MembersQuickActionsDropdown({
           <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-2 animate-fadeIn">
             <a
               href="/members/add"
-              className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-700 transition"
+              className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-orange-700 transition"
             >
               <i className="fas fa-user-plus"></i> Add New Member
             </a>
@@ -2994,11 +3003,11 @@ function QuickActionsDropdown({ filtered }) {
     <div className="relative ml-2" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-orange-50 text-orange-700 rounded-lg shadow-sm border border-orange-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-orange-400"
+        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-blue-50 text-orange-700 rounded-lg shadow-sm border border-blue-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400"
         aria-haspopup="true"
         aria-expanded={open}
       >
-        <i className="fas fa-bolt text-orange-500"></i>
+        <i className="fas fa-bolt text-blue-500"></i>
         Quick Actions
         <i
           className={`fas fa-chevron-${open ? "up" : "down"} text-xs ml-1`}
@@ -3007,10 +3016,10 @@ function QuickActionsDropdown({ filtered }) {
       {open && (
         <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-2 animate-fadeIn">
           <ExportAnalyticsButton />
-          <button className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-700 transition">
+          <button className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-orange-700 transition">
             <i className="fas fa-chart-line"></i> Generate Report
           </button>
-          <button className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-700 transition">
+          <button className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-orange-700 transition">
             <i className="fas fa-share"></i> Share Analytics
           </button>
           <hr className="my-1 border-gray-200 dark:border-gray-700" />

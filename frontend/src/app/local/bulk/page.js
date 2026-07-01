@@ -100,8 +100,8 @@ export default function LocalBulkAddPage() {
         <div className="flex items-center space-x-2">
           <div className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/30 transition-all duration-200 hover:scale-105 shadow-lg">
             <div className="flex items-center space-x-2">
-              <span className="text-xs text-orange-200 font-medium">Added</span>
-              <span className="text-lg font-bold text-orange-500">
+              <span className="text-xs text-blue-200 font-medium">Added</span>
+              <span className="text-lg font-bold text-blue-500">
                 {members.length}
               </span>
               <i className="fas fa-user-plus text-white text-sm"></i>
@@ -118,7 +118,7 @@ export default function LocalBulkAddPage() {
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center flex-wrap">
-              <i className="fas fa-users text-orange-500 mr-2 sm:mr-3 flex-shrink-0"></i>
+              <i className="fas fa-users text-blue-500 mr-2 sm:mr-3 flex-shrink-0"></i>
               <span className="break-words">
                 {isBulkMode
                   ? "Bulk Member Registration"

@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload, label, labelKey, colorScheme }) => {
         </div>
         <div className="flex justify-between gap-4">
           <span className="text-gray-500 dark:text-gray-400">Male</span>
-          <span className="font-semibold text-orange-500">{d?.male ?? 0}</span>
+          <span className="font-semibold text-blue-500">{d?.male ?? 0}</span>
         </div>
         <div className="flex justify-between gap-4">
           <span className="text-gray-500 dark:text-gray-400">Female</span>

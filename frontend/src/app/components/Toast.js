@@ -42,7 +42,7 @@ export default function Toast({
       case "warning":
         return "bg-yellow-500 border-yellow-600 text-white";
       default:
-        return "bg-orange-500 border-orange-500 text-white";
+        return "bg-blue-500 border-blue-500 text-white";
     }
   };
 

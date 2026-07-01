@@ -51,8 +51,8 @@ export default function MemberList({ members, onRemoveMember, onSubmitBulk }) {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 <div className="flex items-center space-x-3 mb-2">
-                  <div className="w-8 h-8 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-medium text-orange-500 dark:text-orange-400">
+                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                    <span className="text-sm font-medium text-blue-500 dark:text-blue-400">
                       {index + 1}
                     </span>
                   </div>
@@ -174,8 +174,8 @@ export default function MemberList({ members, onRemoveMember, onSubmitBulk }) {
                 {/* Executive Information */}
                 {member.is_executive && (
                   <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                    <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-3">
-                      <h5 className="text-sm font-medium text-orange-600 dark:text-orange-300 mb-2">
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+                      <h5 className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-2">
                         Executive Information
                       </h5>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">

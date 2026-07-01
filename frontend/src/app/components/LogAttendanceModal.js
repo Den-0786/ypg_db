@@ -321,10 +321,10 @@ export default function LogAttendanceModal({
                   </div>
                 </div>
 
-                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-3">
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
                   <div className="flex items-start">
-                    <i className="fas fa-info-circle text-orange-500 mt-0.5 mr-2"></i>
-                    <p className="text-sm text-orange-600 dark:text-orange-300">
+                    <i className="fas fa-info-circle text-blue-500 mt-0.5 mr-2"></i>
+                    <p className="text-sm text-blue-700 dark:text-blue-300">
                       Please review the attendance details above. Once
                       confirmed, this data will be logged and cannot be easily
                       modified.

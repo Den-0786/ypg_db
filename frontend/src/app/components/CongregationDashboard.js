@@ -25,7 +25,7 @@ export default function CongregationDashboard({
 
   // Congregation color mapping
   const congregationColors = {
-    "Emmanuel Congregation Ahinsan": "bg-orange-500",
+    "Emmanuel Congregation Ahinsan": "bg-blue-500",
     "Peniel Congregation Esreso No1": "bg-green-500",
     "Mizpah Congregation Odagya No1": "bg-purple-500",
     "Christ Congregation Ahinsan Estate": "bg-red-500",
@@ -33,7 +33,7 @@ export default function CongregationDashboard({
     "Favour Congregation Esreso No2": "bg-indigo-500",
     "Liberty Congregation Esreso High Tension": "bg-pink-500",
     "Odagya No2": "bg-teal-500",
-    NOM: "bg-orange-500",
+    NOM: "bg-blue-500",
     Kokobriko: "bg-cyan-500",
   };
 
@@ -161,7 +161,7 @@ export default function CongregationDashboard({
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-orange-500"></div>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500"></div>
         </div>
       </DashboardLayout>
     );
@@ -184,9 +184,9 @@ export default function CongregationDashboard({
 
         {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-500">
+          <div className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
             <div className="flex items-center">
-              <div className="p-3 rounded-full bg-orange-100 text-orange-500">
+              <div className="p-3 rounded-full bg-blue-100 text-blue-500">
                 <i className="fas fa-users text-xl"></i>
               </div>
               <div className="ml-4">
@@ -253,7 +253,7 @@ export default function CongregationDashboard({
             <h3 className="text-lg font-semibold mb-4">Gender Distribution</h3>
             <div className="flex items-center justify-between">
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-500">
+                <div className="text-2xl font-bold text-blue-500">
                   {stats.maleMembers}
                 </div>
                 <div className="text-sm text-gray-600">Male</div>
@@ -278,7 +278,7 @@ export default function CongregationDashboard({
             <div className="grid grid-cols-2 gap-4">
               <Link
                 href="/local/members"
-                className="bg-orange-500 hover:bg-orange-500 text-white p-3 rounded-lg text-center transition-colors"
+                className="bg-blue-500 hover:bg-blue-500 text-white p-3 rounded-lg text-center transition-colors"
               >
                 <i className="fas fa-users mr-2"></i>
                 Manage Members
@@ -299,7 +299,7 @@ export default function CongregationDashboard({
               </Link>
               <Link
                 href="/local/bulk"
-                className="bg-orange-500 hover:bg-orange-600 text-white p-3 rounded-lg text-center transition-colors"
+                className="bg-blue-500 hover:bg-blue-700 text-white p-3 rounded-lg text-center transition-colors"
               >
                 <i className="fas fa-user-plus mr-2"></i>
                 Bulk Add

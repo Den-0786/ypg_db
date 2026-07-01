@@ -48,7 +48,7 @@ export default function WeeklyAttendanceCards({
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          <i className="fas fa-calendar-week text-orange-500 mr-2"></i>
+          <i className="fas fa-calendar-week text-blue-500 mr-2"></i>
           {currentMonthData.month} {currentMonthData.year} - Weekly Attendance
         </h3>
       </div>
@@ -57,7 +57,7 @@ export default function WeeklyAttendanceCards({
         <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <i className="fas fa-chart-bar text-orange-500 mr-3"></i>
+              <i className="fas fa-chart-bar text-blue-500 mr-3"></i>
               <div>
                 <div className="text-gray-900 dark:text-white font-semibold">
                   {currentMonthData.month} {currentMonthData.year} Summary
@@ -69,7 +69,7 @@ export default function WeeklyAttendanceCards({
             </div>
             <div className="text-right">
               <div className="flex items-center justify-end space-x-1 text-sm">
-                <span className="text-orange-500 dark:text-orange-400 font-semibold">
+                <span className="text-blue-500 dark:text-blue-400 font-semibold">
                   {currentMonthData.totalMale}M
                 </span>
                 <span className="text-gray-400 dark:text-gray-500">/</span>
@@ -91,12 +91,12 @@ export default function WeeklyAttendanceCards({
                   week.isJointProgram
                     ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
                     : index === 0
-                      ? "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800"
+                      ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                       : index === 1
                         ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
                         : index === 2
                           ? "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800"
-                          : "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800"
+                          : "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -107,12 +107,12 @@ export default function WeeklyAttendanceCards({
                         week.isJointProgram
                           ? "text-purple-600 dark:text-purple-400"
                           : index === 0
-                            ? "text-orange-500 dark:text-orange-400"
+                            ? "text-blue-500 dark:text-blue-400"
                             : index === 1
                               ? "text-green-600 dark:text-green-400"
                               : index === 2
                                 ? "text-purple-600 dark:text-purple-400"
-                                : "text-orange-600 dark:text-orange-400"
+                                : "text-blue-700 dark:text-blue-400"
                       }`}
                     >
                       {week.isJointProgram
@@ -137,7 +137,7 @@ export default function WeeklyAttendanceCards({
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleViewWeek(week, index)}
-                      className="p-2 text-gray-500 hover:text-orange-500 dark:text-gray-400 dark:hover:text-orange-400 transition-colors"
+                      className="p-2 text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
                       title="View Details"
                     >
                       <i className="fas fa-eye text-sm"></i>
@@ -171,7 +171,7 @@ export default function WeeklyAttendanceCards({
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  <i className="fas fa-eye text-orange-500 mr-2"></i>
+                  <i className="fas fa-eye text-blue-500 mr-2"></i>
                   Week {selectedWeek.weekNumber} Details
                 </h3>
                 <button

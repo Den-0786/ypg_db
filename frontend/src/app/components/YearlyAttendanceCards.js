@@ -61,10 +61,10 @@ export default function YearlyAttendanceCards({
 
   const getMonthColorClasses = (index) => {
     const colorClasses = [
-      "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800",
+      "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
       "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800",
       "bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800",
-      "bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800",
+      "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
       "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800",
       "bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800",
       "bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-800",
@@ -79,10 +79,10 @@ export default function YearlyAttendanceCards({
 
   const getMonthTextColor = (index) => {
     const textColors = [
-      "text-orange-500 dark:text-orange-400",
+      "text-blue-500 dark:text-blue-400",
       "text-green-600 dark:text-green-400",
       "text-purple-600 dark:text-purple-400",
-      "text-orange-600 dark:text-orange-400",
+      "text-blue-700 dark:text-blue-400",
       "text-red-600 dark:text-red-400",
       "text-indigo-600 dark:text-indigo-400",
       "text-pink-600 dark:text-pink-400",
@@ -120,7 +120,7 @@ export default function YearlyAttendanceCards({
             </div>
             <div className="text-right">
               <div className="flex items-center justify-end space-x-1 text-sm">
-                <span className="text-orange-500 dark:text-orange-400 font-semibold">
+                <span className="text-blue-500 dark:text-blue-400 font-semibold">
                   {currentYearData.totalMale}M
                 </span>
                 <span className="text-gray-400 dark:text-gray-500">/</span>
@@ -191,7 +191,7 @@ export default function YearlyAttendanceCards({
                     <div className="flex space-x-2">
                       <button
                         onClick={() => handleViewMonth(monthData, index)}
-                        className="p-2 text-gray-500 hover:text-orange-500 dark:text-gray-400 dark:hover:text-orange-400 transition-colors"
+                        className="p-2 text-gray-500 hover:text-blue-500 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
                         title="View Details"
                       >
                         <i className="fas fa-eye text-sm"></i>
@@ -226,7 +226,7 @@ export default function YearlyAttendanceCards({
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  <i className="fas fa-eye text-orange-500 mr-2"></i>
+                  <i className="fas fa-eye text-blue-500 mr-2"></i>
                   {monthNames[selectedMonth.monthNumber - 1]} Details
                 </h3>
                 <button

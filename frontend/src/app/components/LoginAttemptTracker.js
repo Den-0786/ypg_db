@@ -126,7 +126,7 @@ const LoginAttemptTracker = ({ onLoginSuccess }) => {
           onClick={() => setLoginType("password")}
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
             loginType === "password"
-              ? "bg-orange-500 text-white"
+              ? "bg-blue-500 text-white"
               : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           }`}
         >
@@ -136,7 +136,7 @@ const LoginAttemptTracker = ({ onLoginSuccess }) => {
           onClick={() => setLoginType("pin")}
           className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-colors ${
             loginType === "pin"
-              ? "bg-orange-500 text-white"
+              ? "bg-blue-500 text-white"
               : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
           }`}
         >
@@ -155,7 +155,7 @@ const LoginAttemptTracker = ({ onLoginSuccess }) => {
             name="username"
             value={loginData.username}
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             placeholder="Enter username"
             required
           />
@@ -173,7 +173,7 @@ const LoginAttemptTracker = ({ onLoginSuccess }) => {
               loginType === "password" ? loginData.password : loginData.pin
             }
             onChange={handleInputChange}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             placeholder={
               loginType === "password" ? "Enter password" : "Enter 4-digit PIN"
             }
@@ -187,7 +187,7 @@ const LoginAttemptTracker = ({ onLoginSuccess }) => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
             <div className="flex items-center justify-center">
@@ -211,11 +211,11 @@ const LoginAttemptTracker = ({ onLoginSuccess }) => {
       </div>
 
       {/* Information Panel */}
-      <div className="mt-6 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-        <h3 className="text-sm font-medium text-orange-900 dark:text-orange-100 mb-2">
+      <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+        <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
           Login Attempt Tracking
         </h3>
-        <ul className="text-xs text-orange-800 dark:text-orange-200 space-y-1">
+        <ul className="text-xs text-blue-800 dark:text-blue-200 space-y-1">
           <li>
             • After 3 failed attempts, you&apos;ll be blocked for 30 minutes
           </li>

@@ -37,7 +37,7 @@ export default function ExecutivesTable({
                         onSelect(executives.map((member) => member.id));
                       }
                     }}
-                    className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded mr-2"
+                    className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-2"
                   />
                   Name
                 </div>
@@ -119,7 +119,7 @@ export default function ExecutivesTable({
                             onSelect([...selectedMembers, member.id]);
                           }
                         }}
-                        className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded mr-3"
+                        className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-3"
                       />
                       {member.profile_picture ? (
                         <img
@@ -133,7 +133,7 @@ export default function ExecutivesTable({
                         />
                       ) : (
                         <div
-                          className={`flex-shrink-0 h-10 w-10 rounded-full bg-orange-500 flex items-center justify-center mr-3`}
+                          className={`flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center mr-3`}
                         >
                           <span className="text-sm font-medium text-white">
                             {member.name
@@ -160,7 +160,7 @@ export default function ExecutivesTable({
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         member.executive_level === "local" ||
                         member.executive_level === "Local"
-                          ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                          ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                           : member.executive_level === "district" ||
                               member.executive_level === "District"
                             ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
@@ -217,7 +217,7 @@ export default function ExecutivesTable({
                     <div className="flex items-center space-x-3 sm:space-x-2">
                       <button
                         onClick={() => onView(member)}
-                        className="text-orange-500 hover:text-orange-900 dark:text-orange-400 dark:hover:text-orange-300 p-2 rounded"
+                        className="text-blue-500 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 p-2 rounded"
                         title="View Details"
                       >
                         <i className="fas fa-eye mr-1"></i>View

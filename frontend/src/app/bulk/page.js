@@ -359,8 +359,8 @@ export default function BulkRegistrationPage() {
         <div className="flex items-center space-x-2">
           <div className="bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg px-3 py-2 border border-white/30 transition-all duration-200 hover:scale-105 shadow-lg">
             <div className="flex items-center space-x-2">
-              <span className="text-xs text-orange-200 font-medium">Added</span>
-              <span className="text-lg font-bold text-orange-500">
+              <span className="text-xs text-blue-200 font-medium">Added</span>
+              <span className="text-lg font-bold text-blue-500">
                 {members.length}
               </span>
               <i className="fas fa-user-plus text-white text-sm"></i>

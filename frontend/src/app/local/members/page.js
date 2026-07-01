@@ -361,7 +361,7 @@ export default function LocalMembersPage() {
   // Function to get color based on name
   const getInitialsColor = (name) => {
     const colors = [
-      "bg-orange-500",
+      "bg-blue-500",
       "bg-green-500",
       "bg-purple-500",
       "bg-pink-500",
@@ -612,7 +612,7 @@ export default function LocalMembersPage() {
     return (
       <LocalDashboardLayout currentPage="Members">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
         </div>
       </LocalDashboardLayout>
     );
@@ -627,9 +627,9 @@ export default function LocalMembersPage() {
     >
       <div className="space-y-6">
         {/* Congregation Card */}
-        <div className="bg-gradient-to-r from-orange-500 to-purple-600 dark:from-orange-600 dark:to-purple-700 rounded-xl shadow-xl overflow-hidden relative">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-700 dark:to-purple-700 rounded-xl shadow-xl overflow-hidden relative">
           {/* Animated background pattern */}
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-400/20 to-purple-400/20 animate-pulse"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 animate-pulse"></div>
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
 
@@ -686,8 +686,8 @@ export default function LocalMembersPage() {
         <div className="overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
           <div className="flex gap-4 min-w-max">
             {/* Total Members */}
-            <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-500/5 dark:from-orange-400/20 dark:to-orange-500/20 animate-pulse"></div>
+            <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-500/5 dark:from-blue-400/20 dark:to-blue-500/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -698,14 +698,14 @@ export default function LocalMembersPage() {
                   </p>
                 </div>
                 <div className="ml-3 lg:ml-4">
-                  <i className="fas fa-users text-xl lg:text-2xl text-orange-500 group-hover:scale-110 transition-transform duration-200"></i>
+                  <i className="fas fa-users text-xl lg:text-2xl text-blue-500 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
               </div>
             </div>
 
             {/* Total Male */}
-            <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-500/5 dark:from-orange-400/20 dark:to-orange-500/20 animate-pulse"></div>
+            <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-500/5 dark:from-blue-400/20 dark:to-blue-500/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -716,7 +716,7 @@ export default function LocalMembersPage() {
                   </p>
                 </div>
                 <div className="ml-3 lg:ml-4">
-                  <i className="fas fa-male text-xl lg:text-2xl text-orange-500 group-hover:scale-110 transition-transform duration-200"></i>
+                  <i className="fas fa-male text-xl lg:text-2xl text-blue-500 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
               </div>
             </div>
@@ -758,8 +758,8 @@ export default function LocalMembersPage() {
             </div>
 
             {/* Confirmed */}
-            <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-600/5 dark:from-orange-400/20 dark:to-orange-600/20 animate-pulse"></div>
+            <div className="bg-white dark:bg-gray-800 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group rounded-lg p-4 lg:p-6 min-w-[200px]">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-700/5 dark:from-blue-400/20 dark:to-blue-700/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs lg:text-sm text-gray-600 dark:text-gray-400">
@@ -770,7 +770,7 @@ export default function LocalMembersPage() {
                   </p>
                 </div>
                 <div className="ml-3 lg:ml-4">
-                  <i className="fas fa-hands text-xl lg:text-2xl text-orange-600 group-hover:scale-110 transition-transform duration-200"></i>
+                  <i className="fas fa-hands text-xl lg:text-2xl text-blue-700 group-hover:scale-110 transition-transform duration-200"></i>
                 </div>
               </div>
             </div>
@@ -844,7 +844,7 @@ export default function LocalMembersPage() {
                 placeholder="Search by name or gender..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 hover:border-orange-400 dark:hover:border-orange-500"
+                className="block w-full pl-10 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 hover:border-blue-400 dark:hover:border-blue-500"
               />
               {searchTerm && (
                 <button
@@ -866,7 +866,7 @@ export default function LocalMembersPage() {
                   onClick={() => setGenderFilter("all")}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${
                     genderFilter === "all"
-                      ? "bg-white dark:bg-gray-600 text-orange-500 dark:text-orange-400 shadow-sm"
+                      ? "bg-white dark:bg-gray-600 text-blue-500 dark:text-blue-400 shadow-sm"
                       : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                   }`}
                 >
@@ -876,7 +876,7 @@ export default function LocalMembersPage() {
                   onClick={() => setGenderFilter("male")}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${
                     genderFilter === "male"
-                      ? "bg-white dark:bg-gray-600 text-orange-500 dark:text-orange-400 shadow-sm"
+                      ? "bg-white dark:bg-gray-600 text-blue-500 dark:text-blue-400 shadow-sm"
                       : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                   }`}
                 >
@@ -887,7 +887,7 @@ export default function LocalMembersPage() {
                   onClick={() => setGenderFilter("female")}
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${
                     genderFilter === "female"
-                      ? "bg-white dark:bg-gray-600 text-orange-500 dark:text-orange-400 shadow-sm"
+                      ? "bg-white dark:bg-gray-600 text-blue-500 dark:text-blue-400 shadow-sm"
                       : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200"
                   }`}
                 >
@@ -903,7 +903,7 @@ export default function LocalMembersPage() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-              <i className="fas fa-users text-orange-500 mr-2"></i>
+              <i className="fas fa-users text-blue-500 mr-2"></i>
               Congregation Executives
             </h3>
           </div>
@@ -923,7 +923,7 @@ export default function LocalMembersPage() {
                           executives.length > 0
                         }
                         onChange={handleSelectAll}
-                        className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded mr-2"
+                        className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-2"
                       />
                       Name
                     </div>
@@ -997,7 +997,7 @@ export default function LocalMembersPage() {
                             type="checkbox"
                             checked={selectedMembers.includes(member.id)}
                             onChange={() => handleSelectMember(member.id)}
-                            className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded mr-3"
+                            className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-3"
                           />
                           {member.profile_picture ? (
                             <img
@@ -1025,7 +1025,7 @@ export default function LocalMembersPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {member.member_id ? (
-                          <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300 border border-orange-200 dark:border-orange-600">
+                          <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
                             {member.member_id}
                           </span>
                         ) : (
@@ -1043,7 +1043,7 @@ export default function LocalMembersPage() {
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             member.executive_level === "local" ||
                             member.executive_level === "Local"
-                              ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                               : member.executive_level === "district" ||
                                   member.executive_level === "District"
                                 ? "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
@@ -1103,7 +1103,7 @@ export default function LocalMembersPage() {
                         <div className="flex items-center space-x-3 sm:space-x-2">
                           <button
                             onClick={() => handleViewDetails(member)}
-                            className="text-orange-500 hover:text-orange-900 dark:text-orange-400 dark:hover:text-orange-300 p-2 rounded"
+                            className="text-blue-500 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 p-2 rounded"
                             title="View Details"
                           >
                             <i className="fas fa-eye mr-1"></i>View
@@ -1179,7 +1179,7 @@ export default function LocalMembersPage() {
                             setSelectedMembers([]);
                           }
                         }}
-                        className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded mr-2"
+                        className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-2"
                       />
                       Name
                     </div>
@@ -1235,7 +1235,7 @@ export default function LocalMembersPage() {
                             type="checkbox"
                             checked={selectedMembers.includes(member.id)}
                             onChange={() => handleSelectMember(member.id)}
-                            className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded mr-3"
+                            className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded mr-3"
                           />
                           {member.profile_picture ? (
                             <img
@@ -1263,7 +1263,7 @@ export default function LocalMembersPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {member.member_id ? (
-                          <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300 border border-orange-200 dark:border-orange-600">
+                          <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
                             {member.member_id}
                           </span>
                         ) : (
@@ -1321,7 +1321,7 @@ export default function LocalMembersPage() {
                         <div className="flex items-center space-x-3 sm:space-x-2">
                           <button
                             onClick={() => handleViewDetails(member)}
-                            className="text-orange-500 hover:text-orange-900 dark:text-orange-400 dark:hover:text-orange-300 p-2 rounded"
+                            className="text-blue-500 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 p-2 rounded"
                             title="View Details"
                           >
                             <i className="fas fa-eye mr-1"></i>View
@@ -1395,7 +1395,7 @@ export default function LocalMembersPage() {
                         onClick={() => handlePageChange(page)}
                         className={`px-3 py-2 text-sm font-medium rounded-md transition-colors duration-200 ${
                           page === currentPage
-                            ? "bg-orange-500 text-white"
+                            ? "bg-blue-500 text-white"
                             : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                         }`}
                       >
@@ -1432,7 +1432,7 @@ export default function LocalMembersPage() {
                     <img
                       src={selectedMember.profile_picture}
                       alt={selectedMember.name}
-                      className="h-14 w-14 rounded-full object-cover border-2 border-orange-200 shadow"
+                      className="h-14 w-14 rounded-full object-cover border-2 border-blue-200 shadow"
                     />
                   ) : (
                     <div className={`h-14 w-14 rounded-full ${getInitialsColor(selectedMember.name)} flex items-center justify-center shadow`}>
@@ -1444,7 +1444,7 @@ export default function LocalMembersPage() {
                       {selectedMember.name}
                     </h3>
                     {selectedMember.member_id && (
-                      <span className="inline-flex px-2 py-0.5 text-xs font-mono font-semibold rounded bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300 border border-orange-200 dark:border-orange-600 mt-1">
+                      <span className="inline-flex px-2 py-0.5 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700 mt-1">
                         {selectedMember.member_id}
                       </span>
                     )}
@@ -1461,13 +1461,13 @@ export default function LocalMembersPage() {
               <div className="p-4 sm:p-6">
                 <div className="space-y-4 sm:space-y-6">
                   {/* Personal & Contact Information */}
-                  <div className="bg-gradient-to-br from-orange-50 to-indigo-50 dark:from-orange-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Personal Information */}
                       <div>
                         <div className="flex items-center mb-3 sm:mb-4">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
-                            <i className="fas fa-user text-orange-500 dark:text-orange-400 text-sm sm:text-base"></i>
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
+                            <i className="fas fa-user text-blue-500 dark:text-blue-400 text-sm sm:text-base"></i>
                           </div>
                           <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                             Personal Information
@@ -1519,7 +1519,7 @@ export default function LocalMembersPage() {
                               <span
                                 className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                                   selectedMember.gender === "Male"
-                                    ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
+                                    ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
                                     : "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200"
                                 }`}
                               >
@@ -1645,8 +1645,8 @@ export default function LocalMembersPage() {
                       {/* Professional Information */}
                       <div>
                         <div className="flex items-center mb-3 sm:mb-4">
-                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
-                            <i className="fas fa-briefcase text-orange-600 dark:text-orange-400 text-sm sm:text-base"></i>
+                          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
+                            <i className="fas fa-briefcase text-blue-700 dark:text-blue-400 text-sm sm:text-base"></i>
                           </div>
                           <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                             Professional Information
@@ -1669,7 +1669,7 @@ export default function LocalMembersPage() {
                     </div>
                   </div>
                   {/* Church & Religious Information */}
-                  <div className="bg-gradient-to-br from-indigo-50 to-orange-50 dark:from-indigo-900/20 dark:to-orange-900/20 rounded-xl p-4 sm:p-6">
+                  <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl p-4 sm:p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Church Information */}
                       <div>
@@ -1810,7 +1810,7 @@ export default function LocalMembersPage() {
                     <div className="flex flex-col sm:flex-row sm:justify-between gap-3">
                       <button
                         onClick={() => handleEditMember(selectedMember)}
-                        className="flex items-center justify-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200 font-medium text-sm sm:flex-1"
+                        className="flex items-center justify-center px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 font-medium text-sm sm:flex-1"
                       >
                         <i className="fas fa-edit mr-2"></i>
                         Edit Member
@@ -1879,7 +1879,7 @@ export default function LocalMembersPage() {
                         name: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 
@@ -1896,7 +1896,7 @@ export default function LocalMembersPage() {
                         location: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 
@@ -1913,7 +1913,7 @@ export default function LocalMembersPage() {
                         established: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 
@@ -1930,7 +1930,7 @@ export default function LocalMembersPage() {
                         pastor: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
                 </div>
 
@@ -1947,7 +1947,7 @@ export default function LocalMembersPage() {
                         contact: e.target.value,
                       })
                     }
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                   />
                 </div>
               </div>
@@ -1961,7 +1961,7 @@ export default function LocalMembersPage() {
                 </button>
                 <button
                   onClick={handleSaveEdit}
-                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors duration-200"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
                 >
                   Save Changes
                 </button>
@@ -1977,7 +1977,7 @@ export default function LocalMembersPage() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    <i className="fas fa-edit text-orange-500 mr-2"></i>
+                    <i className="fas fa-edit text-blue-500 mr-2"></i>
                     Edit Member - {selectedMember.name}
                   </h3>
                   <button
@@ -2028,7 +2028,7 @@ export default function LocalMembersPage() {
                               setEditForm({ ...editForm, profile_picture: file, profile_picture_preview: URL.createObjectURL(file) });
                             }
                           }}
-                          className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 dark:file:bg-orange-900/30 dark:file:text-orange-300 cursor-pointer"
+                          className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300 cursor-pointer"
                         />
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave empty to keep existing photo</p>
                       </div>
@@ -2036,9 +2036,9 @@ export default function LocalMembersPage() {
                   </div>
 
                   {/* Personal Information Section */}
-                  <div className="bg-gradient-to-br from-orange-50 to-indigo-50 dark:from-orange-900/20 dark:to-indigo-900/20 rounded-xl p-6">
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
                     <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                      <i className="fas fa-user text-orange-500 mr-2"></i>
+                      <i className="fas fa-user text-blue-500 mr-2"></i>
                       Personal Information
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -2055,7 +2055,7 @@ export default function LocalMembersPage() {
                               first_name: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           required
                         />
                       </div>
@@ -2073,7 +2073,7 @@ export default function LocalMembersPage() {
                               last_name: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           required
                         />
                       </div>
@@ -2091,7 +2091,7 @@ export default function LocalMembersPage() {
                               phone_number: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="0XXXXXXXXX"
                           required
                         />
@@ -2106,7 +2106,7 @@ export default function LocalMembersPage() {
                           onChange={(e) =>
                             setEditForm({ ...editForm, gender: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           required
                         >
                           <option value="">Select Gender</option>
@@ -2125,7 +2125,7 @@ export default function LocalMembersPage() {
                           onChange={(e) =>
                             setEditForm({ ...editForm, email: e.target.value })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="email@example.com"
                         />
                       </div>
@@ -2183,7 +2183,7 @@ export default function LocalMembersPage() {
                               date_of_birth: selectedDate,
                             });
                           }}
-                          className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent ${
+                          className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                             editFormErrors.date_of_birth
                               ? "border-red-500 focus:ring-red-500"
                               : "border-gray-300 dark:border-gray-600"
@@ -2210,7 +2210,7 @@ export default function LocalMembersPage() {
                               place_of_residence: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="City/Town"
                           required
                         />
@@ -2229,7 +2229,7 @@ export default function LocalMembersPage() {
                               residential_address: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Residential address"
                         />
                       </div>
@@ -2247,7 +2247,7 @@ export default function LocalMembersPage() {
                               profession: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Student, Teacher, etc."
                         />
                       </div>
@@ -2265,7 +2265,7 @@ export default function LocalMembersPage() {
                               hometown: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Hometown"
                           required
                         />
@@ -2285,7 +2285,7 @@ export default function LocalMembersPage() {
                               relative_contact: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="0XXXXXXXXX"
                           required
                         />
@@ -2294,7 +2294,7 @@ export default function LocalMembersPage() {
                   </div>
 
                   {/* Church Information Section */}
-                  <div className="bg-gradient-to-br from-indigo-50 to-orange-50 dark:from-indigo-900/20 dark:to-orange-900/20 rounded-xl p-6">
+                  <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl p-6">
                     <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
                       <i className="fas fa-church text-indigo-500 mr-2"></i>
                       Church Information
@@ -2312,7 +2312,7 @@ export default function LocalMembersPage() {
                               congregation: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           required
                         >
                           <option value="">Select Congregation</option>
@@ -2345,7 +2345,7 @@ export default function LocalMembersPage() {
                               position: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           placeholder="Member, Elder, etc."
                         />
                       </div>
@@ -2362,7 +2362,7 @@ export default function LocalMembersPage() {
                               membership_status: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         >
                           <option value="Active">Active</option>
                           <option value="Inactive">Inactive</option>
@@ -2381,7 +2381,7 @@ export default function LocalMembersPage() {
                               confirmation: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           required
                         >
                           <option value="">Select Confirmation Status</option>
@@ -2402,7 +2402,7 @@ export default function LocalMembersPage() {
                               baptism: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           required
                         >
                           <option value="">Select Baptism Status</option>
@@ -2423,7 +2423,7 @@ export default function LocalMembersPage() {
                               communicant: e.target.value,
                             })
                           }
-                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                           required
                         >
                           <option value="">Select Communicant Status</option>
@@ -2447,7 +2447,7 @@ export default function LocalMembersPage() {
                                 is_executive: e.target.checked,
                               })
                             }
-                            className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded"
+                            className="h-4 w-4 text-blue-500 focus:ring-blue-500 border-gray-300 rounded"
                           />
                           <label
                             htmlFor="is_executive"
@@ -2471,7 +2471,7 @@ export default function LocalMembersPage() {
                                     executive_level: e.target.value,
                                   })
                                 }
-                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               >
                                 <option value="">Select Level</option>
                                 <option value="Local">Local</option>
@@ -2493,7 +2493,7 @@ export default function LocalMembersPage() {
                   </button>
                   <button
                     onClick={handleSaveMemberEdit}
-                    className="flex-1 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors"
+                    className="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded-lg transition-colors"
                   >
                     <i className="fas fa-save mr-2"></i>
                     Save Changes

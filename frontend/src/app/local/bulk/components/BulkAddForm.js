@@ -218,14 +218,14 @@ export default function BulkAddForm({
       <div className="flex items-center justify-center mb-6">
         <div className="flex items-center space-x-4">
           <div
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${currentSection === "personal" ? "bg-orange-500 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"}`}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${currentSection === "personal" ? "bg-blue-500 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"}`}
           >
             <span className="text-sm font-medium">Section A</span>
             <span className="text-xs">Personal Info</span>
           </div>
           <div className="w-8 h-0.5 bg-gray-300 dark:bg-gray-600"></div>
           <div
-            className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${currentSection === "church" ? "bg-orange-500 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"}`}
+            className={`flex items-center space-x-2 px-4 py-2 rounded-lg ${currentSection === "church" ? "bg-blue-500 text-white" : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"}`}
           >
             <span className="text-sm font-medium">Section B</span>
             <span className="text-xs">Church Info</span>
@@ -233,8 +233,8 @@ export default function BulkAddForm({
         </div>
       </div>
 
-      <div className="mb-4 p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-md">
-        <p className="text-sm text-orange-600 dark:text-orange-300">
+      <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+        <p className="text-sm text-blue-700 dark:text-blue-300">
           <span className="font-medium">Note:</span> Fields marked with{" "}
           <span className="text-red-500 font-bold">*</span> are required and
           must be filled.
