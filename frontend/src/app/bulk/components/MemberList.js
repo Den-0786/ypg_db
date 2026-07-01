@@ -22,7 +22,7 @@ export default function MemberList({ members, onRemoveMember, onSubmitBulk }) {
         <button
           onClick={onSubmitBulk}
           disabled={members.length === 0}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 flex items-center hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-2 bg-orange-500 hover:bg-orange-600 dark:bg-orange-500 dark:hover:bg-orange-500 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all duration-200 flex items-center hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <i className="fas fa-upload mr-2"></i>
           <span>Submit All Members</span>
@@ -49,7 +49,7 @@ export default function MemberList({ members, onRemoveMember, onSubmitBulk }) {
                       {member.phone_number} • {member.congregation}
                     </p>
                     {member.is_executive && (
-                      <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                      <p className="text-xs text-orange-500 dark:text-orange-400 mt-1">
                         {getExecutivePositionDisplay(member.executive_position)}
                         {member.executive_level &&
                           ` (${member.executive_level})`}

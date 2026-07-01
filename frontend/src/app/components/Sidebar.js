@@ -170,11 +170,11 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/dashboard"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-orange-500 text-white shadow-lg"
+                    : "bg-orange-500 text-white shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-orange-500"
               }`}
               title="Dashboard"
             >
@@ -195,11 +195,11 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-orange-500 text-white shadow-lg"
+                    : "bg-orange-500 text-white shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-orange-500"
               }`}
               title="Home"
             >
@@ -220,11 +220,11 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/members"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-orange-500 text-white shadow-lg"
+                    : "bg-orange-500 text-white shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-orange-500"
               }`}
               title="Members"
             >
@@ -245,11 +245,11 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/attendance"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-orange-500 text-white shadow-lg"
+                    : "bg-orange-500 text-white shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-orange-500"
               }`}
               title="Attendance"
             >
@@ -270,11 +270,11 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/analytics"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-orange-500 text-white shadow-lg"
+                    : "bg-orange-500 text-white shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-orange-500"
               }`}
               title="Analytics"
             >
@@ -295,11 +295,11 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/bulk"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-orange-500 text-white shadow-lg"
+                    : "bg-orange-500 text-white shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-orange-500"
               }`}
               title="Add Member"
             >
@@ -321,7 +321,7 @@ export default function Sidebar({
             >
               <button
                 onClick={toggleTheme}
-                className="relative w-12 h-6 bg-gray-200 dark:bg-gray-800 rounded-full p-0.5 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="relative w-12 h-6 bg-gray-200 dark:bg-gray-800 rounded-full p-0.5 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 aria-label="Toggle theme"
                 title={
                   mounted && theme === "light"
@@ -358,7 +358,7 @@ export default function Sidebar({
                   <div
                     className={`absolute inset-0 rounded-full transition-all duration-300 ${
                       mounted && theme === "dark"
-                        ? "bg-gradient-to-r from-cyan-400/20 to-blue-500/20 shadow-lg shadow-cyan-400/30"
+                        ? "bg-gradient-to-r from-cyan-400/20 to-orange-500/20 shadow-lg shadow-cyan-400/30"
                         : "bg-gradient-to-r from-yellow-400/20 to-orange-500/20 shadow-lg shadow-yellow-400/30"
                     }`}
                   />
@@ -420,7 +420,7 @@ export default function Sidebar({
                                     ? "bg-yellow-500"
                                     : notification.type === "error"
                                       ? "bg-red-500"
-                                      : "bg-blue-500"
+                                      : "bg-orange-500"
                               }`}
                             ></div>
                             <div className="flex-1 min-w-0">
@@ -443,7 +443,7 @@ export default function Sidebar({
                     )}
                   </div>
                   <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-                    <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline truncate">
+                    <button className="text-xs text-orange-500 dark:text-orange-400 hover:underline truncate">
                       View all notifications
                     </button>
                   </div>
@@ -463,7 +463,7 @@ export default function Sidebar({
                 className={`w-full flex items-center space-x-3 p-2 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"} rounded-lg transition-colors min-w-0`}
                 title={userInfo?.username || "User"}
               >
-                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
                   <i className="fas fa-user text-xs text-white"></i>
                 </div>
                 {sidebarOpen && (

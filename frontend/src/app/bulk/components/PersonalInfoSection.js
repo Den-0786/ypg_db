@@ -396,11 +396,11 @@ export default function PersonalInfoSection({
               <img
                 src={currentMember.profile_picture_preview}
                 alt="Preview"
-                className="h-20 w-20 rounded-full object-cover border-2 border-blue-200 shadow"
+                className="h-20 w-20 rounded-full object-cover border-2 border-orange-200 shadow"
               />
             ) : (
-              <div className="h-20 w-20 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center border-2 border-dashed border-blue-300 dark:border-blue-600">
-                <i className="fas fa-user text-blue-400 dark:text-blue-300 text-2xl"></i>
+              <div className="h-20 w-20 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center border-2 border-dashed border-orange-300 dark:border-orange-500">
+                <i className="fas fa-user text-orange-400 dark:text-orange-300 text-2xl"></i>
               </div>
             )}
           </div>
@@ -418,7 +418,7 @@ export default function PersonalInfoSection({
                   });
                 }
               }}
-              className="block w-full text-sm text-light-text-secondary dark:text-dark-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300 cursor-pointer"
+              className="block w-full text-sm text-light-text-secondary dark:text-dark-text-secondary file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 dark:file:bg-orange-900/30 dark:file:text-orange-300 cursor-pointer"
             />
             <p className="text-xs text-gray-400 mt-1">Max 5MB. Leave empty to skip.</p>
           </div>

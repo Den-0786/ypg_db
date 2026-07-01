@@ -54,7 +54,7 @@ const CustomTooltip = ({ active, payload, label }) => {
       <div className="space-y-1">
         <div className="flex justify-between gap-4">
           <span className="text-gray-500 dark:text-gray-400">Total Attendance</span>
-          <span className="font-semibold text-blue-600">{d?.total}</span>
+          <span className="font-semibold text-orange-500">{d?.total}</span>
         </div>
         <div className="flex justify-between gap-4">
           <span className="text-gray-500 dark:text-gray-400">Communicants</span>
@@ -84,7 +84,7 @@ export default function AttendanceWaveChart() {
     <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
       <div className="mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          <i className="fas fa-chart-area text-blue-600 mr-2"></i>
+          <i className="fas fa-chart-area text-orange-500 mr-2"></i>
           Attendance Overview
         </h3>
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">

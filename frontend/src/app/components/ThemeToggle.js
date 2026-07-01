@@ -37,7 +37,7 @@ export default function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative w-16 h-8 bg-gray-200 dark:bg-gray-800 rounded-full p-1 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+      className="relative w-16 h-8 bg-gray-200 dark:bg-gray-800 rounded-full p-1 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
       aria-label="Toggle theme"
     >
       {/* Toggle Track */}
@@ -67,7 +67,7 @@ export default function ThemeToggle() {
         <div
           className={`absolute inset-0 rounded-full transition-all duration-300 ${
             isDark
-              ? "bg-gradient-to-r from-cyan-400/20 to-blue-500/20 shadow-lg shadow-cyan-400/30"
+              ? "bg-gradient-to-r from-cyan-400/20 to-orange-500/20 shadow-lg shadow-cyan-400/30"
               : "bg-gradient-to-r from-yellow-400/20 to-orange-500/20 shadow-lg shadow-yellow-400/30"
           }`}
         />

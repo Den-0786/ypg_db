@@ -204,7 +204,7 @@ export default function PersonalInfoSection({
                 gender: e.target.value,
               })
             }
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
             required
           >
             <option value="" className="text-gray-800 dark:text-white">
@@ -230,7 +230,7 @@ export default function PersonalInfoSection({
             className={`w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base ${
               errors.email
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+                : "border-gray-300 dark:border-gray-600 focus:ring-orange-500"
             }`}
             placeholder="email@example.com"
           />
@@ -288,7 +288,7 @@ export default function PersonalInfoSection({
             className={`w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base ${
               errors.date_of_birth
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+                : "border-gray-300 dark:border-gray-600 focus:ring-orange-500"
             }`}
           />
           {errors.date_of_birth && (
@@ -308,7 +308,7 @@ export default function PersonalInfoSection({
             onChange={(e) =>
               handleInputChange("place_of_residence", e.target.value)
             }
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
             placeholder="City/Town"
             required
           />
@@ -324,7 +324,7 @@ export default function PersonalInfoSection({
             onChange={(e) =>
               handleInputChange("residential_address", e.target.value)
             }
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
             placeholder="Residential address"
           />
         </div>
@@ -337,7 +337,7 @@ export default function PersonalInfoSection({
             type="text"
             value={currentMember.profession}
             onChange={(e) => handleInputChange("profession", e.target.value)}
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
             placeholder="Student, Teacher, etc."
           />
         </div>
@@ -350,7 +350,7 @@ export default function PersonalInfoSection({
             type="text"
             value={currentMember.hometown}
             onChange={(e) => handleInputChange("hometown", e.target.value)}
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base"
             placeholder="Hometown"
             required
           />
@@ -367,7 +367,7 @@ export default function PersonalInfoSection({
             className={`w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border rounded-md focus:outline-none focus:ring-2 text-gray-800 dark:text-white bg-white dark:bg-gray-700 text-sm lg:text-base ${
               errors.relative_contact
                 ? "border-red-500 focus:ring-red-500"
-                : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+                : "border-gray-300 dark:border-gray-600 focus:ring-orange-500"
             }`}
             placeholder="0XXXXXXXXX"
             required
@@ -391,11 +391,11 @@ export default function PersonalInfoSection({
               <img
                 src={currentMember.profile_picture_preview}
                 alt="Preview"
-                className="h-20 w-20 rounded-full object-cover border-2 border-blue-200 shadow"
+                className="h-20 w-20 rounded-full object-cover border-2 border-orange-200 shadow"
               />
             ) : (
-              <div className="h-20 w-20 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center border-2 border-dashed border-blue-300 dark:border-blue-600">
-                <i className="fas fa-user text-blue-400 dark:text-blue-300 text-2xl"></i>
+              <div className="h-20 w-20 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center border-2 border-dashed border-orange-300 dark:border-orange-500">
+                <i className="fas fa-user text-orange-400 dark:text-orange-300 text-2xl"></i>
               </div>
             )}
           </div>
@@ -413,7 +413,7 @@ export default function PersonalInfoSection({
                   });
                 }
               }}
-              className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-blue-900/30 dark:file:text-blue-300 cursor-pointer"
+              className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 dark:file:bg-orange-900/30 dark:file:text-orange-300 cursor-pointer"
             />
             <p className="text-xs text-gray-400 mt-1">Max 5MB. Leave empty to skip.</p>
           </div>

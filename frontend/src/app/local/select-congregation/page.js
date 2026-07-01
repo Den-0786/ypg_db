@@ -14,7 +14,7 @@ export default function SelectCongregationPage() {
 
   // Congregation list (updated to match actual database IDs)
   const congregations = [
-    { id: "2", name: "Emmanuel Congregation Ahinsan", color: "bg-blue-500" },
+    { id: "2", name: "Emmanuel Congregation Ahinsan", color: "bg-orange-500" },
     { id: "3", name: "Peniel Congregation Esreso No1", color: "bg-green-500" },
     { id: "4", name: "Mizpah Congregation Odagya No1", color: "bg-purple-500" },
     {
@@ -76,7 +76,7 @@ export default function SelectCongregationPage() {
               key={congregation.id}
               className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 border-2 ${
                 selectedCongregation?.id === congregation.id
-                  ? "border-blue-500"
+                  ? "border-orange-500"
                   : "border-transparent"
               }`}
               onClick={() => handleCongregationSelect(congregation)}
@@ -97,7 +97,7 @@ export default function SelectCongregationPage() {
                   <button
                     className={`w-full py-2 px-4 rounded-lg text-white font-medium transition-colors ${
                       selectedCongregation?.id === congregation.id
-                        ? "bg-blue-600"
+                        ? "bg-orange-500"
                         : congregation.color
                             .replace("bg-", "bg-")
                             .replace("-500", "-600")

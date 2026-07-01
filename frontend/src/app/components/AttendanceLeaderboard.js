@@ -226,7 +226,7 @@ export default function AttendanceLeaderboard({ type = "weekly" }) {
             }`}
           >
             <div className="flex items-center space-x-3 sm:space-x-4 mb-3 sm:mb-0">
-              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-blue-100 dark:bg-blue-900 flex-shrink-0">
+              <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-100 dark:bg-orange-900 flex-shrink-0">
                 {getRankBadge(winner.rank)}
               </div>
               <div className="flex-1 min-w-0">
@@ -239,7 +239,7 @@ export default function AttendanceLeaderboard({ type = "weekly" }) {
             {/* Attendance numbers on the right */}
             <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 dark:text-gray-300 justify-end">
               <span className="whitespace-nowrap">
-                <i className="fas fa-mars text-blue-500 mr-1"></i>
+                <i className="fas fa-mars text-orange-500 mr-1"></i>
                 {winner.male_count} Male
               </span>
               <span className="whitespace-nowrap">
@@ -273,7 +273,7 @@ export default function AttendanceLeaderboard({ type = "weekly" }) {
               </div>
               <div className="flex flex-wrap gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600 dark:text-gray-300 justify-end">
                 <span className="whitespace-nowrap">
-                  <i className="fas fa-mars text-blue-500 mr-1"></i>
+                  <i className="fas fa-mars text-orange-500 mr-1"></i>
                   {leaderboardData.previousWinner.male_count} Male
                 </span>
                 <span className="whitespace-nowrap">

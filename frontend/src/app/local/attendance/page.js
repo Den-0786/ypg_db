@@ -778,7 +778,7 @@ export default function LocalAttendancePage() {
     return (
       <LocalDashboardLayout currentPage="Attendance">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
         </div>
       </LocalDashboardLayout>
     );
@@ -788,8 +788,8 @@ export default function LocalAttendancePage() {
     <LocalDashboardLayout currentPage="Attendance">
       <div className="space-y-6">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-700 dark:to-blue-700 rounded-xl shadow-xl overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-blue-400/20 animate-pulse"></div>
+        <div className="bg-gradient-to-r from-green-600 to-orange-500 dark:from-green-700 dark:to-orange-600 rounded-xl shadow-xl overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-green-400/20 to-orange-400/20 animate-pulse"></div>
           <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
 

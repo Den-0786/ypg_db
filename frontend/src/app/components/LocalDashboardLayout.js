@@ -7,6 +7,7 @@ import PinModal from "./PinModal";
 import { useTheme } from "./ThemeProvider";
 import { useToast, ToastContainer } from "./Toast";
 import autoLogout from "../utils/autoLogout";
+import { saveFileWithPicker } from "../utils/saveFile";
 
 // Members Quick Actions Dropdown Component
 function MembersQuickActionsDropdown({
@@ -50,19 +51,25 @@ function MembersQuickActionsDropdown({
       const data = await response.json();
       if (data.success) {
         if (formatLower === "csv" || formatLower === "excel") {
-          const blob = new Blob([data.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = data.filename || `members-export.${formatLower === "excel" ? "xlsx" : "csv"}`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
+          const mimeType = formatLower === "excel"
+            ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            : "text/csv";
+          const ext = formatLower === "excel" ? "xlsx" : "csv";
+          const filename = data.filename || `members-export.${ext}`;
+          const blob = new Blob([data.data], { type: mimeType });
+          const saved = await saveFileWithPicker(blob, filename, mimeType);
+          if (saved) {
+            if (window.showToast) window.showToast(`${format} export completed!`, "success");
+          }
         } else if (formatLower === "pdf" && data.pdf_url) {
-          window.open(`${baseUrl}${data.pdf_url}`, "_blank");
+          const pdfResponse = await fetch(`${baseUrl}${data.pdf_url}`);
+          const pdfBlob = await pdfResponse.blob();
+          const filename = data.filename || "members-export.pdf";
+          const saved = await saveFileWithPicker(pdfBlob, filename, "application/pdf");
+          if (saved) {
+            if (window.showToast) window.showToast(`${format} export completed!`, "success");
+          }
         }
-        if (window.showToast) window.showToast(`${format} export completed!`, "success");
       } else {
         if (window.showToast) window.showToast(data.error || "Export failed", "error");
       }
@@ -92,7 +99,7 @@ function MembersQuickActionsDropdown({
           <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-2 animate-fadeIn">
             <a
               href="/local/members/add"
-              className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-blue-700 transition"
+              className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-700 transition"
             >
               <i className="fas fa-user-plus"></i> Add New Member
             </a>
@@ -248,19 +255,25 @@ function AttendanceQuickActionsDropdown() {
       const data = await response.json();
       if (data.success) {
         if (formatLower === "csv" || formatLower === "excel") {
-          const blob = new Blob([data.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = data.filename || `attendance-export.${formatLower === "excel" ? "xlsx" : "csv"}`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
+          const mimeType = formatLower === "excel"
+            ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            : "text/csv";
+          const ext = formatLower === "excel" ? "xlsx" : "csv";
+          const filename = data.filename || `attendance-export.${ext}`;
+          const blob = new Blob([data.data], { type: mimeType });
+          const saved = await saveFileWithPicker(blob, filename, mimeType);
+          if (saved) {
+            if (window.showToast) window.showToast(`${format} export completed!`, "success");
+          }
         } else if (formatLower === "pdf" && data.pdf_url) {
-          window.open(`${baseUrl}${data.pdf_url}`, "_blank");
+          const pdfResponse = await fetch(`${baseUrl}${data.pdf_url}`);
+          const pdfBlob = await pdfResponse.blob();
+          const filename = data.filename || "attendance-export.pdf";
+          const saved = await saveFileWithPicker(pdfBlob, filename, "application/pdf");
+          if (saved) {
+            if (window.showToast) window.showToast(`${format} export completed!`, "success");
+          }
         }
-        if (window.showToast) window.showToast(`${format} export completed!`, "success");
       } else {
         if (window.showToast) window.showToast(data.error || "Export failed", "error");
       }
@@ -312,7 +325,7 @@ function AttendanceQuickActionsDropdown() {
           <div className="relative">
             <button
               onClick={() => setShowExportModal(!showExportModal)}
-              className="w-full flex items-center justify-between px-4 py-2 text-xs sm:text-sm text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-blue-700 transition"
+              className="w-full flex items-center justify-between px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-700 transition"
             >
               <div className="flex items-center gap-2">
                 <i className="fas fa-download"></i>
@@ -925,7 +938,7 @@ export default function LocalDashboardLayout({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            type: "all", // Export all data
+            type: "all",
           }),
         }
       );
@@ -933,20 +946,28 @@ export default function LocalDashboardLayout({
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          // Create and download file
-          const blob = new Blob([data.data], { type: "text/csv" });
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download =
-            data.filename ||
-            `ypg_data_${format}_${new Date().toISOString().split("T")[0]}.csv`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          document.body.removeChild(a);
-
-          showSuccess(`${format.toUpperCase()} export completed successfully!`);
+          if (format === "csv" || format === "excel") {
+            const mimeType = format === "excel"
+              ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              : "text/csv";
+            const ext = format === "excel" ? "xlsx" : "csv";
+            const filename = data.filename || `ypg_data_${format}_${new Date().toISOString().split("T")[0]}.${ext}`;
+            const blob = new Blob([data.data], { type: mimeType });
+            const saved = await saveFileWithPicker(blob, filename, mimeType);
+            if (saved) {
+              showSuccess(`${format.toUpperCase()} export completed successfully!`);
+            }
+          } else if (format === "pdf" && data.pdf_url) {
+            const pdfResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}${data.pdf_url}`);
+            const pdfBlob = await pdfResponse.blob();
+            const filename = data.filename || `ypg_data_${format}_${new Date().toISOString().split("T")[0]}.pdf`;
+            const saved = await saveFileWithPicker(pdfBlob, filename, "application/pdf");
+            if (saved) {
+              showSuccess(`${format.toUpperCase()} export completed successfully!`);
+            }
+          } else {
+            showSuccess(data.message || `${format.toUpperCase()} export completed!`);
+          }
         } else {
           showError(data.error || `Failed to export ${format}`);
         }
@@ -1227,14 +1248,14 @@ export default function LocalDashboardLayout({
     >
       {/* Header */}
       <header
-        className={`${mounted && theme === "dark" ? "bg-gray-800" : "bg-blue-600"} shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
+        className={`${mounted && theme === "dark" ? "bg-gray-800" : "bg-orange-500"} shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
       >
         <div className="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-6">
           <div className="relative lg:hidden">
             <button
               data-sidebar-toggle
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-white hover:text-blue-200 transition-colors mr-2 lg:hidden focus:outline-none"
+              className="text-white hover:text-orange-200 transition-colors mr-2 lg:hidden focus:outline-none"
               aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
               onFocus={(e) => {
                 const el = document.getElementById("sidebar-tooltip");
@@ -1345,7 +1366,7 @@ export default function LocalDashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "profile" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "profile" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-user mr-2"></i>Profile
                     </button>
@@ -1357,7 +1378,7 @@ export default function LocalDashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "security" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "security" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-shield-alt mr-2"></i>Security
                     </button>
@@ -1369,7 +1390,7 @@ export default function LocalDashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "privacy" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "privacy" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-user-secret mr-2"></i>Privacy
                     </button>
@@ -1381,7 +1402,7 @@ export default function LocalDashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "notifications" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "notifications" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-bell mr-2"></i>Notifications
                     </button>
@@ -1393,7 +1414,7 @@ export default function LocalDashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "appearance" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "appearance" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-palette mr-2"></i>Appearance
                     </button>
@@ -1405,7 +1426,7 @@ export default function LocalDashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "data" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "data" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-database mr-2"></i>Data Management
                     </button>
@@ -1417,7 +1438,7 @@ export default function LocalDashboardLayout({
                           setSettingsSidebarOpen(false);
                         }
                       }}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "about" ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "about" ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
                     >
                       <i className="fas fa-info-circle mr-2"></i>About
                     </button>
@@ -1433,7 +1454,7 @@ export default function LocalDashboardLayout({
 
                       {profileLoading ? (
                         <div className="flex items-center justify-center py-8">
-                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
                           <span className="ml-2 text-gray-600 dark:text-gray-400">
                             Loading profile...
                           </span>
@@ -1453,7 +1474,7 @@ export default function LocalDashboardLayout({
                                   fullName: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                               placeholder="Enter your full name"
                             />
                           </div>
@@ -1470,7 +1491,7 @@ export default function LocalDashboardLayout({
                                   email: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                               placeholder="Enter your email"
                             />
                           </div>
@@ -1487,7 +1508,7 @@ export default function LocalDashboardLayout({
                                   phone: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                               placeholder="Enter your phone number"
                             />
                           </div>
@@ -1503,7 +1524,7 @@ export default function LocalDashboardLayout({
                                   role: e.target.value,
                                 }))
                               }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                             >
                               <option value="Local Executive">
                                 Local Executive
@@ -1529,7 +1550,7 @@ export default function LocalDashboardLayout({
                                 type="text"
                                 value={congregationInitials}
                                 onChange={(e) => setCongregationInitials(e.target.value.toUpperCase().slice(0, 10))}
-                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base uppercase tracking-widest"
+                                className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base uppercase tracking-widest"
                                 placeholder="e.g. AE"
                                 maxLength={10}
                               />
@@ -1553,7 +1574,7 @@ export default function LocalDashboardLayout({
                           <button
                             onClick={handleProfileUpdate}
                             disabled={profileSaving}
-                            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                            className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                           >
                             {profileSaving ? (
                               <>
@@ -1581,14 +1602,14 @@ export default function LocalDashboardLayout({
                         <div className="flex flex-col sm:flex-row gap-2 sm:gap-4">
                           <button
                             onClick={() => setSecurityMethod("password")}
-                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${securityMethod === "password" ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"}`}
+                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${securityMethod === "password" ? "bg-orange-500 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"}`}
                           >
                             <i className="fas fa-key mr-2"></i>Username &
                             Password
                           </button>
                           <button
                             onClick={() => setSecurityMethod("pin")}
-                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${securityMethod === "pin" ? "bg-blue-600 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"}`}
+                            className={`w-full sm:w-auto px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${securityMethod === "pin" ? "bg-orange-500 text-white" : "bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600"}`}
                           >
                             <i className="fas fa-mobile-alt mr-2"></i>PIN
                             Authentication
@@ -1603,7 +1624,7 @@ export default function LocalDashboardLayout({
                           </h4>
                           {securityLoading ? (
                             <div className="flex items-center justify-center py-4">
-                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
                               <span className="ml-2 text-gray-600 dark:text-gray-400">
                                 Loading...
                               </span>
@@ -1623,7 +1644,7 @@ export default function LocalDashboardLayout({
                                       username: e.target.value,
                                     }))
                                   }
-                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                   placeholder="Enter new username"
                                 />
                               </div>
@@ -1657,7 +1678,7 @@ export default function LocalDashboardLayout({
                                         currentPassword: e.target.value,
                                       }))
                                     }
-                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                     placeholder="Enter current password"
                                   />
                                   <button
@@ -1689,7 +1710,7 @@ export default function LocalDashboardLayout({
                                         newPassword: e.target.value,
                                       }))
                                     }
-                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                     placeholder="Enter new password"
                                   />
                                   <button
@@ -1721,7 +1742,7 @@ export default function LocalDashboardLayout({
                                         confirmPassword: e.target.value,
                                       }))
                                     }
-                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                     placeholder="Confirm new password"
                                   />
                                   <button
@@ -1762,7 +1783,7 @@ export default function LocalDashboardLayout({
                               <button
                                 onClick={handlePasswordUpdate}
                                 disabled={securitySaving}
-                                className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 {securitySaving ? (
                                   <>
@@ -1789,7 +1810,7 @@ export default function LocalDashboardLayout({
                           </p>
                           {securityLoading ? (
                             <div className="flex items-center justify-center py-4">
-                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
                               <span className="ml-2 text-gray-600 dark:text-gray-400">
                                 Loading...
                               </span>
@@ -1812,7 +1833,7 @@ export default function LocalDashboardLayout({
                                       }))
                                     }
                                     placeholder="Enter 4-digit PIN"
-                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                   />
                                   <button
                                     type="button"
@@ -1843,7 +1864,7 @@ export default function LocalDashboardLayout({
                                       }))
                                     }
                                     placeholder="Enter 4-digit PIN"
-                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                   />
                                   <button
                                     type="button"
@@ -1872,7 +1893,7 @@ export default function LocalDashboardLayout({
                                       }))
                                     }
                                     placeholder="Confirm 4-digit PIN"
-                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                                    className="w-full px-3 py-2 pr-10 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                                   />
                                   <button
                                     type="button"
@@ -1910,7 +1931,7 @@ export default function LocalDashboardLayout({
                               <button
                                 onClick={handlePinUpdate}
                                 disabled={securitySaving}
-                                className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 {securitySaving ? (
                                   <>
@@ -2004,7 +2025,7 @@ export default function LocalDashboardLayout({
                             className="rounded"
                           />
                         </div>
-                        <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base">
+                        <button className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base">
                           Save Preferences
                         </button>
                       </div>
@@ -2028,7 +2049,7 @@ export default function LocalDashboardLayout({
                               const congregationId = localStorage.getItem("congregationId");
                               localStorage.setItem(`theme_${congregationId}`, newTheme);
                             }}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
                           >
                             <option value="light">Light Mode</option>
                             <option value="dark">Dark Mode</option>
@@ -2039,7 +2060,7 @@ export default function LocalDashboardLayout({
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Language
                           </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
+                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
                             <option>English</option>
                             <option>Twi</option>
                             <option>Ga</option>
@@ -2050,13 +2071,13 @@ export default function LocalDashboardLayout({
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Font Size
                           </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
+                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
                             <option>Small</option>
                             <option>Medium</option>
                             <option>Large</option>
                           </select>
                         </div>
-                        <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base">
+                        <button className="w-full bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors text-xs sm:text-base">
                           Apply Changes
                         </button>
                       </div>
@@ -2068,18 +2089,18 @@ export default function LocalDashboardLayout({
                         Data Management
                       </h3>
                       <div className="space-y-3 sm:space-y-4">
-                        <div className="p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
-                          <h4 className="text-xs sm:text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">
+                        <div className="p-4 bg-orange-50 dark:bg-orange-900 rounded-lg">
+                          <h4 className="text-xs sm:text-sm font-medium text-orange-900 dark:text-orange-100 mb-2">
                             Export Data
                           </h4>
-                          <p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
+                          <p className="text-xs text-orange-700 dark:text-orange-300 mb-3">
                             Download your data in various formats
                           </p>
                           <div className="space-y-2">
                             <button
                               onClick={() => handleExportData("csv")}
                               disabled={dataManagementLoading}
-                              className="w-full text-left px-3 py-2 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full text-left px-3 py-2 bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300 rounded text-sm hover:bg-orange-200 dark:hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <i className="fas fa-download mr-2"></i>
                               {dataManagementLoading
@@ -2089,7 +2110,7 @@ export default function LocalDashboardLayout({
                             <button
                               onClick={() => handleExportData("excel")}
                               disabled={dataManagementLoading}
-                              className="w-full text-left px-3 py-2 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full text-left px-3 py-2 bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300 rounded text-sm hover:bg-orange-200 dark:hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <i className="fas fa-file-excel mr-2"></i>
                               {dataManagementLoading
@@ -2099,7 +2120,7 @@ export default function LocalDashboardLayout({
                             <button
                               onClick={() => handleExportData("pdf")}
                               disabled={dataManagementLoading}
-                              className="w-full text-left px-3 py-2 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300 rounded text-sm hover:bg-blue-200 dark:hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full text-left px-3 py-2 bg-orange-100 dark:bg-orange-800 text-orange-700 dark:text-orange-300 rounded text-sm hover:bg-orange-200 dark:hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <i className="fas fa-file-pdf mr-2"></i>
                               {dataManagementLoading
@@ -2275,11 +2296,11 @@ function QuickActionsDropdown({ filtered }) {
     <div className="relative ml-2" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-blue-50 text-blue-700 rounded-lg shadow-sm border border-blue-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-orange-50 text-orange-700 rounded-lg shadow-sm border border-orange-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-orange-400"
         aria-haspopup="true"
         aria-expanded={open}
       >
-        <i className="fas fa-bolt text-blue-500"></i>
+        <i className="fas fa-bolt text-orange-500"></i>
         Quick Actions
         <i
           className={`fas fa-chevron-${open ? "up" : "down"} text-xs ml-1`}
@@ -2288,10 +2309,10 @@ function QuickActionsDropdown({ filtered }) {
       {open && (
         <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 py-2 animate-fadeIn">
           <ExportAnalyticsButton />
-          <button className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-blue-700 transition">
+          <button className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-700 transition">
             <i className="fas fa-chart-line"></i> Generate Report
           </button>
-          <button className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-blue-700 dark:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-800 focus:bg-blue-100 dark:focus:bg-blue-700 transition">
+          <button className="w-full flex items-center gap-2 px-4 py-2 text-xs sm:text-sm text-orange-700 dark:text-orange-300 hover:bg-orange-50 dark:hover:bg-orange-800 focus:bg-orange-100 dark:focus:bg-orange-700 transition">
             <i className="fas fa-share"></i> Share Analytics
           </button>
           <hr className="my-1 border-gray-200 dark:border-gray-700" />

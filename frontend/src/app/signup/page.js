@@ -37,7 +37,7 @@ export default function SignupPage() {
 
   const passwordStrength = getPasswordStrength(formData.password);
   const strengthLabels = ["Very Weak", "Weak", "Fair", "Good", "Strong"];
-  const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-blue-500", "bg-green-500"];
+  const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-orange-500", "bg-green-500"];
 
   const validationChecks = [
     { label: "At least 8 characters", valid: formData.password.length >= 8 },
@@ -63,7 +63,7 @@ export default function SignupPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading...</p>
         </div>
       </div>

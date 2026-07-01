@@ -79,7 +79,7 @@ export default function AttendanceFilter({
         <select
           value={weekFilter}
           onChange={(e) => handleWeekChange(e.target.value)}
-          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+          className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
           aria-label="Filter by week"
         >
           <option value="">All Weeks</option>
@@ -99,7 +99,7 @@ export default function AttendanceFilter({
           <select
             value={monthFilter}
             onChange={(e) => handleMonthChange(e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
             aria-label="Filter by month"
           >
             <option value="">All Months</option>
@@ -125,7 +125,7 @@ export default function AttendanceFilter({
           <select
             value={yearFilter}
             onChange={(e) => handleYearChange(e.target.value)}
-            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
             aria-label="Filter by year"
           >
             <option value="">All Years</option>

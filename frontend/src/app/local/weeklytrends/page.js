@@ -64,7 +64,7 @@ export default function WeeklyTrendsPage() {
     return (
       <LocalDashboardLayout>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
         </div>
       </LocalDashboardLayout>
     );
@@ -76,7 +76,7 @@ export default function WeeklyTrendsPage() {
         <div className="bg-gray-50 dark:bg-gray-700 shadow rounded-lg p-4 md:p-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 md:mb-8 mt-4 md:mt-6">
             <h2 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white">
-              <i className="fas fa-calendar-check text-blue-600 mr-3"></i>
+              <i className="fas fa-calendar-check text-orange-500 mr-3"></i>
               Weekly Attendance Trends
             </h2>
 
@@ -91,7 +91,7 @@ export default function WeeklyTrendsPage() {
               </button>
               <a
                 href="/local/monthlytrends"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
+                className="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg"
               >
                 <i className="fas fa-calendar-alt mr-2"></i>
                 Monthly
@@ -128,7 +128,7 @@ export default function WeeklyTrendsPage() {
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">
+                      <div className="text-2xl font-bold text-orange-500">
                         {
                           chartData.sundayAttendance.weeklyTrend.slice(0, 4)
                             .length

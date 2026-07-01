@@ -333,11 +333,11 @@ export default function LocalSidebar({
                   className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                     isActive
                       ? mounted && theme === "dark"
-                        ? "bg-blue-600 text-white shadow-lg"
-                        : "bg-blue-500 text-white shadow-lg"
+                        ? "bg-orange-500 text-white shadow-lg"
+                        : "bg-orange-500 text-white shadow-lg"
                       : mounted && theme === "dark"
                         ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                        : "text-gray-700 hover:bg-gray-100 hover:text-blue-600"
+                        : "text-gray-700 hover:bg-gray-100 hover:text-orange-500"
                   }`}
                   title={link.label}
                 >
@@ -363,7 +363,7 @@ export default function LocalSidebar({
                   const newTheme = theme === "dark" ? "light" : "dark";
                   setTheme(newTheme);
                 }}
-                className="relative w-12 h-6 bg-gray-200 dark:bg-gray-800 rounded-full p-0.5 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="relative w-12 h-6 bg-gray-200 dark:bg-gray-800 rounded-full p-0.5 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
                 aria-label="Toggle theme"
                 title={
                   mounted && theme === "light"
@@ -394,7 +394,7 @@ export default function LocalSidebar({
                   <div
                     className={`absolute inset-0 rounded-full transition-all duration-300 ${
                       mounted && theme === "dark"
-                        ? "bg-gradient-to-r from-cyan-400/20 to-blue-500/20 shadow-lg shadow-cyan-400/30"
+                        ? "bg-gradient-to-r from-cyan-400/20 to-orange-500/20 shadow-lg shadow-cyan-400/30"
                         : "bg-gradient-to-r from-yellow-400/20 to-orange-500/20 shadow-lg shadow-yellow-400/30"
                     }`}
                   />
@@ -455,7 +455,7 @@ export default function LocalSidebar({
                   <div className="max-h-32 overflow-y-auto">
                     {notificationsLoading ? (
                       <div className="p-2 text-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mx-auto"></div>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500 mx-auto"></div>
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                           Loading...
                         </p>
@@ -471,7 +471,7 @@ export default function LocalSidebar({
                           className={`p-2 border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors ${
                             notification.is_read
                               ? ""
-                              : "bg-blue-50 dark:bg-blue-900/20"
+                              : "bg-orange-50 dark:bg-orange-900/20"
                           }`}
                         >
                           <div className="flex items-start space-x-2 min-w-0">
@@ -486,12 +486,12 @@ export default function LocalSidebar({
                                       : notification.type === "birthday"
                                         ? "bg-pink-500"
                                         : notification.type === "new_member"
-                                          ? "bg-blue-500"
+                                          ? "bg-orange-500"
                                           : notification.type === "attendance"
                                             ? "bg-purple-500"
                                             : notification.type === "system"
                                               ? "bg-gray-500"
-                                              : "bg-blue-500"
+                                              : "bg-orange-500"
                               }`}
                             ></div>
                             <div className="flex-1 min-w-0">
@@ -516,7 +516,7 @@ export default function LocalSidebar({
                               </div>
                             </div>
                             {!notification.is_read && (
-                              <div className="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-1"></div>
+                              <div className="flex-shrink-0 w-2 h-2 bg-orange-500 rounded-full mt-1"></div>
                             )}
                           </div>
                         </div>
@@ -533,7 +533,7 @@ export default function LocalSidebar({
                     <div className="flex justify-center">
                       <button
                         onClick={fetchNotifications}
-                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline truncate"
+                        className="text-xs text-orange-500 dark:text-orange-400 hover:underline truncate"
                       >
                         {notificationsLoading
                           ? "Refreshing..."
@@ -558,7 +558,7 @@ export default function LocalSidebar({
                 className={`w-full flex items-center space-x-3 p-2 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"} rounded-lg transition-colors min-w-0`}
                 title={userInfo?.username || "User"}
               >
-                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0">
                   <i className="fas fa-user text-xs text-white"></i>
                 </div>
                 {sidebarOpen && (

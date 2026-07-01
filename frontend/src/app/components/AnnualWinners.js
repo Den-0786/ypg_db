@@ -185,8 +185,8 @@ export default function AnnualWinners({ year = 2024 }) {
       case 3:
         return (
           <div className="flex flex-col items-center justify-center">
-            <i className="fas fa-gem text-blue-500 text-sm sm:text-base"></i>
-            <span className="text-blue-600 dark:text-blue-400 font-bold text-xs sm:text-sm">
+            <i className="fas fa-gem text-orange-500 text-sm sm:text-base"></i>
+            <span className="text-orange-500 dark:text-orange-400 font-bold text-xs sm:text-sm">
               3rd
             </span>
           </div>
@@ -236,13 +236,13 @@ export default function AnnualWinners({ year = 2024 }) {
                 : winner.rank === 2
                   ? "border-gray-300 bg-gray-50 dark:bg-gray-700"
                   : winner.rank === 3
-                    ? "border-blue-300 bg-blue-50 dark:bg-blue-900/20"
+                    ? "border-orange-300 bg-orange-50 dark:bg-orange-900/20"
                     : "border-gray-200 bg-white dark:bg-gray-700"
             }`}
           >
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
               <div className="flex items-center space-x-3 sm:space-x-4">
-                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-blue-100 dark:bg-blue-900 flex-shrink-0">
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-orange-100 dark:bg-orange-900 flex-shrink-0">
                   {getRankBadge(winner.rank)}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -264,7 +264,7 @@ export default function AnnualWinners({ year = 2024 }) {
                   <i className="fas fa-trophy mr-1"></i>
                   {winner.wins} Win{winner.wins > 1 ? "s" : ""}
                 </span>
-                <span className="text-blue-600 dark:text-blue-400 whitespace-nowrap">
+                <span className="text-orange-500 dark:text-orange-400 whitespace-nowrap">
                   <i className="fas fa-users mr-1"></i>
                   {winner.total_attendance.toLocaleString()} Total
                 </span>

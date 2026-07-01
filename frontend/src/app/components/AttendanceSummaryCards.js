@@ -5,14 +5,14 @@ export default function AttendanceSummaryCards({ attendanceStats }) {
       <div className="flex justify-between min-w-max p-1 gap-4">
         {/* Total Male Card */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 min-w-[280px] relative overflow-hidden border border-gray-200 dark:border-gray-700">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-300/5 dark:from-blue-300/10 dark:to-blue-200/10 animate-pulse"></div>
-          <div className="absolute top-0 right-0 w-20 h-20 bg-blue-100/30 dark:bg-blue-400/10 rounded-full -mr-10 -mt-10"></div>
-          <div className="absolute bottom-0 left-0 w-16 h-16 bg-blue-100/30 dark:bg-blue-400/10 rounded-full -ml-8 -mb-8"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-300/5 dark:from-orange-300/10 dark:to-orange-200/10 animate-pulse"></div>
+          <div className="absolute top-0 right-0 w-20 h-20 bg-orange-100/30 dark:bg-orange-400/10 rounded-full -mr-10 -mt-10"></div>
+          <div className="absolute bottom-0 left-0 w-16 h-16 bg-orange-100/30 dark:bg-orange-400/10 rounded-full -ml-8 -mb-8"></div>
 
           <div className="relative z-10">
             <div className="flex items-center justify-between mb-4">
-              <div className="bg-blue-100 dark:bg-blue-900/30 rounded-lg p-3">
-                <i className="fas fa-male text-blue-600 dark:text-blue-400 text-xl"></i>
+              <div className="bg-orange-100 dark:bg-orange-900/30 rounded-lg p-3">
+                <i className="fas fa-male text-orange-500 dark:text-orange-400 text-xl"></i>
               </div>
               <div className="text-right">
                 <div className="text-gray-600 dark:text-gray-400 text-sm">
@@ -27,7 +27,7 @@ export default function AttendanceSummaryCards({ attendanceStats }) {
               <div className="text-gray-600 dark:text-gray-400 text-sm">
                 {attendanceStats.weeksLogged}/{attendanceStats.totalWeeks} weeks
               </div>
-              <div className="text-blue-600 dark:text-blue-400 font-semibold">
+              <div className="text-orange-500 dark:text-orange-400 font-semibold">
                 {Math.round(
                   (attendanceStats.weeksLogged / attendanceStats.totalWeeks) *
                     100
@@ -37,7 +37,7 @@ export default function AttendanceSummaryCards({ attendanceStats }) {
             </div>
             <div className="mt-3 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
               <div
-                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                className="bg-orange-500 h-2 rounded-full transition-all duration-300"
                 style={{
                   width: `${(attendanceStats.weeksLogged / attendanceStats.totalWeeks) * 100}%`,
                 }}

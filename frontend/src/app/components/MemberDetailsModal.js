@@ -40,7 +40,7 @@ export default function MemberDetailsModal({
               {selectedMember.name}
             </h3>
             {selectedMember.member_id && (
-              <span className="inline-flex px-3 py-1 mt-1 text-xs font-mono font-semibold rounded-full bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+              <span className="inline-flex px-3 py-1 mt-1 text-xs font-mono font-semibold rounded-full bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-300 border border-orange-200 dark:border-orange-600">
                 {selectedMember.member_id}
               </span>
             )}
@@ -56,13 +56,13 @@ export default function MemberDetailsModal({
         <div className="p-4 sm:p-6">
           <div className="space-y-4 sm:space-y-6">
             {/* Personal & Contact Information */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6">
+            <div className="bg-gradient-to-br from-orange-50 to-indigo-50 dark:from-orange-900/20 dark:to-indigo-900/20 rounded-xl p-4 sm:p-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Personal Information */}
                 <div>
                   <div className="flex items-center mb-3 sm:mb-4">
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
-                      <i className="fas fa-user text-blue-600 dark:text-blue-400 text-sm sm:text-base"></i>
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 dark:bg-orange-900 rounded-full flex items-center justify-center mr-2 sm:mr-3">
+                      <i className="fas fa-user text-orange-500 dark:text-orange-400 text-sm sm:text-base"></i>
                     </div>
                     <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
                       Personal Information
@@ -111,7 +111,7 @@ export default function MemberDetailsModal({
                         <span
                           className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                             selectedMember.gender === "Male"
-                              ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+                              ? "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200"
                               : "bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200"
                           }`}
                         >
@@ -271,7 +271,7 @@ export default function MemberDetailsModal({
             </div>
 
             {/* Church & Religious Information */}
-            <div className="bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl p-4 sm:p-6">
+            <div className="bg-gradient-to-br from-indigo-50 to-orange-50 dark:from-indigo-900/20 dark:to-orange-900/20 rounded-xl p-4 sm:p-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Church Information */}
                 <div>
@@ -407,7 +407,7 @@ export default function MemberDetailsModal({
               <div className="flex flex-col sm:flex-row sm:justify-between gap-3">
                 <button
                   onClick={() => handleEditMember(selectedMember)}
-                  className="flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200 font-medium text-sm sm:flex-1"
+                  className="flex items-center justify-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg transition-colors duration-200 font-medium text-sm sm:flex-1"
                 >
                   <i className="fas fa-edit mr-2"></i>
                   Edit Member

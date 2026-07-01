@@ -184,7 +184,7 @@ export default function LocalAnalyticsPage() {
     return (
       <LocalDashboardLayout>
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
         </div>
       </LocalDashboardLayout>
     );
@@ -196,7 +196,7 @@ export default function LocalAnalyticsPage() {
         {/* Welcome Card */}
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            <i className="fas fa-chart-bar text-blue-600 mr-3"></i>
+            <i className="fas fa-chart-bar text-orange-500 mr-3"></i>
             {currentCongregationName
               ? `${currentCongregationName} Analytics`
               : "Local Analytics Dashboard"}
@@ -215,7 +215,7 @@ export default function LocalAnalyticsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                  <i className="fas fa-church text-blue-600 mr-2"></i>
+                  <i className="fas fa-church text-orange-500 mr-2"></i>
                   {currentCongregationName || "Local Congregation"}
                 </h3>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -226,7 +226,7 @@ export default function LocalAnalyticsPage() {
                 <div className="text-sm text-gray-500 dark:text-gray-400">
                   Filtered Data
                 </div>
-                <div className="text-xs text-blue-600 dark:text-blue-400">
+                <div className="text-xs text-orange-500 dark:text-orange-400">
                   {selectedCongregation}
                 </div>
               </div>
@@ -249,7 +249,7 @@ export default function LocalAnalyticsPage() {
                 onChange={(e) =>
                   setDateRange({ ...dateRange, start: e.target.value })
                 }
-                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
                 aria-label="Start date"
               />
             </div>
@@ -267,7 +267,7 @@ export default function LocalAnalyticsPage() {
                 onChange={(e) =>
                   setDateRange({ ...dateRange, end: e.target.value })
                 }
-                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+                className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
                 aria-label="End date"
               />
             </div>
@@ -290,7 +290,7 @@ export default function LocalAnalyticsPage() {
                   onChange={(e) =>
                     setDateRange({ ...dateRange, start: e.target.value })
                   }
-                  className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+                  className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
                   aria-label="Start date"
                 />
               </div>
@@ -308,7 +308,7 @@ export default function LocalAnalyticsPage() {
                   onChange={(e) =>
                     setDateRange({ ...dateRange, end: e.target.value })
                   }
-                  className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
+                  className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-gray-800 dark:text-white text-xs bg-white dark:bg-gray-700"
                   aria-label="End date"
                 />
               </div>
@@ -318,14 +318,14 @@ export default function LocalAnalyticsPage() {
 
         <div className="bg-gray-50 dark:bg-gray-700 shadow rounded-lg p-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-8 mt-6">
-            <i className="fas fa-calendar-check text-blue-600 mr-3"></i>
+            <i className="fas fa-calendar-check text-orange-500 mr-3"></i>
             Sunday Attendance Analytics
           </h2>
 
           {/* Statistics Cards */}
           <div className="flex overflow-x-auto space-x-4 pb-4 mb-8">
-            <div className="flex-shrink-0 w-48 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+            <div className="flex-shrink-0 w-48 bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-500/5 dark:from-orange-400/20 dark:to-orange-500/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Total Attendance</p>
@@ -336,7 +336,7 @@ export default function LocalAnalyticsPage() {
                     }
                   </p>
                 </div>
-                <i className="fas fa-users text-xl text-blue-600 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+                <i className="fas fa-users text-xl text-orange-500 dark:text-orange-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
             </div>
 
@@ -452,7 +452,7 @@ export default function LocalAnalyticsPage() {
                         Monthly attendance patterns
                       </p>
                     </div>
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
                       <i className="fas fa-calendar-alt text-white"></i>
                     </div>
                   </div>
@@ -462,7 +462,7 @@ export default function LocalAnalyticsPage() {
                   </p>
                   <a
                     href="/local/monthlytrends"
-                    className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                    className="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-500 text-white text-sm font-medium rounded-lg transition-colors duration-200"
                   >
                     View Monthly Trends
                     <i className="fas fa-arrow-right ml-2"></i>
@@ -540,7 +540,7 @@ export default function LocalAnalyticsPage() {
                             Monthly attendance patterns
                           </p>
                         </div>
-                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                        <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
                           <i className="fas fa-calendar-alt text-white"></i>
                         </div>
                       </div>
@@ -550,7 +550,7 @@ export default function LocalAnalyticsPage() {
                       </p>
                       <a
                         href="/local/monthlytrends"
-                        className="inline-flex items-center px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium rounded-lg transition-colors duration-200"
+                        className="inline-flex items-center px-4 py-2 bg-orange-500 hover:bg-orange-500 text-white text-sm font-medium rounded-lg transition-colors duration-200"
                       >
                         View Monthly Trends
                         <i className="fas fa-arrow-right ml-2"></i>
@@ -618,8 +618,8 @@ export default function LocalAnalyticsPage() {
                 <i className="fas fa-users text-xl text-green-600 dark:text-green-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
             </div>
-              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+              <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-500/5 dark:from-orange-400/20 dark:to-orange-500/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Male Members</p>
@@ -632,7 +632,7 @@ export default function LocalAnalyticsPage() {
                       ) || 0}
                     </p>
                 </div>
-                <i className="fas fa-mars text-xl text-blue-600 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+                <i className="fas fa-mars text-xl text-orange-500 dark:text-orange-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
             </div>
               <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-pink-500/20 relative overflow-hidden group">
@@ -724,8 +724,8 @@ export default function LocalAnalyticsPage() {
                 <i className="fas fa-users text-xl text-green-600 dark:text-green-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
             </div>
-                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group flex-shrink-0 w-48">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+                  <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group flex-shrink-0 w-48">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-500/5 dark:from-orange-400/20 dark:to-orange-500/20 animate-pulse"></div>
               <div className="relative z-10 flex items-center justify-between">
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Male Members</p>
@@ -739,7 +739,7 @@ export default function LocalAnalyticsPage() {
                           ) || 0}
                         </p>
                 </div>
-                <i className="fas fa-mars text-xl text-blue-600 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+                <i className="fas fa-mars text-xl text-orange-500 dark:text-orange-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
               </div>
             </div>
                   <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-3 shadow-lg dark:shadow-pink-500/20 relative overflow-hidden group flex-shrink-0 w-48">
@@ -839,7 +839,7 @@ export default function LocalAnalyticsPage() {
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
                     <div
-                      className="h-2 rounded-full bg-blue-500"
+                      className="h-2 rounded-full bg-orange-500"
                       style={{
                         width: `${Math.min((((filtered?.membersDatabase || chartData.membersDatabase)?.genderDistribution?.reduce((sum, item) => sum + item.male, 0) || 0) / ((filtered?.membersDatabase || chartData.membersDatabase)?.congregations?.reduce((sum, c) => sum + c.members, 0) || 1)) * 100, 100)}%`,
                       }}
@@ -879,15 +879,15 @@ export default function LocalAnalyticsPage() {
               </h3>
               {/* Large screens - Grid layout with cards */}
               <div className="hidden lg:grid grid-cols-1 gap-6">
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group">
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-500/5 dark:from-orange-400/20 dark:to-orange-500/20 animate-pulse"></div>
                   <div className="relative z-10">
                     <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3 text-center">
                       Total Members
                     </h4>
                     <div className="flex justify-center space-x-4">
                       <div className="text-center">
-                        <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-200">
+                        <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-200">
                           <i className="fas fa-mars text-white text-sm"></i>
                         </div>
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -927,15 +927,15 @@ export default function LocalAnalyticsPage() {
               {/* Small screens - Grid layout with evenly distributed cards */}
               <div className="lg:hidden">
                 <div className="grid grid-cols-1 gap-4">
-                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg dark:shadow-orange-500/20 relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-400/5 to-orange-500/5 dark:from-orange-400/20 dark:to-orange-500/20 animate-pulse"></div>
                     <div className="relative z-10">
                       <h4 className="text-sm font-medium text-gray-900 dark:text-white mb-3 text-center">
                         Total Members
                       </h4>
                       <div className="flex justify-center space-x-4">
                         <div className="text-center">
-                          <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-200">
+                          <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform duration-200">
                             <i className="fas fa-mars text-white text-sm"></i>
                           </div>
                           <div className="text-sm font-medium text-gray-900 dark:text-white">

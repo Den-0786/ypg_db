@@ -168,7 +168,7 @@ export default function PinModal({
                 className={`w-full px-2 sm:px-3 py-2 text-sm border rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:border-transparent ${
                   error
                     ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-300 dark:border-gray-600 focus:ring-blue-500"
+                    : "border-gray-300 dark:border-gray-600 focus:ring-orange-500"
                 }`}
                 placeholder="Enter 4-digit PIN"
                 maxLength={4}
@@ -193,7 +193,7 @@ export default function PinModal({
               </button>
               <button
                 type="submit"
-                className={`flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm text-white rounded-md transition-colors bg-blue-600 hover:bg-blue-700 ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`flex-1 px-2 sm:px-3 py-2 text-xs sm:text-sm text-white rounded-md transition-colors bg-orange-500 hover:bg-orange-600 ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
                 disabled={isLoading || !pin}
               >
                 {isLoading ? (

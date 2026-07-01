@@ -23,7 +23,7 @@ export default function ToastNotification({ toast }) {
       case "warning":
         return "bg-yellow-500 dark:bg-yellow-600";
       default:
-        return "bg-blue-500 dark:bg-blue-600";
+        return "bg-orange-500 dark:bg-orange-500";
     }
   };
 
