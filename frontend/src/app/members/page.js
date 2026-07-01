@@ -364,7 +364,7 @@ export default function MembersPage() {
     return (
       <DashboardLayout currentPage="Members">
         <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
         </div>
       </DashboardLayout>
     );
@@ -374,10 +374,7 @@ export default function MembersPage() {
     <DashboardLayout currentPage="Members">
       <div className="space-y-6">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-700 dark:to-purple-700 rounded-xl shadow-xl overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-purple-400/20 animate-pulse"></div>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16"></div>
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full -ml-12 -mb-12"></div>
+        <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl shadow-xl overflow-hidden relative">
           <div className="relative z-10 p-6 lg:p-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
               <div className="mb-4 lg:mb-0">
@@ -387,7 +384,6 @@ export default function MembersPage() {
                     {congregationName
                       ? `${congregationName} Members`
                       : "Members Management"}
-                    {/* Debug: {congregationName || 'null'} */}
                   </h1>
                 </div>
                 <p className="text-white/90 text-sm lg:text-base">
@@ -406,7 +402,7 @@ export default function MembersPage() {
                   <div className="text-white text-xs opacity-90">
                     Congregations
                   </div>
-                  <div className="text-blue-300 font-semibold">
+                  <div className="text-white font-semibold">
                     {totalCongregations}
                   </div>
                 </div>
@@ -418,83 +414,59 @@ export default function MembersPage() {
         {/* Statistics Cards */}
         <div className="overflow-x-auto">
           <div className="flex gap-6 min-w-max md:grid md:grid-cols-4 md:min-w-0">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-orange-500">
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-blue-100 dark:bg-blue-900">
-                    <i className="fas fa-users text-blue-600 dark:text-blue-400"></i>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Total Members
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Total Members
+                  </p>
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                     {totalMembers}
                   </p>
                 </div>
+                <i className="fas fa-users text-2xl text-orange-500"></i>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-orange-500">
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center w-12 h-12">
-                    <i className="fas fa-male text-green-600 dark:text-green-400 text-lg"></i>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Male
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Male
+                  </p>
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                     {totalMale}
                   </p>
                 </div>
+                <i className="fas fa-male text-2xl text-orange-500"></i>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-orange-500">
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-pink-100 dark:bg-pink-900 flex items-center justify-center w-12 h-12">
-                    <i className="fas fa-female text-pink-600 dark:text-pink-400 text-lg"></i>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Female
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Female
+                  </p>
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
                     {totalFemale}
                   </p>
                 </div>
+                <i className="fas fa-female text-2xl text-orange-500"></i>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0">
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 min-w-[280px] md:min-w-0 border-t-4 border-orange-500">
               <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="p-3 rounded-full bg-purple-100 dark:bg-purple-900">
-                    <i className="fas fa-church text-purple-600 dark:text-purple-400"></i>
-                  </div>
-                  <div className="ml-4">
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
-                      Congregations
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    Congregations
+                  </p>
                   <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                    10
+                    {totalCongregations}
                   </p>
                 </div>
+                <i className="fas fa-church text-2xl text-orange-500"></i>
               </div>
             </div>
           </div>
@@ -514,9 +486,9 @@ export default function MembersPage() {
               </span>
               <button
                 onClick={handleExecutiveViewToggle}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
                   executiveView === "local"
-                    ? "bg-blue-600"
+                    ? "bg-orange-500"
                     : "bg-gray-200 dark:bg-gray-700"
                 }`}
               >
@@ -588,9 +560,31 @@ export default function MembersPage() {
 
         {/* Members Table */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-6">
-            Congregation Members
-          </h2>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+              Congregation Members
+            </h2>
+            <div className="relative w-full sm:w-72">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <i className="fas fa-search text-gray-400"></i>
+              </div>
+              <input
+                type="text"
+                placeholder="Search by name, phone, congregation..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+              {searchTerm && (
+                <button
+                  onClick={() => setSearchTerm("")}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              )}
+            </div>
+          </div>
           <MembersTable
             members={members}
             onView={handleViewDetails}

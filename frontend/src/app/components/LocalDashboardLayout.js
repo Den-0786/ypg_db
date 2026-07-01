@@ -6,6 +6,7 @@ import ExportAnalyticsButton from "./ExportAnalyticsButton";
 import PinModal from "./PinModal";
 import { useTheme } from "./ThemeProvider";
 import { useToast, ToastContainer } from "./Toast";
+import autoLogout from "../utils/autoLogout";
 
 // Members Quick Actions Dropdown Component
 function MembersQuickActionsDropdown({
@@ -37,13 +38,37 @@ function MembersQuickActionsDropdown({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showExportModal]);
 
-  const handleExport = (format) => {
-    if (format === "CSV") {
-      exportSelectedToCSV();
-    } else if (format === "Excel") {
-      showToast("Excel export coming soon!", "success");
-    } else if (format === "PDF") {
-      showToast("PDF export coming soon!", "success");
+  const handleExport = async (format) => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+    const formatLower = format.toLowerCase();
+    try {
+      const response = await fetch(`${baseUrl}/api/data/export/${formatLower}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "all" }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        if (formatLower === "csv" || formatLower === "excel") {
+          const blob = new Blob([data.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = data.filename || `members-export.${formatLower === "excel" ? "xlsx" : "csv"}`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        } else if (formatLower === "pdf" && data.pdf_url) {
+          window.open(`${baseUrl}${data.pdf_url}`, "_blank");
+        }
+        if (window.showToast) window.showToast(`${format} export completed!`, "success");
+      } else {
+        if (window.showToast) window.showToast(data.error || "Export failed", "error");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      if (window.showToast) window.showToast("Export failed. Please try again.", "error");
     }
     setShowExportModal(false);
   };
@@ -53,11 +78,11 @@ function MembersQuickActionsDropdown({
       <div className="relative ml-2" ref={ref}>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-blue-50 text-blue-700 rounded-lg shadow-sm border border-blue-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-orange-50 text-orange-700 rounded-lg shadow-sm border border-orange-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-orange-400"
           aria-haspopup="true"
           aria-expanded={open}
         >
-          <i className="fas fa-bolt text-blue-500"></i>
+          <i className="fas fa-bolt text-orange-500"></i>
           Quick Actions
           <i
             className={`fas fa-chevron-${open ? "up" : "down"} text-xs ml-1`}
@@ -211,12 +236,37 @@ function AttendanceQuickActionsDropdown() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showExportModal]);
 
-  const handleExport = (format) => {
-    if (typeof window !== "undefined" && window.showToast) {
-      window.showToast(
-        `Attendance data exported as ${format.toUpperCase()}`,
-        "success"
-      );
+  const handleExport = async (format) => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+    const formatLower = format.toLowerCase();
+    try {
+      const response = await fetch(`${baseUrl}/api/data/export/${formatLower}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "attendance" }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        if (formatLower === "csv" || formatLower === "excel") {
+          const blob = new Blob([data.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = data.filename || `attendance-export.${formatLower === "excel" ? "xlsx" : "csv"}`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        } else if (formatLower === "pdf" && data.pdf_url) {
+          window.open(`${baseUrl}${data.pdf_url}`, "_blank");
+        }
+        if (window.showToast) window.showToast(`${format} export completed!`, "success");
+      } else {
+        if (window.showToast) window.showToast(data.error || "Export failed", "error");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      if (window.showToast) window.showToast("Export failed. Please try again.", "error");
     }
     setShowExportModal(false);
   };
@@ -225,11 +275,11 @@ function AttendanceQuickActionsDropdown() {
     <div className="relative ml-2" ref={ref}>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-blue-50 text-blue-700 rounded-lg shadow-sm border border-blue-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="flex items-center gap-2 px-3 py-1.5 bg-white/90 hover:bg-orange-50 text-orange-700 rounded-lg shadow-sm border border-orange-200 text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-orange-400"
         aria-haspopup="true"
         aria-expanded={open}
       >
-        <i className="fas fa-bolt text-blue-500"></i>
+        <i className="fas fa-bolt text-orange-500"></i>
         Quick Actions
         <i
           className={`fas fa-chevron-${open ? "up" : "down"} text-xs ml-1`}
@@ -1019,10 +1069,18 @@ export default function LocalDashboardLayout({
   };
 
   const handleLogout = () => {
-    showSuccess("Logged out successfully!");
-    setTimeout(() => {
-      window.location.href = "/";
-    }, 1000);
+    if (typeof window !== "undefined" && window.autoLogout) {
+      window.autoLogout.manualLogout();
+    } else {
+      localStorage.removeItem("user");
+      localStorage.removeItem("congregationId");
+      localStorage.removeItem("congregationName");
+      sessionStorage.removeItem("welcomeShown");
+      showSuccess("Logged out successfully!");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1000);
+    }
   };
 
   useEffect(() => {
@@ -1061,6 +1119,14 @@ export default function LocalDashboardLayout({
           showSuccess(message);
         }
       };
+
+      // Initialize auto-logout
+      const user = localStorage.getItem("user");
+      const congId = localStorage.getItem("congregationId");
+      if (user || congId) {
+        autoLogout.updateLoginStatus(true);
+      }
+      window.autoLogout = autoLogout;
 
       const congregationId = localStorage.getItem("congregationId");
       const savedTheme = localStorage.getItem(`theme_${congregationId}`);

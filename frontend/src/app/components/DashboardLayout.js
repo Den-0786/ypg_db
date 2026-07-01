@@ -172,25 +172,25 @@ export default function DashboardLayout({
   // Initialize auto-logout
   useEffect(() => {
     // Check if user is logged in
-    const token =
-      localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
-    if (token) {
+    const user = localStorage.getItem("user");
+    const congregationId = localStorage.getItem("congregationId");
+    if (user || congregationId) {
       autoLogout.updateLoginStatus(true);
-      // Make autoLogout available globally
-      if (typeof window !== "undefined") {
-        window.autoLogout = autoLogout;
-        // Set up global toast function for autoLogout utility
-        window.showToast = (message, type = "success", duration = 3000) => {
-          if (type === "success") {
-            showSuccess(message);
-          } else if (type === "error") {
-            showError(message);
-          } else {
-            // For info type, use success but with different styling
-            showSuccess(message);
-          }
-        };
-      }
+    }
+    // Make autoLogout available globally
+    if (typeof window !== "undefined") {
+      window.autoLogout = autoLogout;
+      // Set up global toast function for autoLogout utility
+      window.showToast = (message, type = "success", duration = 3000) => {
+        if (type === "success") {
+          showSuccess(message);
+        } else if (type === "error") {
+          showError(message);
+        } else {
+          // For info/warning type, use success styling
+          showSuccess(message);
+        }
+      };
     }
 
     // Cleanup on unmount
@@ -2796,13 +2796,37 @@ function MembersQuickActionsDropdown({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleExport = (format) => {
-    if (format === "CSV") {
-      exportSelectedToCSV();
-    } else if (format === "Excel") {
-      showToast("Excel export coming soon!", "success");
-    } else if (format === "PDF") {
-      showToast("PDF export coming soon!", "success");
+  const handleExport = async (format) => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+    const formatLower = format.toLowerCase();
+    try {
+      const response = await fetch(`${baseUrl}/api/data/export/${formatLower}/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "all" }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        if (formatLower === "csv" || formatLower === "excel") {
+          const blob = new Blob([data.data], { type: "text/csv" });
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = data.filename || `members-export.${formatLower === "excel" ? "xlsx" : "csv"}`;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(url);
+          document.body.removeChild(a);
+        } else if (formatLower === "pdf" && data.pdf_url) {
+          window.open(`${baseUrl}${data.pdf_url}`, "_blank");
+        }
+        if (window.showToast) window.showToast(`${format} export completed!`, "success");
+      } else {
+        if (window.showToast) window.showToast(data.error || "Export failed", "error");
+      }
+    } catch (error) {
+      console.error("Export error:", error);
+      if (window.showToast) window.showToast("Export failed. Please try again.", "error");
     }
     setShowExportModal(false);
   };

@@ -14,14 +14,19 @@ export default function MembersTable({
   membersPerPage,
   handleSelectAll,
 }) {
+  const filteredMembers = members.filter((member) => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      (member.name || "").toLowerCase().includes(term) ||
+      (member.phone || member.phone_number || "").toLowerCase().includes(term) ||
+      (member.congregation || "").toLowerCase().includes(term) ||
+      (member.email || "").toLowerCase().includes(term)
+    );
+  });
+
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          <i className="fas fa-users text-green-500 mr-2"></i>
-          Congregation Members
-        </h3>
-      </div>
+    <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-700">
@@ -94,8 +99,8 @@ export default function MembersTable({
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {members.length > 0 ? (
-              members.map((member) => (
+            {filteredMembers.length > 0 ? (
+              filteredMembers.map((member) => (
                 <tr
                   key={member.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700"

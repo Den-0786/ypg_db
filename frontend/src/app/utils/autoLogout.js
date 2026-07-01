@@ -73,6 +73,14 @@ class AutoLogout {
     this.lastActivity = Date.now();
     this.warningShown = false;
 
+    // Remove warning indicator if present
+    if (typeof window !== "undefined") {
+      const warning = document.getElementById("auto-logout-warning");
+      if (warning) {
+        warning.remove();
+      }
+    }
+
     // Clear existing timeouts
     if (this.timeout) {
       clearTimeout(this.timeout);
@@ -104,20 +112,15 @@ class AutoLogout {
 
     this.warningShown = true;
 
-    // Show toast warning
-    if (typeof window !== "undefined" && window.showToast) {
-      window.showToast(
-        "You will be logged out in 1 minute due to inactivity. Click anywhere or press any key to stay logged in.",
-        "warning",
-        60000 // Show for 1 minute
-      );
-    }
-
-    // Add visual indicator
+    // Add visual indicator (only one notification, not both toast and overlay)
     this.addWarningIndicator();
   }
 
   addWarningIndicator() {
+    // Remove existing warning if any
+    const existing = document.getElementById("auto-logout-warning");
+    if (existing) existing.remove();
+
     // Create warning overlay
     const warningDiv = document.createElement("div");
     warningDiv.id = "auto-logout-warning";
@@ -144,8 +147,8 @@ class AutoLogout {
           text-align: center;
           max-width: 400px;
           margin: 20px;
+          pointer-events: auto;
         ">
-          <i class="fas fa-exclamation-triangle" style="font-size: 24px; margin-bottom: 10px;"></i>
           <h3 style="margin: 0 0 10px 0; font-weight: bold;">Session Timeout Warning</h3>
           <p style="margin: 0; font-size: 14px;">You will be logged out in 1 minute due to inactivity.</p>
           <p style="margin: 10px 0 0 0; font-size: 12px; font-weight: bold;">Click anywhere or press any key to stay logged in.</p>
@@ -154,20 +157,6 @@ class AutoLogout {
     `;
 
     document.body.appendChild(warningDiv);
-
-    // Remove warning when user interacts
-    const removeWarning = () => {
-      const warning = document.getElementById("auto-logout-warning");
-      if (warning) {
-        warning.remove();
-      }
-      this.warningShown = false;
-      this.resetTimer();
-    };
-
-    // Add event listeners to remove warning
-    document.addEventListener("click", removeWarning, { once: true });
-    document.addEventListener("keydown", removeWarning, { once: true });
   }
 
   logout() {
@@ -179,6 +168,8 @@ class AutoLogout {
       clearTimeout(this.warningTimeout);
     }
 
+    this.isLoggedIn = false;
+
     // Remove warning indicator if present
     if (typeof window !== "undefined") {
       const warning = document.getElementById("auto-logout-warning");
@@ -186,15 +177,17 @@ class AutoLogout {
         warning.remove();
       }
 
-      // Clear auth data
+      // Clear all auth data
       localStorage.removeItem("authToken");
-      sessionStorage.removeItem("authToken");
       localStorage.removeItem("user");
+      localStorage.removeItem("congregationId");
+      localStorage.removeItem("congregationName");
+      sessionStorage.removeItem("authToken");
       sessionStorage.removeItem("user");
       sessionStorage.removeItem("welcomeShown");
     }
 
-    // Show logout toast
+    // Show logout toast then redirect
     if (typeof window !== "undefined" && window.showToast) {
       window.showToast(
         "You have been logged out due to inactivity.",
@@ -203,11 +196,11 @@ class AutoLogout {
       );
     }
 
-    // Redirect to home page
+    // Redirect to login page
     if (typeof window !== "undefined") {
       setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
+        window.location.href = "/login";
+      }, 1500);
     }
   }
 
@@ -221,6 +214,8 @@ class AutoLogout {
       clearTimeout(this.warningTimeout);
     }
 
+    this.isLoggedIn = false;
+
     // Remove warning indicator if present
     if (typeof window !== "undefined") {
       const warning = document.getElementById("auto-logout-warning");
@@ -228,10 +223,12 @@ class AutoLogout {
         warning.remove();
       }
 
-      // Clear auth data
+      // Clear all auth data
       localStorage.removeItem("authToken");
-      sessionStorage.removeItem("authToken");
       localStorage.removeItem("user");
+      localStorage.removeItem("congregationId");
+      localStorage.removeItem("congregationName");
+      sessionStorage.removeItem("authToken");
       sessionStorage.removeItem("user");
       sessionStorage.removeItem("welcomeShown");
     }
@@ -245,11 +242,11 @@ class AutoLogout {
       );
     }
 
-    // Redirect to home page
+    // Redirect to login page
     if (typeof window !== "undefined") {
       setTimeout(() => {
-        window.location.href = "/";
-      }, 1000);
+        window.location.href = "/login";
+      }, 1500);
     }
   }
 
