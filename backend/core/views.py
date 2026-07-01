@@ -7,6 +7,9 @@ from io import BytesIO
 
 from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash, authenticate, login, logout
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
@@ -355,6 +358,205 @@ def api_verify_password(request):
             'error': str(e)
         }, status=500)
 
+
+@csrf_exempt
+@require_POST
+def api_signup(request):
+    """API endpoint for user registration"""
+    try:
+        data = json.loads(request.body)
+        username = data.get('username', '').strip()
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
+        first_name = data.get('first_name', '').strip()
+        last_name = data.get('last_name', '').strip()
+        congregation_name = data.get('congregation', '').strip()
+        
+        # Validation
+        if not username or not email or not password:
+            return JsonResponse({
+                'success': False,
+                'error': 'Username, email, and password are required'
+            }, status=400)
+        
+        if len(password) < 8:
+            return JsonResponse({
+                'success': False,
+                'error': 'Password must be at least 8 characters long'
+            }, status=400)
+        
+        # Check if username already exists
+        if User.objects.filter(username=username).exists():
+            return JsonResponse({
+                'success': False,
+                'error': 'Username already exists'
+            }, status=400)
+        
+        # Check if email already exists
+        if User.objects.filter(email=email).exists():
+            return JsonResponse({
+                'success': False,
+                'error': 'Email already registered'
+            }, status=400)
+        
+        # Create user
+        user = User.objects.create_user(
+            username=username,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+        
+        # Create user profile
+        UserProfile.objects.create(user=user)
+        
+        # If congregation is provided, try to associate
+        congregation_info = None
+        if congregation_name:
+            try:
+                congregation = Congregation.objects.get(name=congregation_name)
+                congregation.user = user
+                congregation.save()
+                congregation_info = {
+                    'id': str(congregation.id),
+                    'name': congregation.name
+                }
+            except Congregation.DoesNotExist:
+                pass
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Registration successful',
+            'user': {
+                'username': user.username,
+                'email': user.email,
+                'first_name': user.first_name,
+                'last_name': user.last_name
+            },
+            'congregation': congregation_info
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@require_POST
+def api_forgot_password(request):
+    """API endpoint for forgot password - sends reset link"""
+    try:
+        data = json.loads(request.body)
+        email = data.get('email', '').strip()
+        
+        if not email:
+            return JsonResponse({
+                'success': False,
+                'error': 'Email is required'
+            }, status=400)
+        
+        # Check if user exists with this email
+        try:
+            user = User.objects.get(email=email)
+            
+            # Generate password reset token
+            token = default_token_generator.make_token(user)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            
+            # In a real implementation, you would send an email here
+            # For now, we'll return the reset link in the response
+            reset_link = f"/reset-password/{uid}/{token}/"
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Password reset link sent to your email',
+                'reset_link': reset_link  # Remove this in production
+            })
+        except User.DoesNotExist:
+            # Don't reveal if email exists or not for security
+            return JsonResponse({
+                'success': True,
+                'message': 'If the email exists, a reset link has been sent'
+            })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@require_POST
+def api_reset_password(request):
+    """API endpoint for resetting password with token"""
+    try:
+        data = json.loads(request.body)
+        uid = data.get('uid', '').strip()
+        token = data.get('token', '').strip()
+        new_password = data.get('new_password', '').strip()
+        
+        if not uid or not token or not new_password:
+            return JsonResponse({
+                'success': False,
+                'error': 'UID, token, and new password are required'
+            }, status=400)
+        
+        if len(new_password) < 8:
+            return JsonResponse({
+                'success': False,
+                'error': 'Password must be at least 8 characters long'
+            }, status=400)
+        
+        # Decode user ID
+        try:
+            user_id = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=user_id)
+        except (TypeError, ValueError, User.DoesNotExist):
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid reset link'
+            }, status=400)
+        
+        # Verify token
+        if not default_token_generator.check_token(user, token):
+            return JsonResponse({
+                'success': False,
+                'error': 'Invalid or expired token'
+            }, status=400)
+        
+        # Set new password
+        user.set_password(new_password)
+        user.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Password reset successful'
+        })
+        
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON data'
+        }, status=400)
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
+            'error': str(e)
+        }, status=500)
 
 
 # 

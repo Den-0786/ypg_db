@@ -52,6 +52,9 @@ urlpatterns = [
     path("api/auth/pin-login/", views.api_pin_login, name="api_pin_login"),
     path("api/auth/logout/", views.api_logout, name="api_logout"),
     path("api/auth/verify-password/", views.api_verify_password, name="api_verify_password"),
+    path("api/auth/signup/", views.api_signup, name="api_signup"),
+    path("api/auth/forgot-password/", views.api_forgot_password, name="api_forgot_password"),
+    path("api/auth/reset-password/", views.api_reset_password, name="api_reset_password"),
     
     # API URLs
     path("api/members/", views.api_members, name="api_members"),
