@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import ToastContainer from "../../components/ToastContainer";
-import { apiFetch } from "../../utils/api";
+import ToastContainer from "../../../components/ToastContainer";
+import { apiFetch } from "../../../utils/api";
 import Link from "next/link";
 
 export default function ResetPasswordPage() {
