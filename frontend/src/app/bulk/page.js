@@ -44,6 +44,7 @@ export default function BulkRegistrationPage() {
     hometown: "",
     relative_contact: "",
     membership_status: "Active",
+    member_level: "district",
     position: "",
     is_executive: false,
     executive_position: "",
