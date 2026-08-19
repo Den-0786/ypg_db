@@ -96,11 +96,15 @@ export default function LocalMembersPage() {
             }
 
             if (Array.isArray(allMembers)) {
+              // Filter out district-level members from local view
+              const localMembers = allMembers.filter(
+                (member) => member.member_level !== "district"
+              );
               // Separate executives from regular members
-              const executivesList = allMembers.filter(
+              const executivesList = localMembers.filter(
                 (member) => member.is_executive
               );
-              const regularMembers = allMembers.filter(
+              const regularMembers = localMembers.filter(
                 (member) => !member.is_executive
               );
 
@@ -109,26 +113,26 @@ export default function LocalMembersPage() {
               setExecutives(executivesList);
 
               // Calculate statistics
-              const totalMembers = allMembers.length;
-              const totalMale = allMembers.filter(
+              const totalMembers = localMembers.length;
+              const totalMale = localMembers.filter(
                 (m) => m.gender === "Male"
               ).length;
-              const totalFemale = allMembers.filter(
+              const totalFemale = localMembers.filter(
                 (m) => m.gender === "Female"
               ).length;
-              const communicant = allMembers.filter(
+              const communicant = localMembers.filter(
                 (m) => m.communicant === "Yes"
               ).length;
-              const confirmed = allMembers.filter(
+              const confirmed = localMembers.filter(
                 (m) => m.confirmation === "Yes"
               ).length;
-              const baptism = allMembers.filter(
+              const baptism = localMembers.filter(
                 (m) => m.baptism === "Yes"
               ).length;
-              const activeGuilders = allMembers.filter(
+              const activeGuilders = localMembers.filter(
                 (m) => m.status === "Active"
               ).length;
-              const distantGuilders = allMembers.filter(
+              const distantGuilders = localMembers.filter(
                 (m) => m.status === "Inactive"
               ).length;
 

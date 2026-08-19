@@ -406,11 +406,17 @@ class DataStore {
           timestamp: new Date().toISOString(),
         }));
 
-        // Filter by congregation name on the frontend (only if congregation name was provided, not ID)
-        if (filters.congregation && isNaN(filters.congregation)) {
+        // Always filter out district-level members when viewing from a local context
+        if (filters.congregation) {
           members = members.filter(
-            (m) => m.congregation === filters.congregation && m.member_level !== "district"
+            (m) => m.member_level !== "district"
           );
+          // If congregation is a name (not ID), also filter by name since backend only filters by ID
+          if (isNaN(filters.congregation)) {
+            members = members.filter(
+              (m) => m.congregation === filters.congregation
+            );
+          }
         }
 
         this.membersData = members;
