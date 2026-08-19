@@ -783,11 +783,7 @@ export default function DashboardLayout({
         targetCongregations = setting.selected_congregations;
         break;
       case "non_submitting":
-        // This would be determined by the current attendance data
-        targetCongregations = [
-          "Emmanuel Congregation Ahinsan",
-          "Peniel Congregation Esreso No1",
-        ]; // Demo data
+        targetCongregations = [];
         break;
     }
 

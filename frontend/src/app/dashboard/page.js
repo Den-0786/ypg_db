@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
-import ToastContainer from "../components/ToastContainer";
 import AttendanceWaveChart from "../components/AttendanceWaveChart";
 import autoLogout from "../utils/autoLogout";
 import getDataStore from "../utils/dataStore";
@@ -28,11 +27,6 @@ export default function DashboardPage() {
     newMembersThisMonth: 0,
   });
   const [loading, setLoading] = useState(true);
-  const [toast, setToast] = useState({
-    show: false,
-    message: "",
-    type: "success",
-  });
 
   // Initialize auto-logout when component mounts
   useEffect(() => {
@@ -70,34 +64,21 @@ export default function DashboardPage() {
           newMembersThisMonth: stats.newMembersThisMonth || 0,
         });
       } else {
-        showToast("Failed to fetch dashboard data", "error");
+        if (typeof window !== "undefined" && window.showToast) {
+          window.showToast("Failed to fetch dashboard data", "error");
+        }
       }
     } catch (error) {
-      showToast("Error fetching dashboard data", "error");
+      if (typeof window !== "undefined" && window.showToast) {
+        window.showToast("Error fetching dashboard data", "error");
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const showToast = (message, type = "success") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type }), 3000);
-  };
-
   return (
     <DashboardLayout currentPage="Dashboard">
-      {toast.show && (
-        <div
-          className={`fixed top-6 right-6 z-50 px-4 py-2 rounded shadow-lg text-white text-sm font-semibold transition-all duration-300
-          ${toast.type === "success" ? "bg-green-600" : "bg-red-600"}`}
-          role="alert"
-          aria-live="assertive"
-          tabIndex={0}
-        >
-          {toast.message}
-        </div>
-      )}
-
       <div className="space-y-6">
         {/* Welcome Message Card */}
         <div className="bg-gradient-to-r from-blue-500 to-blue-700 rounded-lg p-6 text-white shadow-lg">
@@ -273,8 +254,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
-      {/* Toast Container */}
-      <ToastContainer />
     </DashboardLayout>
   );
 }

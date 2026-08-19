@@ -248,59 +248,59 @@ export default function PersonalInfoSection({
 
         <div className="sm:col-span-1">
           <label className="block text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-2">
-            Date of Birth
+            Date of Birth <span className="text-gray-400 text-xs font-normal">(Month & Day only)</span>
           </label>
-          <input
-            type="date"
-            value={currentMember.date_of_birth}
-            onChange={(e) => {
-              const selectedDate = e.target.value;
-              if (selectedDate) {
-                const today = new Date();
-                const birthDate = new Date(selectedDate);
-                const age = today.getFullYear() - birthDate.getFullYear();
-                const monthDiff = today.getMonth() - birthDate.getMonth();
-
-                // Adjust age if birthday hasn't occurred this year
-                const actualAge =
-                  monthDiff < 0 ||
-                  (monthDiff === 0 && today.getDate() < birthDate.getDate())
-                    ? age - 1
-                    : age;
-
-                if (actualAge < 17) {
-                  setErrors((prev) => ({
+          <div className="flex gap-2">
+            <select
+              value={currentMember.dob_month || ""}
+              onChange={(e) => {
+                const month = e.target.value;
+                setCurrentMember((prev) => {
+                  const day = prev.dob_day || "";
+                  return {
                     ...prev,
-                    date_of_birth: "Age cannot be less than 17",
-                  }));
-                } else if (actualAge > 30) {
-                  setErrors((prev) => ({
+                    dob_month: month,
+                    date_of_birth: month && day ? `${month.padStart(2, "0")}-${day.padStart(2, "0")}` : "",
+                  };
+                });
+              }}
+              className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-light-border dark:border-dark-border rounded-md focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface text-sm lg:text-base neumorphic-light-inset dark:neumorphic-dark-inset"
+            >
+              <option value="">Month</option>
+              <option value="1">January</option>
+              <option value="2">February</option>
+              <option value="3">March</option>
+              <option value="4">April</option>
+              <option value="5">May</option>
+              <option value="6">June</option>
+              <option value="7">July</option>
+              <option value="8">August</option>
+              <option value="9">September</option>
+              <option value="10">October</option>
+              <option value="11">November</option>
+              <option value="12">December</option>
+            </select>
+            <select
+              value={currentMember.dob_day || ""}
+              onChange={(e) => {
+                const day = e.target.value;
+                setCurrentMember((prev) => {
+                  const month = prev.dob_month || "";
+                  return {
                     ...prev,
-                    date_of_birth: "Age cannot be more than 30",
-                  }));
-                } else {
-                  setErrors((prev) => ({ ...prev, date_of_birth: "" }));
-                }
-              } else {
-                setErrors((prev) => ({ ...prev, date_of_birth: "" }));
-              }
-
-              setCurrentMember({
-                ...currentMember,
-                date_of_birth: selectedDate,
-              });
-            }}
-            className={`w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border rounded-md focus:outline-none focus:ring-2 text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface text-sm lg:text-base neumorphic-light-inset dark:neumorphic-dark-inset ${
-              errors.date_of_birth
-                ? "border-red-500 focus:ring-red-500"
-                : "border-light-border dark:border-dark-border focus:ring-light-accent dark:focus:ring-dark-accent"
-            }`}
-          />
-          {errors.date_of_birth && (
-            <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-              {errors.date_of_birth}
-            </p>
-          )}
+                    dob_day: day,
+                    date_of_birth: month && day ? `${month.padStart(2, "0")}-${day.padStart(2, "0")}` : "",
+                  };
+                });
+              }}
+              className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-light-border dark:border-dark-border rounded-md focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface text-sm lg:text-base neumorphic-light-inset dark:neumorphic-dark-inset"
+            >
+              <option value="">Day</option>
+              {Array.from({ length: 31 }, (_, i) => (
+                <option key={i + 1} value={i + 1}>{i + 1}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <div className="sm:col-span-1">

@@ -468,7 +468,15 @@ export default function BulkRegistrationPage() {
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
                     <p className="text-xs text-gray-500 dark:text-gray-400">Date of Birth</p>
                     <p className="font-medium text-gray-900 dark:text-white">
-                      {currentMember.date_of_birth || "N/A"}
+                      {(() => {
+                        const dob = currentMember.date_of_birth;
+                        if (!dob) return "N/A";
+                        const parts = dob.split("-");
+                        const months = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                        if (parts.length === 2) return `${months[parseInt(parts[0], 10)]} ${parseInt(parts[1], 10)}`;
+                        if (parts.length === 3) return `${months[parseInt(parts[1], 10)]} ${parseInt(parts[2], 10)}`;
+                        return dob;
+                      })()}
                     </p>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">

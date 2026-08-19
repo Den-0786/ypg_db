@@ -14,7 +14,7 @@ export default function PinModal({
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPin, setCurrentPin] = useState("1234"); // Default fallback
+  const [currentPin, setCurrentPin] = useState("");
   const [debugInfo, setDebugInfo] = useState(null);
 
   // Fetch current PIN from server

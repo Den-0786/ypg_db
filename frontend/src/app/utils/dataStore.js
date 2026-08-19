@@ -9,17 +9,11 @@ class DataStore {
     this.analyticsData = this.loadFromStorage("analyticsData") || {};
     this.leaderboardData = this.loadFromStorage("leaderboardData") || {};
 
-    // Initialize with some mock data if no data exists
+    // Initialize with empty data if no data exists
     if (this.membersData.length === 0) {
-      this.initializeMockData();
+      this.membersData = [];
+      this.saveToStorage("membersData", this.membersData);
     }
-  }
-
-  // Initialize with mock data for demonstration
-  initializeMockData() {
-    this.membersData = [];
-    this.saveToStorage("membersData", this.membersData);
-  }
 
   // Storage utilities
   loadFromStorage(key) {
@@ -203,7 +197,7 @@ class DataStore {
         district_executive_position: member.is_executive
           ? member.district_executive_position || ""
           : "",
-        date_of_birth: member.date_of_birth || "1990-01-01",
+        date_of_birth: member.date_of_birth || "",
         place_of_residence: member.place_of_residence || "Accra",
         residential_address:
           member.residential_address || "123 Main Street, Accra",
@@ -523,7 +517,7 @@ class DataStore {
           updatedData.date_of_birth ??
           existingMember.date_of_birth ??
           updatedData.dateOfBirth ??
-          "1990-01-01",
+          "",
         place_of_residence:
           updatedData.place_of_residence ??
           existingMember.place_of_residence ??
@@ -1024,7 +1018,7 @@ let dataStoreInstance = null;
 
 const getDataStore = () => {
   if (typeof window === "undefined") {
-    // Return a mock instance for SSR
+    // Return a stub instance for SSR (no localStorage access)
     return {
       attendanceRecords: [],
       membersData: [],

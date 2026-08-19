@@ -2090,7 +2090,7 @@ def api_gender_distribution(request):
 @require_http_methods(["GET"])
 def api_attendance_trends(request):
     """API endpoint for attendance trends over time"""
-    months = int(request.GET.get("months", 6))
+    months = int(request.GET.get("months", 12))
     congregation_id = request.GET.get("congregation")
 
     end_date = timezone.now().date()
@@ -2106,16 +2106,27 @@ def api_attendance_trends(request):
         ).order_by("date")
 
     # Group by month
-    monthly_data = defaultdict(list)
+    monthly_data = defaultdict(lambda: {"total": 0, "male": 0, "female": 0, "count": 0})
     for record in attendance_records:
         month_key = record.date.strftime("%Y-%m")
-        monthly_data[month_key].append(record.total_count)
+        monthly_data[month_key]["total"] += record.total_count
+        monthly_data[month_key]["male"] += record.male_count
+        monthly_data[month_key]["female"] += record.female_count
+        monthly_data[month_key]["count"] += 1
 
     # Calculate averages
-    months = sorted(monthly_data.keys())
-    averages = [sum(monthly_data[month]) / len(monthly_data[month]) for month in months]
+    sorted_months = sorted(monthly_data.keys())
+    total_avg = [round(monthly_data[m]["total"] / monthly_data[m]["count"], 1) for m in sorted_months]
+    male_avg = [round(monthly_data[m]["male"] / monthly_data[m]["count"], 1) for m in sorted_months]
+    female_avg = [round(monthly_data[m]["female"] / monthly_data[m]["count"], 1) for m in sorted_months]
 
-    return JsonResponse({"labels": months, "data": averages, "months": months})
+    return JsonResponse({
+        "labels": sorted_months,
+        "data": total_avg,
+        "male_data": male_avg,
+        "female_data": female_avg,
+        "months": months,
+    })
 
 
 @csrf_exempt
@@ -4283,8 +4294,6 @@ def generate_members_csv():
     csv_lines = ['Name,Gender,Date of Birth,Congregation,Phone,Email,Position,Membership Status,Date Added']
     
     for member in members:
-        # Calculate age from date of birth
-        age = (timezone.now().date() - member.date_of_birth).days // 365
         position = member.get_primary_executive_position() or member.position or "Member"
         
         csv_lines.append(f'"{member.first_name} {member.last_name}","{member.gender}","{member.date_of_birth}","{member.congregation.name}","{member.phone_number}","{member.email}","{position}","{member.membership_status}","{member.created_at.strftime("%Y-%m-%d")}"')

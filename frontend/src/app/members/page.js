@@ -665,8 +665,16 @@ export default function MembersPage() {
                             <label className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400">
                               Date of Birth:
                             </label>
-                            <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
-                              {selectedMember.date_of_birth || "N/A"}
+                              <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
+                              {(() => {
+                                const dob = selectedMember.date_of_birth;
+                                if (!dob) return "N/A";
+                                const parts = dob.split("-");
+                                const months = ["", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                                if (parts.length === 3) return `${months[parseInt(parts[1], 10)]} ${parseInt(parts[2], 10)}`;
+                                if (parts.length === 2) return `${months[parseInt(parts[0], 10)]} ${parseInt(parts[1], 10)}`;
+                                return dob;
+                              })()}
                             </p>
                           </div>
                         </div>
@@ -1076,63 +1084,83 @@ export default function MembersPage() {
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Date of Birth
+                        Date of Birth <span className="text-gray-400 text-xs font-normal">(Month & Day only)</span>
                       </label>
-                      <input
-                        type="date"
-                        value={editForm.date_of_birth || ""}
-                        onChange={(e) => {
-                          const selectedDate = e.target.value;
-                          if (selectedDate) {
-                            const today = new Date();
-                            const birthDate = new Date(selectedDate);
-                            const age =
-                              today.getFullYear() - birthDate.getFullYear();
-                            const monthDiff =
-                              today.getMonth() - birthDate.getMonth();
-
-                            // Adjust age if birthday hasn't occurred this year
-                            const actualAge =
-                              monthDiff < 0 ||
-                              (monthDiff === 0 &&
-                                today.getDate() < birthDate.getDate())
-                                ? age - 1
-                                : age;
-
-                            if (actualAge < 17) {
-                              setEditFormErrors((prev) => ({
+                      <div className="flex gap-2">
+                        <select
+                          value={(() => {
+                            const dob = editForm.date_of_birth || "";
+                            if (!dob) return "";
+                            const parts = dob.split("-");
+                            if (parts.length === 3) return parseInt(parts[1], 10).toString();
+                            if (parts.length === 2) return parseInt(parts[0], 10).toString();
+                            return "";
+                          })()}
+                          onChange={(e) => {
+                            const month = e.target.value;
+                            setEditForm((prev) => {
+                              const existing = prev.date_of_birth || "";
+                              let day = "";
+                              const parts = existing.split("-");
+                              if (parts.length === 3) day = parseInt(parts[2], 10).toString();
+                              else if (parts.length === 2) day = parseInt(parts[1], 10).toString();
+                              return {
                                 ...prev,
-                                date_of_birth: "Age cannot be less than 17",
-                              }));
-                            } else if (actualAge > 30) {
-                              setEditFormErrors((prev) => ({
+                                date_of_birth: month && day ? `${month.padStart(2, "0")}-${day.padStart(2, "0")}` : "",
+                              };
+                            });
+                          }}
+                          className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            editFormErrors.date_of_birth ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                          }`}
+                        >
+                          <option value="">Month</option>
+                          <option value="1">January</option>
+                          <option value="2">February</option>
+                          <option value="3">March</option>
+                          <option value="4">April</option>
+                          <option value="5">May</option>
+                          <option value="6">June</option>
+                          <option value="7">July</option>
+                          <option value="8">August</option>
+                          <option value="9">September</option>
+                          <option value="10">October</option>
+                          <option value="11">November</option>
+                          <option value="12">December</option>
+                        </select>
+                        <select
+                          value={(() => {
+                            const dob = editForm.date_of_birth || "";
+                            if (!dob) return "";
+                            const parts = dob.split("-");
+                            if (parts.length === 3) return parseInt(parts[2], 10).toString();
+                            if (parts.length === 2) return parseInt(parts[1], 10).toString();
+                            return "";
+                          })()}
+                          onChange={(e) => {
+                            const day = e.target.value;
+                            setEditForm((prev) => {
+                              const existing = prev.date_of_birth || "";
+                              let month = "";
+                              const parts = existing.split("-");
+                              if (parts.length === 3) month = parseInt(parts[1], 10).toString();
+                              else if (parts.length === 2) month = parseInt(parts[0], 10).toString();
+                              return {
                                 ...prev,
-                                date_of_birth: "Age cannot be more than 30",
-                              }));
-                            } else {
-                              setEditFormErrors((prev) => ({
-                                ...prev,
-                                date_of_birth: "",
-                              }));
-                            }
-                          } else {
-                            setEditFormErrors((prev) => ({
-                              ...prev,
-                              date_of_birth: "",
-                            }));
-                          }
-
-                          setEditForm({
-                            ...editForm,
-                            date_of_birth: selectedDate,
-                          });
-                        }}
-                        className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
-                          editFormErrors.date_of_birth
-                            ? "border-red-500 focus:ring-red-500"
-                            : "border-gray-300 dark:border-gray-600"
-                        }`}
-                      />
+                                date_of_birth: month && day ? `${month.padStart(2, "0")}-${day.padStart(2, "0")}` : "",
+                              };
+                            });
+                          }}
+                          className={`w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                            editFormErrors.date_of_birth ? "border-red-500" : "border-gray-300 dark:border-gray-600"
+                          }`}
+                        >
+                          <option value="">Day</option>
+                          {Array.from({ length: 31 }, (_, i) => (
+                            <option key={i + 1} value={i + 1}>{i + 1}</option>
+                          ))}
+                        </select>
+                      </div>
                       {editFormErrors.date_of_birth && (
                         <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                           {editFormErrors.date_of_birth}

@@ -137,7 +137,7 @@ class Guilder(models.Model):
     # Section A – Personal Information
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
+    date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(
         max_length=10, choices=[("Male", "Male"), ("Female", "Female")]
     )

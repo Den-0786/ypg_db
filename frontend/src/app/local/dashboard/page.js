@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import LocalDashboardLayout from "../../components/LocalDashboardLayout";
+import AttendanceWaveChart from "../../components/AttendanceWaveChart";
 import getDataStore from "../../utils/dataStore";
 
 export default function LocalDashboardPage() {
@@ -271,6 +272,8 @@ export default function LocalDashboardPage() {
             </div>
           </div>
         </div>
+        {/* Attendance Chart */}
+        <AttendanceWaveChart congregationId={congregationId} />
         {/* Quick Actions */}
         <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">

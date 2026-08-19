@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from datetime import datetime
 
 from .models import (BulkProfileCart, Congregation, Guilder, Role,
                      SundayAttendance)
@@ -61,11 +62,29 @@ class GuilderForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.fields["date_of_birth"].required = False
         # Make executive fields required only if is_executive is True
         self.fields["executive_position"].required = False
         self.fields["executive_level"].required = False
         self.fields["local_executive_position"].required = False
         self.fields["district_executive_position"].required = False
+
+    def clean_date_of_birth(self):
+        dob = self.cleaned_data.get("date_of_birth")
+        if dob is None:
+            return None
+        if isinstance(dob, str) and dob:
+            dob = dob.strip()
+            for fmt in ("%Y-%m-%d", "%m-%d", "%d-%m", "%m/%d/%Y", "%d/%m/%Y"):
+                try:
+                    parsed = datetime.strptime(dob, fmt)
+                    return parsed.replace(year=1900).date()
+                except ValueError:
+                    continue
+            raise forms.ValidationError("Invalid date format. Use MM-DD or YYYY-MM-DD.")
+        if isinstance(dob, datetime):
+            return dob.replace(year=1900).date()
+        return dob
 
     def clean_phone_number(self):
         phone = self.cleaned_data.get("phone_number")

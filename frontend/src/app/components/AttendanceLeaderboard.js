@@ -109,7 +109,7 @@ export default function AttendanceLeaderboard({ type = "weekly" }) {
       } catch (error) {
         console.error("Error fetching leaderboard data:", error);
 
-        // Show empty data instead of mock data
+        // Show empty data on error
         const emptyData = {
           currentWinners: [],
           previousWinner: null,
