@@ -141,7 +141,7 @@ class Guilder(models.Model):
     gender = models.CharField(
         max_length=10, choices=[("Male", "Male"), ("Female", "Female")]
     )
-    phone_number = models.CharField(max_length=15, unique=True)
+    phone_number = models.CharField(max_length=15)
     email = models.EmailField(blank=True)
     place_of_residence = models.CharField(max_length=100)
     residential_address = models.CharField(max_length=100)

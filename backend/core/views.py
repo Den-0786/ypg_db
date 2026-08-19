@@ -1852,7 +1852,15 @@ def api_add_member(request):
             files = {}
         
         print(f"api_add_member - Received data: {data}")
-        
+
+        # Preprocess date_of_birth: convert MM-DD to 1900-MM-DD before form validation
+        if data.get("date_of_birth"):
+            dob = data["date_of_birth"].strip()
+            if len(dob) == 5 and dob[2] == "-":
+                data["date_of_birth"] = f"1900-{dob}"
+            elif len(dob) == 4 and dob[1] == "-":
+                data["date_of_birth"] = f"1900-0{dob}"
+
         # Handle congregation name to ID conversion
         if data.get("congregation") and isinstance(data.get("congregation"), str):
             try:
@@ -1914,7 +1922,15 @@ def api_update_member(request, member_id):
             files = {}
         
         print(f"api_update_member - Received data for member {member_id}: {data}")
-        
+
+        # Preprocess date_of_birth: convert MM-DD to 1900-MM-DD before form validation
+        if data.get("date_of_birth"):
+            dob = data["date_of_birth"].strip()
+            if len(dob) == 5 and dob[2] == "-":
+                data["date_of_birth"] = f"1900-{dob}"
+            elif len(dob) == 4 and dob[1] == "-":
+                data["date_of_birth"] = f"1900-0{dob}"
+
         # Get the member to update
         try:
             member = Guilder.objects.get(id=member_id)
