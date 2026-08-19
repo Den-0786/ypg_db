@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import JointProgramModal from "../components/JointProgramModal";
+import formatPosition from "../utils/formatPosition";
 import PinModal from "../components/PinModal";
 import React from "react";
 import getDataStore from "../utils/dataStore";
@@ -1734,7 +1735,7 @@ export default function AttendancePage() {
                             Position:
                           </span>
                           <span className="ml-2 font-medium text-gray-900 dark:text-white">
-                            {selectedRecord.position}
+                            {formatPosition(selectedRecord.position)}
                           </span>
                         </div>
                       )}

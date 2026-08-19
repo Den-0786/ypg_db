@@ -1,31 +1,7 @@
 'use client';
+import formatPosition from "../../../utils/formatPosition";
+
 export default function MemberList({ members, onRemoveMember, onSubmitBulk }) {
-  // Function to convert executive position value to display name
-  const getExecutivePositionDisplay = (position) => {
-    const positionMap = {
-      president: "President",
-      presidents_rep: "President's Rep",
-      vice_president: "Vice President",
-      secretary: "Secretary",
-      assistant_secretary: "Assistant Secretary",
-      financial_secretary: "Financial Secretary",
-      treasurer: "Treasurer",
-      organizer: "Organizer",
-      youth_leader: "Youth Leader",
-      choir_master: "Choir Master",
-      usher: "Usher",
-      protocol: "Protocol",
-      security: "Security",
-      maintenance: "Maintenance",
-      welfare: "Welfare",
-      education: "Education",
-      evangelism: "Evangelism",
-      children_ministry: "Children Ministry",
-      women_fellowship: "Women Fellowship",
-      men_fellowship: "Men Fellowship",
-    };
-    return positionMap[position] || position;
-  };
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
@@ -184,7 +160,7 @@ export default function MemberList({ members, onRemoveMember, onSubmitBulk }) {
                             Position:
                           </span>
                           <span className="ml-1 text-gray-600 dark:text-gray-400">
-                            {getExecutivePositionDisplay(
+                            {formatPosition(
                               member.executive_position
                             )}
                           </span>

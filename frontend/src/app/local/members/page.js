@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import LocalDashboardLayout from "../../components/LocalDashboardLayout";
 import BulkEditModal from "../../components/BulkEditModal";
 import PinModal from "../../components/PinModal";
+import formatPosition from "../../utils/formatPosition";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useToast, ToastContainer } from "../../components/Toast";
 import getDataStore from "../../utils/dataStore";
@@ -1036,7 +1037,7 @@ export default function LocalMembersPage() {
                         {member.phone}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                        {member.executive_position || member.position || "N/A"}
+                        {formatPosition(member.executive_position || member.position)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
@@ -1709,7 +1710,7 @@ export default function LocalMembersPage() {
                                 Position:
                               </label>
                               <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
-                                {selectedMember.position || "N/A"}
+                                {formatPosition(selectedMember.position)}
                               </p>
                             </div>
                           </div>

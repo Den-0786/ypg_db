@@ -1,4 +1,7 @@
 "use client";
+
+import formatPosition from "../../../utils/formatPosition";
+
 export default function ChurchInfoSection({
   currentMember,
   setCurrentMember,
@@ -18,22 +21,6 @@ export default function ChurchInfoSection({
       ...currentMember,
       [field]: capitalizedValue,
     });
-  };
-
-  // Function to convert executive position value to display name
-  const getExecutivePositionDisplay = (position) => {
-    const positionMap = {
-      president: "President",
-      presidents_rep: "President's Rep",
-      vice_president: "Vice President",
-      secretary: "Secretary",
-      assistant_secretary: "Assistant Secretary",
-      financial_secretary: "Financial Secretary",
-      treasurer: "Treasurer",
-      organizer: "Organizer",
-      evangelism_coordinator: "Evangelism Coordinator",
-    };
-    return positionMap[position] || position;
   };
 
   return (
@@ -155,7 +142,7 @@ export default function ChurchInfoSection({
                 value={currentMember.local_executive_position}
                 onChange={(e) => {
                   const position = e.target.value;
-                  const positionDisplay = getExecutivePositionDisplay(position);
+                  const positionDisplay = formatPosition(position);
                   setCurrentMember({
                     ...currentMember,
                     local_executive_position: position,

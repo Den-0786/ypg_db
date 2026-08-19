@@ -24,6 +24,7 @@ export default function BulkAddForm({
     hometown: "",
     relative_contact: "",
     membership_status: "Active",
+    member_level: "local",
     position: "",
     is_executive: false,
     executive_position: "",

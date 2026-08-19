@@ -36,6 +36,7 @@ class GuilderForm(forms.ModelForm):
             "relative_contact",
             "congregation",
             "membership_status",
+            "member_level",
             "position",
             "favorite_quote",
             "is_baptized",

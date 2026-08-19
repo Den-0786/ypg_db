@@ -1,17 +1,6 @@
+import formatPosition from "../../utils/formatPosition";
+
 export default function MemberList({ members, onRemoveMember, onSubmitBulk }) {
-  const getExecutivePositionDisplay = (position) => {
-    const positionMap = {
-      president: "President",
-      vice_president: "Vice President",
-      secretary: "Secretary",
-      assistant_secretary: "Assistant Secretary",
-      financial_secretary: "Financial Secretary",
-      treasurer: "Treasurer",
-      organizer: "Organizer",
-      evangelism: "Evangelism",
-    };
-    return positionMap[position] || position;
-  };
 
   return (
     <div className="space-y-4 neumorphic-light dark:neumorphic-dark p-6">
@@ -50,7 +39,7 @@ export default function MemberList({ members, onRemoveMember, onSubmitBulk }) {
                     </p>
                     {member.is_executive && (
                       <p className="text-xs text-blue-500 dark:text-blue-400 mt-1">
-                        {getExecutivePositionDisplay(member.executive_position)}
+                        {formatPosition(member.executive_position)}
                         {member.executive_level &&
                           ` (${member.executive_level})`}
                       </p>

@@ -1797,6 +1797,7 @@ def api_members(request):
             "gender": member.gender,
             "congregation": member.congregation.name,
             "membership_status": member.membership_status,
+            "member_level": member.member_level,
             "position": member.position,
             "date_of_birth": member.date_of_birth,
             "place_of_residence": member.place_of_residence,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import formatPosition from "../utils/formatPosition";
 
 export default function MemberDetailsModal({
   showDetailsModal,
@@ -302,7 +303,7 @@ export default function MemberDetailsModal({
                           Position:
                         </label>
                         <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
-                          {selectedMember.position}
+                          {formatPosition(selectedMember.position)}
                         </p>
                       </div>
                     </div>

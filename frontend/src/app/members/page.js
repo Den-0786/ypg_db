@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
+import formatPosition from "../utils/formatPosition";
 import ExecutivesTable from "../components/ExecutivesTable";
 import MembersTable from "../components/MembersTable";
 import PinModal from "../components/PinModal";
@@ -869,7 +870,7 @@ export default function MembersPage() {
                               Position:
                             </label>
                             <p className="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">
-                              {selectedMember.position || "N/A"}
+                              {formatPosition(selectedMember.position)}
                             </p>
                           </div>
                         </div>

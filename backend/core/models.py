@@ -156,6 +156,12 @@ class Guilder(models.Model):
         choices=[("Active", "Active"), ("Inactive", "Inactive"), ("Distant", "Distant")],
         default="Active",
     )
+    member_level = models.CharField(
+        max_length=10,
+        choices=[("local", "Local"), ("district", "District")],
+        default="local",
+        help_text="Whether this member was added from a local or district dashboard",
+    )
     position = models.CharField(max_length=100, blank=True)
     favorite_quote = models.TextField(blank=True)
     is_baptized = models.BooleanField(default=True)

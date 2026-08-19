@@ -1,5 +1,7 @@
 "use client";
 
+import formatPosition from "../utils/formatPosition";
+
 export default function ExecutivesTable({
   executives,
   selectedMembers,
@@ -153,7 +155,7 @@ export default function ExecutivesTable({
                     {member.phone}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {member.executive_position || member.position || "N/A"}
+                    {formatPosition(member.executive_position || member.position)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span

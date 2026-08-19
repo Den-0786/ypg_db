@@ -379,6 +379,7 @@ class DataStore {
           congregation: member.congregation,
           status: member.membership_status || "Active",
           membership_status: member.membership_status || "Active",
+          member_level: member.member_level || "local",
           date_of_birth: member.date_of_birth || "",
           place_of_residence: member.place_of_residence || "",
           residential_address: member.residential_address || "",
@@ -408,7 +409,7 @@ class DataStore {
         // Filter by congregation name on the frontend (only if congregation name was provided, not ID)
         if (filters.congregation && isNaN(filters.congregation)) {
           members = members.filter(
-            (m) => m.congregation === filters.congregation
+            (m) => m.congregation === filters.congregation && m.member_level !== "district"
           );
         }
 
