@@ -64,6 +64,8 @@ class GuilderForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["date_of_birth"].required = False
+        self.fields["member_level"].required = False
+        self.fields["member_level"].initial = "local"
         # Make executive fields required only if is_executive is True
         self.fields["executive_position"].required = False
         self.fields["executive_level"].required = False
