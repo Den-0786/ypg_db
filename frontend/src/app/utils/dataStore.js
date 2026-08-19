@@ -14,6 +14,7 @@ class DataStore {
       this.membersData = [];
       this.saveToStorage("membersData", this.membersData);
     }
+  }
 
   // Storage utilities
   loadFromStorage(key) {
