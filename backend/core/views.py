@@ -427,11 +427,23 @@ def api_signup(request):
         # Create user profile
         UserProfile.objects.create(user=user)
         
-        # If congregation is provided, try to associate
+        # If congregation is provided, only allow claiming UNOWNED,
+        # non-district congregations. Never let signup take over an
+        # existing account's congregation or the district admin.
         congregation_info = None
         if congregation_name:
             try:
                 congregation = Congregation.objects.get(name=congregation_name)
+                if congregation.is_district:
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'Invalid congregation selection'
+                    }, status=400)
+                if congregation.user is not None:
+                    return JsonResponse({
+                        'success': False,
+                        'error': 'This congregation is already registered. Please contact the district admin.'
+                    }, status=400)
                 congregation.user = user
                 congregation.save()
                 congregation_info = {
@@ -1771,30 +1783,20 @@ def export_attendance_pdf(request):
 def api_members(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None:
+        return JsonResponse({'members': [], 'count': 0})
     congregation_id = request.GET.get("congregation")
     search = request.GET.get("search")
-    
-    print(f"api_members - congregation_id: {congregation_id}, type: {type(congregation_id)}")
-    print(f"api_members - search: {search}")
 
     members = Guilder.objects.all()
 
-    if congregation_id:
-        print(f"Filtering by congregation_id: {congregation_id}")
-        
-        # Debug: Show all congregations and their IDs
-        from .models import Congregation
-        all_congregations = Congregation.objects.all()
-        print("All congregations in database:")
-        for cong in all_congregations:
-            print(f"  ID: {cong.id}, Name: {cong.name}")
-        
+    # Non-district users are always pinned to their own congregation,
+    # regardless of the ?congregation= parameter they pass.
+    if not requester_is_district:
+        members = members.filter(congregation=requester_cong)
+    elif congregation_id:
         members = members.filter(congregation_id=congregation_id)
-        print(f"Filtered members count: {members.count()}")
-        
-        # Debug: Show which members were found
-        for member in members:
-            print(f"  Member: {member.first_name} {member.last_name}, Congregation: {member.congregation.name} (ID: {member.congregation.id})")
 
     if search:
         members = members.filter(
@@ -1964,6 +1966,10 @@ def api_update_member(request, member_id):
                 "success": False, 
                 "error": f"Member with ID {member_id} not found"
             }, status=404)
+
+        denied = _ensure_member_access(request, member)
+        if denied:
+            return denied
         
         # Handle congregation name to ID conversion
         if data.get("congregation") and isinstance(data.get("congregation"), str):
@@ -2033,9 +2039,11 @@ def api_delete_member(request, member_id):
                 "success": False, 
                 "error": f"Member with ID {member_id} not found"
             }, status=404)
-        
-        # Note: No authentication/permission checks for API consistency
-        
+
+        denied = _ensure_member_access(request, member)
+        if denied:
+            return denied
+
         # Delete the member
         member.delete()
         
@@ -4061,6 +4069,28 @@ def _get_district_admin_user(request):
         return None
     if Congregation.objects.filter(user=user, is_district=True).exists():
         return user
+    return None
+
+
+def _get_requester_congregation(request):
+    """Return (congregation_or_None, is_district) for the logged-in user."""
+    try:
+        congregation = Congregation.objects.get(user=request.user)
+    except Congregation.DoesNotExist:
+        return None, False
+    return congregation, bool(congregation.is_district)
+
+
+def _ensure_member_access(request, member):
+    """403 when a non-district user touches another congregation's member."""
+    requester_cong, is_district = _get_requester_congregation(request)
+    if is_district:
+        return None
+    if requester_cong is None or member.congregation_id != requester_cong.id:
+        return JsonResponse({
+            'success': False,
+            'error': 'You can only manage members of your own congregation.'
+        }, status=403)
     return None
 
 

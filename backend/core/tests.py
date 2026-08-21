@@ -46,6 +46,81 @@ class BackupAuthTests(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
+class CongregationIsolationTests(TestCase):
+    """Local users must never see or touch other congregations' members."""
+
+    def setUp(self):
+        self.district_user = User.objects.create_user(
+            username='district_admin', password='pass12345'
+        )
+        self.district_cong = Congregation.objects.create(
+            name='District Admin', is_district=True, user=self.district_user
+        )
+        self.local_user = User.objects.create_user(
+            username='emmanuel', password='pass12345'
+        )
+        self.local_cong = Congregation.objects.create(
+            name='Emmanuel Congregation Ahinsan', user=self.local_user
+        )
+        self.other_user = User.objects.create_user(
+            username='liberty', password='pass12345'
+        )
+        self.other_cong = Congregation.objects.create(
+            name='Liberty Congregation', user=self.other_user
+        )
+        self.own_member = Guilder.objects.create(
+            first_name='Own', last_name='Member',
+            congregation=self.local_cong,
+        )
+        self.foreign_member = Guilder.objects.create(
+            first_name='Foreign', last_name='Member',
+            congregation=self.other_cong,
+        )
+
+    def test_local_user_pinned_to_own_congregation(self):
+        self.client.force_login(self.local_user)
+        response = self.client.get('/api/members/?congregation=999')
+        names = [m['first_name'] for m in response.json()['members']]
+        self.assertEqual(names, ['Own'])
+
+    def test_local_user_cannot_delete_foreign_member(self):
+        self.client.force_login(self.local_user)
+        response = self.client.delete(f'/api/members/{self.foreign_member.id}/delete/')
+        self.assertEqual(response.status_code, 403)
+        self.assertTrue(Guilder.objects.filter(id=self.foreign_member.id).exists())
+
+    def test_district_admin_can_delete_any_member(self):
+        self.client.force_login(self.district_user)
+        response = self.client.delete(f'/api/members/{self.foreign_member.id}/delete/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_signup_cannot_claim_owned_congregation(self):
+        response = self.client.post(
+            '/api/auth/signup/',
+            data=json.dumps({
+                'username': 'squatter', 'email': 's@x.com',
+                'password': 'longenough1', 'congregation': 'Liberty Congregation',
+            }),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+        self.other_cong.refresh_from_db()
+        self.assertEqual(self.other_cong.user, self.other_user)
+
+    def test_signup_cannot_claim_district(self):
+        response = self.client.post(
+            '/api/auth/signup/',
+            data=json.dumps({
+                'username': 'wannabe', 'email': 'w@x.com',
+                'password': 'longenough1', 'congregation': 'District Admin',
+            }),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+        self.district_cong.refresh_from_db()
+        self.assertEqual(self.district_cong.user, self.district_user)
+
+
 class DataEndpointAuthTests(TestCase):
     """Member data must never be served to anonymous callers."""
 
