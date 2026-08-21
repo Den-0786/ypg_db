@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.utils import timezone
 
@@ -465,6 +466,34 @@ class QuizSubmission(models.Model):
         # Automatically determine if answer is correct
         self.is_correct = self.selected_answer == self.quiz.correct_answer
         super().save(*args, **kwargs)
+
+
+class DataBackup(models.Model):
+    BACKUP_TYPE_CHOICES = [
+        ('manual', 'Manual'),
+        ('pre_clear', 'Pre-Clear Safety'),
+    ]
+    payload = models.JSONField(
+        encoder=DjangoJSONEncoder,
+        help_text="Full snapshot of congregations, members and attendance"
+    )
+    backup_type = models.CharField(
+        max_length=20, choices=BACKUP_TYPE_CHOICES, default='manual'
+    )
+    created_by = models.ForeignKey(
+        User, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='data_backups'
+    )
+    members_count = models.PositiveIntegerField(default=0)
+    attendance_count = models.PositiveIntegerField(default=0)
+    congregations_count = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.get_backup_type_display()} backup at {self.created_at:%Y-%m-%d %H:%M}"
 
 
 

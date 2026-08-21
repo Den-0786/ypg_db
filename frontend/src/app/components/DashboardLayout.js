@@ -675,6 +675,7 @@ export default function DashboardLayout({
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/data/backup/create/`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
@@ -702,6 +703,7 @@ export default function DashboardLayout({
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/data/backup/restore/`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },

@@ -995,69 +995,6 @@ export default function LocalDashboardLayout({
     }
   };
 
-  const handleCreateBackup = async () => {
-    try {
-      setDataManagementLoading(true);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/data/backup/create/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          showSuccess(data.message || "Backup created successfully!");
-        } else {
-          showError(data.error || "Failed to create backup");
-        }
-      } else {
-        showError("Failed to create backup");
-      }
-    } catch (error) {
-      console.error("Error creating backup:", error);
-      showError("Failed to create backup");
-    } finally {
-      setDataManagementLoading(false);
-    }
-  };
-
-  const handleRestoreBackup = async () => {
-    try {
-      setDataManagementLoading(true);
-
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/data/backup/restore/`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          showSuccess(data.message || "Backup restored successfully!");
-        } else {
-          showError(data.error || "Failed to restore backup");
-        }
-      } else {
-        showError("Failed to restore backup");
-      }
-    } catch (error) {
-      console.error("Error restoring backup:", error);
-      showError("Failed to restore backup");
-    } finally {
-      setDataManagementLoading(false);
-    }
-  };
 
   const handleClearData = async () => {
     if (!confirmClear) {
@@ -2139,36 +2076,6 @@ export default function LocalDashboardLayout({
                               {dataManagementLoading
                                 ? "Exporting..."
                                 : "Export as PDF"}
-                            </button>
-                          </div>
-                        </div>
-                        <div className="p-4 bg-yellow-50 dark:bg-yellow-900 rounded-lg">
-                          <h4 className="text-xs sm:text-sm font-medium text-yellow-900 dark:text-yellow-100 mb-2">
-                            Backup & Restore
-                          </h4>
-                          <p className="text-xs text-yellow-700 dark:text-yellow-300 mb-3">
-                            Manage your data backups
-                          </p>
-                          <div className="space-y-2">
-                            <button
-                              onClick={handleCreateBackup}
-                              disabled={dataManagementLoading}
-                              className="w-full text-left px-3 py-2 bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300 rounded text-sm hover:bg-yellow-200 dark:hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <i className="fas fa-save mr-2"></i>
-                              {dataManagementLoading
-                                ? "Creating..."
-                                : "Create Backup"}
-                            </button>
-                            <button
-                              onClick={handleRestoreBackup}
-                              disabled={dataManagementLoading}
-                              className="w-full text-left px-3 py-2 bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-300 rounded text-sm hover:bg-yellow-200 dark:hover:bg-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <i className="fas fa-upload mr-2"></i>
-                              {dataManagementLoading
-                                ? "Restoring..."
-                                : "Restore from Backup"}
                             </button>
                           </div>
                         </div>

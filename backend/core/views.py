@@ -13,8 +13,10 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.core.management.color import no_style
 from django.core.paginator import Paginator
-from django.db import transaction
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import connection, transaction
 from django.db.models import Avg, Count, Q, Sum
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -36,7 +38,8 @@ from .forms import (BulkGuilderForm, ChangePINForm, CongregationForm,
                     SearchForm, SundayAttendanceForm)
 from .models import (DISTRICT_EXECUTIVE_POSITIONS, LOCAL_EXECUTIVE_POSITIONS,
                      BirthdayMessageLog, BulkProfileCart, Congregation,
-                     Guilder, Notification, Role, SundayAttendance, Quiz, QuizSubmission, UserProfile, LoginAttempt)
+                     DataBackup, Guilder, Notification, Role,
+                     SundayAttendance, Quiz, QuizSubmission, UserProfile, LoginAttempt)
 
 LOGIN_RATE_LIMIT_ENABLED = True
 
@@ -3992,37 +3995,63 @@ def api_export_pdf(request):
         }, status=500)
 
 
+def _get_district_admin_user(request):
+    """Return request.user only when linked to the district congregation."""
+    user = request.user
+    if not user.is_authenticated:
+        return None
+    if Congregation.objects.filter(user=user, is_district=True).exists():
+        return user
+    return None
+
+
+def _create_backup(user, backup_type='manual'):
+    payload = {
+        'timestamp': timezone.now().isoformat(),
+        'congregations': list(Congregation.objects.values()),
+        'members': list(Guilder.objects.values()),
+        'attendance': list(SundayAttendance.objects.values()),
+    }
+    return DataBackup.objects.create(
+        payload=json.loads(json.dumps(payload, cls=DjangoJSONEncoder)),
+        backup_type=backup_type,
+        created_by=user,
+        members_count=len(payload['members']),
+        attendance_count=len(payload['attendance']),
+        congregations_count=len(payload['congregations']),
+    )
+
+
+def _reset_sequences(models):
+    sequence_sql = connection.ops.sequence_reset_sql(no_style(), models)
+    if sequence_sql:
+        with connection.cursor() as cursor:
+            cursor.execute(";".join(sequence_sql))
+
+
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_create_backup(request):
-    """API endpoint for creating data backup"""
+    """API endpoint for creating a persistent data backup"""
+    user = _get_district_admin_user(request)
+    if user is None:
+        return JsonResponse({
+            'success': False,
+            'error': 'District admin authentication required'
+        }, status=403)
     try:
-        # Create backup data
-        backup_data = {
-            'timestamp': timezone.now().isoformat(),
-            'members': list(Guilder.objects.values()),
-            'attendance': list(SundayAttendance.objects.values()),
-            'congregations': list(Congregation.objects.values()),
-            'backup_type': 'manual',
-            'created_by': 'district_admin'
-        }
-        
-        # In a real implementation, this would be stored in a Backup model or file
-        # For now, we'll store it in session as a demo
-        request.session['backup_data'] = backup_data
-        request.session['backup_created_at'] = timezone.now().isoformat()
-        
+        backup = _create_backup(user)
         return JsonResponse({
             'success': True,
             'message': 'Backup created successfully',
             'backup_info': {
-                'timestamp': backup_data['timestamp'],
-                'members_count': len(backup_data['members']),
-                'attendance_count': len(backup_data['attendance']),
-                'congregations_count': len(backup_data['congregations'])
+                'id': backup.id,
+                'timestamp': backup.created_at.isoformat(),
+                'members_count': backup.members_count,
+                'attendance_count': backup.attendance_count,
+                'congregations_count': backup.congregations_count,
             }
         })
-        
     except Exception as e:
         return JsonResponse({
             'success': False,
@@ -4033,29 +4062,54 @@ def api_create_backup(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_restore_backup(request):
-    """API endpoint for restoring data from backup"""
+    """API endpoint for restoring data from the most recent backup"""
+    user = _get_district_admin_user(request)
+    if user is None:
+        return JsonResponse({
+            'success': False,
+            'error': 'District admin authentication required'
+        }, status=403)
     try:
-        # Check if backup exists
-        backup_data = request.session.get('backup_data')
-        if not backup_data:
+        backup = DataBackup.objects.first()
+        if backup is None:
             return JsonResponse({
                 'success': False,
                 'error': 'No backup found to restore'
             }, status=404)
-        
-        # In a real implementation, this would restore data from the backup
-        # For now, just return success message
+
+        payload = backup.payload
+
+        # Safety snapshot of the current state before overwriting anything
+        _create_backup(user, backup_type='pre_clear')
+
+        with transaction.atomic():
+            # Members and attendance are fully replaced by the snapshot
+            SundayAttendance.objects.all().delete()
+            Guilder.objects.all().delete()
+
+            SundayAttendance.objects.bulk_create(
+                SundayAttendance(**row) for row in payload.get('attendance', [])
+            )
+            Guilder.objects.bulk_create(
+                Guilder(**row) for row in payload.get('members', [])
+            )
+
+            # Congregations are merged so user accounts are never cascade-deleted
+            for row in payload.get('congregations', []):
+                Congregation.objects.update_or_create(id=row['id'], defaults=row)
+
+            _reset_sequences([Congregation, Guilder, SundayAttendance])
+
         return JsonResponse({
             'success': True,
             'message': 'Backup restored successfully',
             'restored_info': {
-                'timestamp': backup_data['timestamp'],
-                'members_count': len(backup_data.get('members', [])),
-                'attendance_count': len(backup_data.get('attendance', [])),
-                'congregations_count': len(backup_data.get('congregations', []))
+                'timestamp': backup.created_at.isoformat(),
+                'members_count': len(payload.get('members', [])),
+                'attendance_count': len(payload.get('attendance', [])),
+                'congregations_count': len(payload.get('congregations', []))
             }
         })
-        
     except Exception as e:
         return JsonResponse({
             'success': False,
@@ -4066,26 +4120,49 @@ def api_restore_backup(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_clear_data(request):
-    """API endpoint for clearing all data (danger zone)"""
+    """API endpoint for clearing all member and attendance data (danger zone)"""
+    user = _get_district_admin_user(request)
+    if user is None:
+        return JsonResponse({
+            'success': False,
+            'error': 'District admin authentication required'
+        }, status=403)
     try:
         data = json.loads(request.body)
         confirmation = data.get('confirmation', '')
-        
-        # Require explicit confirmation
+
         if confirmation != 'DELETE_ALL_DATA':
             return JsonResponse({
                 'success': False,
                 'error': 'Confirmation required. Type DELETE_ALL_DATA to confirm.'
             }, status=400)
-        
-        # In a real implementation, this would delete all data
-        # For now, just return success message (demo mode)
+
+        # Snapshot everything first so the wipe is reversible
+        safety_backup = _create_backup(user, backup_type='pre_clear')
+
+        with transaction.atomic():
+            members_deleted = Guilder.objects.count()
+            attendance_deleted = SundayAttendance.objects.count()
+            SundayAttendance.objects.all().delete()
+            Guilder.objects.all().delete()
+
         return JsonResponse({
             'success': True,
-            'message': 'All data cleared successfully',
-            'note': 'This is a demo. In production, this would actually delete all data.'
+            'message': 'All member and attendance data cleared successfully',
+            'note': ('Congregation accounts were preserved so you can still log in. '
+                     f'A safety backup (#{safety_backup.id}) was taken first and can be restored.'),
+            'cleared_info': {
+                'members_deleted': members_deleted,
+                'attendance_deleted': attendance_deleted,
+                'safety_backup_id': safety_backup.id,
+            }
         })
-        
+
+    except json.JSONDecodeError:
+        return JsonResponse({
+            'success': False,
+            'error': 'Invalid JSON data'
+        }, status=400)
     except Exception as e:
         return JsonResponse({
             'success': False,
