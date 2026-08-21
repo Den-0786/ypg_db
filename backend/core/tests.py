@@ -1,6 +1,7 @@
 import json
 
 from django.contrib.auth.models import User
+from django.core import mail
 from django.test import TestCase
 from django.urls import reverse
 
@@ -261,3 +262,31 @@ class BackupRoundTripTests(TestCase):
         # The wipe is reversible via restore
         self.client.post('/api/data/backup/restore/')
         self.assertEqual(Guilder.objects.count(), 1)
+
+
+class PasswordResetEmailTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username='leader', password='pass12345', email='leader@example.com'
+        )
+
+    def test_forgot_password_sends_email_without_leaking_link(self):
+        response = self.client.post(
+            '/api/auth/forgot-password/',
+            data=json.dumps({'email': 'leader@example.com'}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn('reset_link', response.json())
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn('/reset-password/', mail.outbox[0].body)
+
+    def test_unknown_email_gets_generic_response_and_no_email(self):
+        response = self.client.post(
+            '/api/auth/forgot-password/',
+            data=json.dumps({'email': 'ghost@example.com'}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(mail.outbox), 0)
+        self.assertNotIn('reset_link', response.json())

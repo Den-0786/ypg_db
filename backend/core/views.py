@@ -9,6 +9,10 @@ from io import BytesIO
 from django.contrib import messages
 
 logger = logging.getLogger(__name__)
+
+from django.core.mail import send_mail
+
+logger = logging.getLogger(__name__)
 from django.contrib.auth import update_session_auth_hash, authenticate, login, logout
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -398,14 +402,31 @@ def api_forgot_password(request):
         try:
             user = User.objects.get(email=email)
 
-            # Generate password reset token.
-            # NOTE: the link is intentionally NOT returned in the response —
-            # returning it lets anyone take over any account. It will be
-            # emailed once an email provider is wired up (Brevo/Resend).
+            # Generate password reset token and email the link.
+            # The link is NEVER returned in the API response — that would
+            # let anyone take over any account.
             token = default_token_generator.make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
-            reset_link = f"/reset-password/{uid}/{token}/"
-            logger.info("Password reset requested for %s (link generated, not sent)", email)
+            reset_link = f"https://database.ahinsandistrictypg.com/reset-password/{uid}/{token}/"
+
+            try:
+                send_mail(
+                    subject='Reset your Ahinsan District YPG password',
+                    message=(
+                        'Hello,\n\n'
+                        'We received a request to reset your password.\n\n'
+                        f'Open this link to choose a new password:\n{reset_link}\n\n'
+                        'This link expires shortly and can be used only once.\n'
+                        'If you did not request this, you can safely ignore this email.\n\n'
+                        '— Ahinsan District YPG Database'
+                    ),
+                    from_email=None,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+                logger.info("Password reset email sent to %s", email)
+            except Exception:
+                logger.exception("Failed to send reset email to %s", email)
 
             return JsonResponse({
                 'success': True,
