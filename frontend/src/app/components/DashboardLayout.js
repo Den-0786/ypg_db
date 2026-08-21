@@ -68,6 +68,13 @@ export default function DashboardLayout({
   // Dynamic congregations from the system
   const [availableCongregations, setAvailableCongregations] = useState([]);
 
+  // Auth guard: bounce visitors without a session to the login page
+  useEffect(() => {
+    if (!localStorage.getItem("user")) {
+      window.location.href = "/login";
+    }
+  }, []);
+
   // Fetch congregations from API
   useEffect(() => {
     const fetchCongregations = async () => {

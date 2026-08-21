@@ -46,6 +46,40 @@ class BackupAuthTests(TestCase):
         self.assertEqual(response.status_code, 403)
 
 
+class DataEndpointAuthTests(TestCase):
+    """Member data must never be served to anonymous callers."""
+
+    def test_anonymous_cannot_list_members(self):
+        response = self.client.get('/api/members/')
+        self.assertEqual(response.status_code, 401)
+
+    def test_anonymous_cannot_get_dashboard_stats(self):
+        response = self.client.get('/api/dashboard-stats/')
+        self.assertEqual(response.status_code, 401)
+
+    def test_anonymous_cannot_add_member(self):
+        response = self.client.post(
+            '/api/members/add/',
+            data=json.dumps({'first_name': 'X'}),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_anonymous_cannot_export_excel(self):
+        response = self.client.get('/api/export/excel/')
+        self.assertIn(response.status_code, (401, 404))
+
+    def test_login_page_still_public(self):
+        response = self.client.post(
+            '/api/auth/login/',
+            data=json.dumps({'username': 'nobody', 'password': 'wrong'}),
+            content_type='application/json',
+        )
+        # 401 here is the endpoint's own "Invalid credentials" response,
+        # not the authentication gate.
+        self.assertEqual(response.json().get('error'), 'Invalid credentials.')
+
+
 class BackupRoundTripTests(TestCase):
     def setUp(self):
         self.admin = User.objects.create_user(

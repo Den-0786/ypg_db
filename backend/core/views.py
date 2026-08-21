@@ -326,6 +326,8 @@ def api_logout(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_verify_password(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """Verify user password for quiz creation"""
     try:
         data = json.loads(request.body)
@@ -1756,6 +1758,8 @@ def export_attendance_pdf(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_members(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     congregation_id = request.GET.get("congregation")
     search = request.GET.get("search")
     
@@ -1826,6 +1830,8 @@ def api_members(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_attendance_stats(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     congregation_id = request.GET.get("congregation")
 
     if congregation_id:
@@ -1845,6 +1851,8 @@ def api_attendance_stats(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_add_member(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     try:
         # Support both JSON and multipart/form-data
         content_type = request.content_type or ""
@@ -1915,6 +1923,8 @@ def api_add_member(request):
 @csrf_exempt
 @require_http_methods(["PUT", "POST"])
 def api_update_member(request, member_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     try:
         # Support both JSON and multipart/form-data
         content_type = request.content_type or ""
@@ -1998,6 +2008,8 @@ def api_update_member(request, member_id):
 @csrf_exempt
 @require_http_methods(["DELETE"])
 def api_delete_member(request, member_id):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for deleting a member"""
     try:
         print(f"api_delete_member called for member_id: {member_id}")
@@ -2032,6 +2044,8 @@ def api_delete_member(request, member_id):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_attendance_chart_data(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for attendance chart data"""
     weeks = int(request.GET.get("weeks", 8))
     congregation_id = request.GET.get("congregation")
@@ -2062,6 +2076,8 @@ def api_attendance_chart_data(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_congregation_pie_data(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for congregation distribution pie chart"""
     congregations = Congregation.objects.all()
 
@@ -2082,6 +2098,8 @@ def api_congregation_pie_data(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_gender_distribution(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for gender distribution histogram"""
     congregations = Congregation.objects.all()
 
@@ -2109,6 +2127,8 @@ def api_gender_distribution(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_attendance_trends(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for attendance trends over time"""
     months = int(request.GET.get("months", 12))
     congregation_id = request.GET.get("congregation")
@@ -2164,6 +2184,8 @@ def api_executive_positions(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_dashboard_stats(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for dashboard statistics"""
     try:
         user_congregation = Congregation.objects.get(user=request.user)
@@ -2336,6 +2358,8 @@ def send_birthday_sms(request, guilder_id):
 # --- Notification API Endpoints ---
 @require_GET
 def api_notifications(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     # For now, return empty notifications to prevent errors
     # This can be implemented later when notification system is needed
     return JsonResponse({
@@ -2346,6 +2370,8 @@ def api_notifications(request):
 
 @require_POST
 def api_mark_notification_read(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     notif_id = request.POST.get("id")
     congregation_name = request.POST.get("congregation")
     
@@ -2368,6 +2394,8 @@ def api_mark_notification_read(request):
 
 @require_POST
 def api_clear_notifications(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     congregation_name = request.POST.get("congregation")
     
     try:
@@ -2387,6 +2415,8 @@ def api_clear_notifications(request):
 
 @require_POST
 def api_send_manual_notification(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     try:
         data = json.loads(request.body)
         target = data.get("target")  # 'all' or 'local'
@@ -2421,6 +2451,8 @@ def api_send_manual_notification(request):
 
 @require_POST
 def api_create_test_notifications(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """Create test notifications for development/testing"""
     try:
         data = json.loads(request.body)
@@ -2484,6 +2516,8 @@ DISTRICT_PROFILE_DATA = {
 @csrf_exempt
 @require_http_methods(["GET", "PUT"])
 def api_settings_profile(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for profile settings"""
     
     try:
@@ -2632,6 +2666,8 @@ def api_congregation_initials(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_get_current_pin(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for getting current PIN (for debugging)"""
     try:
         # Get congregation info from query parameters (sent by frontend)
@@ -2820,6 +2856,8 @@ def api_validate_pin(request):
 @csrf_exempt
 @require_http_methods(["GET", "PUT"])
 def api_settings_security(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for security settings (password/PIN changes)"""
     try:
         if request.method == "GET":
@@ -3121,6 +3159,8 @@ def api_settings_security(request):
 @csrf_exempt
 @require_http_methods(["GET", "PUT"])
 def api_settings_website(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for website settings"""
     try:
         if request.method == "GET":
@@ -3821,6 +3861,8 @@ def api_export_csv(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_export_excel(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for exporting data as Excel"""
     try:
         data = json.loads(request.body)
@@ -3853,6 +3895,8 @@ def api_export_excel(request):
 @csrf_exempt
 @require_http_methods(["POST"])
 def api_export_pdf(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for exporting data as PDF"""
     try:
         data = json.loads(request.body)
@@ -4175,6 +4219,8 @@ def api_clear_data(request):
 @csrf_exempt
 @require_http_methods(["GET"])
 def api_analytics_detailed(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for detailed analytics data including trends"""
     try:
         from datetime import datetime, timedelta
@@ -4320,6 +4366,8 @@ def api_analytics_detailed(request):
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
 def api_reminder_settings(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for reminder settings management"""
     try:
         if request.method == "GET":

@@ -447,6 +447,13 @@ export default function LocalDashboardLayout({
   const [congregationInitials, setCongregationInitials] = useState("");
   const [initialsSaving, setInitialsSaving] = useState(false);
 
+  // Auth guard: bounce visitors without a session to the login page
+  useEffect(() => {
+    if (!localStorage.getItem("user")) {
+      window.location.href = "/login";
+    }
+  }, []);
+
   // Security state management
   const [securityData, setSecurityData] = useState({
     username: "",
