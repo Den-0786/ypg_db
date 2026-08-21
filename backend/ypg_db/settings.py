@@ -36,7 +36,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', "django-insecure-2$9=gcw8c+t@t1hdehjgqffqpp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = list(dict.fromkeys(
+    os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+    + ['api-database.ahinsandistrictypg.com', 'ypg-database-system.onrender.com']
+))
 
 # Production security settings
 if not DEBUG:
@@ -55,10 +58,18 @@ SECURE_SSL_REDIRECT = False  # Force False for development
 SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
 CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
 
-# CSRF Trusted Origins (comma-separated list of origins)
+# Unique per project so sessions don't collide with the other YPG apps
+# sharing the ahinsandistrictypg.com domain.
+SESSION_COOKIE_NAME = 'ypgdb_sessionid'
+
+# CSRF Trusted Origins (comma-separated env list, merged with the project domains)
+CSRF_TRUSTED_ORIGINS = [
+    'https://database.ahinsandistrictypg.com',
+    'https://api-database.ahinsandistrictypg.com',
+]
 _csrf_trusted = os.getenv('CSRF_TRUSTED_ORIGINS')
 if _csrf_trusted:
-    CSRF_TRUSTED_ORIGINS = [o.strip() for o in _csrf_trusted.split(',') if o.strip()]
+    CSRF_TRUSTED_ORIGINS += [o.strip() for o in _csrf_trusted.split(',') if o.strip()]
 
 
 # Application definition
@@ -210,7 +221,10 @@ LOGOUT_REDIRECT_URL = "/login/"
 LOGIN_URL = "/login/"
 
 # CORS Settings
-CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001').split(',')
+CORS_ALLOWED_ORIGINS = list(dict.fromkeys(
+    os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001,http://127.0.0.1:3001').split(',')
+    + ['https://database.ahinsandistrictypg.com']
+))
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins in development
