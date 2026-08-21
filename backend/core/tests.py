@@ -94,31 +94,20 @@ class CongregationIsolationTests(TestCase):
         response = self.client.delete(f'/api/members/{self.foreign_member.id}/delete/')
         self.assertEqual(response.status_code, 200)
 
-    def test_signup_cannot_claim_owned_congregation(self):
-        response = self.client.post(
-            '/api/auth/signup/',
-            data=json.dumps({
-                'username': 'squatter', 'email': 's@x.com',
-                'password': 'longenough1', 'congregation': 'Liberty Congregation',
-            }),
-            content_type='application/json',
-        )
-        self.assertEqual(response.status_code, 400)
+    def test_signup_endpoint_is_disabled(self):
+        """Signup is admin-only onboarding now; the public endpoint is gone."""
+        for congregation in ('Liberty Congregation', 'District Admin'):
+            response = self.client.post(
+                '/api/auth/signup/',
+                data=json.dumps({
+                    'username': 'squatter', 'email': 's@x.com',
+                    'password': 'longenough1', 'congregation': congregation,
+                }),
+                content_type='application/json',
+            )
+            self.assertEqual(response.status_code, 404)
         self.other_cong.refresh_from_db()
         self.assertEqual(self.other_cong.user, self.other_user)
-
-    def test_signup_cannot_claim_district(self):
-        response = self.client.post(
-            '/api/auth/signup/',
-            data=json.dumps({
-                'username': 'wannabe', 'email': 'w@x.com',
-                'password': 'longenough1', 'congregation': 'District Admin',
-            }),
-            content_type='application/json',
-        )
-        self.assertEqual(response.status_code, 400)
-        self.district_cong.refresh_from_db()
-        self.assertEqual(self.district_cong.user, self.district_user)
 
 
 class DataEndpointAuthTests(TestCase):

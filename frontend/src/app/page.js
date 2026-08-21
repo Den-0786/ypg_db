@@ -175,7 +175,7 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3">
               <Link
-                href="/signup"
+                href="/login"
                 className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-3 px-8 rounded-lg transition-colors text-sm"
               >
                 Get Started
