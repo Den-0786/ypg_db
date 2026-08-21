@@ -171,7 +171,16 @@ def api_login(request):
                 'success': False,
                 'error': 'Username and password are required'
             }, status=400)
-        
+
+        # Brute-force protection: block after repeated failures
+        if LOGIN_RATE_LIMIT_ENABLED:
+            is_allowed, block_message = check_login_attempts(request, username)
+            if not is_allowed:
+                return JsonResponse({
+                    'success': False,
+                    'error': block_message
+                }, status=429)
+
         # Attempt authentication
         user = authenticate(request, username=username, password=password)
         
@@ -204,7 +213,9 @@ def api_login(request):
                 'congregation': congregation_info
             })
         else:
-            # Failed login
+            # Failed login — record the attempt
+            if LOGIN_RATE_LIMIT_ENABLED:
+                record_failed_attempt(request, username)
             return JsonResponse({
                 'success': False,
                 'error': 'Invalid credentials.'
