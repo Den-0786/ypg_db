@@ -34,7 +34,9 @@ if str(backend_path) not in sys.path:
 SECRET_KEY = os.getenv('SECRET_KEY', "django-insecure-2$9=gcw8c+t@t1hdehjgqffqppj=)f130gxu3is3#_80ou7dl7")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
+# Debug only when running locally (sqlite / no DB url); never in production.
+_db_url = os.getenv('DATABASE_URL', '')
+DEBUG = os.getenv('DEBUG', str('sqlite' in _db_url or 'localhost' in _db_url or _db_url == '')).lower() == 'true'
 
 ALLOWED_HOSTS = list(dict.fromkeys(
     os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
@@ -55,8 +57,8 @@ if not DEBUG:
 SECURE_SSL_REDIRECT = False  # Force False for development
 
 # Cookie security
-SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', 'False').lower() == 'true'
-CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', 'False').lower() == 'true'
+SESSION_COOKIE_SECURE = os.getenv('SESSION_COOKIE_SECURE', str(not DEBUG)).lower() == 'true'
+CSRF_COOKIE_SECURE = os.getenv('CSRF_COOKIE_SECURE', str(not DEBUG)).lower() == 'true'
 
 # Unique per project so sessions don't collide with the other YPG apps
 # sharing the ahinsandistrictypg.com domain.
@@ -227,7 +229,7 @@ CORS_ALLOWED_ORIGINS = list(dict.fromkeys(
 ))
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins in development
+CORS_ALLOW_ALL_ORIGINS = False  # never allow all origins with credentials
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
