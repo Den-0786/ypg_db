@@ -3708,6 +3708,8 @@ def api_log_attendance(request):
 @require_http_methods(["GET"])
 def api_attendance_records(request):
     """API endpoint for getting attendance records"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     try:
         congregation_param = request.GET.get('congregation')
         date_from = request.GET.get('date_from')
@@ -3831,6 +3833,8 @@ def api_update_attendance(request, attendance_id):
 @require_http_methods(["POST"])
 def api_export_csv(request):
     """API endpoint for exporting data as CSV"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     try:
         data = json.loads(request.body)
         export_type = data.get('type', 'all')  # all, members, attendance, analytics

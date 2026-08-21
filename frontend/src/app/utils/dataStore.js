@@ -50,6 +50,7 @@ class DataStore {
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/attendance/log/`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
@@ -105,7 +106,7 @@ class DataStore {
         url += "?" + params.toString();
       }
 
-      const response = await fetch(url);
+      const response = await fetch(url, { credentials: "include" });
 
       if (!response.ok) {
         console.warn(
@@ -265,6 +266,7 @@ class DataStore {
         fetchOptions = {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(requestData),
         };
       }
@@ -352,7 +354,7 @@ class DataStore {
         url += "?" + params.toString();
       }
 
-      const response = await fetch(url);
+      const response = await fetch(url, { credentials: "include" });
 
       if (!response.ok) {
         console.warn(
@@ -638,6 +640,7 @@ class DataStore {
         fetchOptions = {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(requestData),
         };
       }
@@ -688,6 +691,7 @@ class DataStore {
       const base = process.env.NEXT_PUBLIC_API_BASE_URL || "/";
       const response = await fetch(`${base}/api/members/${memberId}/delete/`, {
         method: "DELETE",
+        credentials: "include",
       });
       if (!response.ok) throw new Error("Failed to delete member");
       this.membersData = this.membersData.filter((m) => m.id !== memberId);
