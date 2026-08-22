@@ -23,3 +23,7 @@ export function ensureCredentials() {
     return originalFetch(input, init);
   };
 }
+
+// Install immediately on import so the patch exists before any
+// component fires its first request.
+ensureCredentials();
