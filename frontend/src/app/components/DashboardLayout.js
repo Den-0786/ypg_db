@@ -7,6 +7,7 @@ import { useTheme } from "./ThemeProvider";
 import { useToast, ToastContainer } from "./Toast";
 import autoLogout from "../utils/autoLogout";
 import { saveFileWithPicker } from "../utils/saveFile";
+import { ensureCredentials } from "../utils/credentialsPatch";
 
 export default function DashboardLayout({
   children,
@@ -70,6 +71,7 @@ export default function DashboardLayout({
 
   // Auth guard: bounce visitors without a session to the login page
   useEffect(() => {
+    ensureCredentials();
     if (!localStorage.getItem("user")) {
       window.location.href = "/login";
     }
