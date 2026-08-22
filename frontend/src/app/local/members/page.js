@@ -444,6 +444,7 @@ export default function LocalMembersPage() {
                 `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/${pendingAction.member.id}/delete/`,
                 {
                   method: "DELETE",
+                  credentials: "include",
                   headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": getCookie("csrftoken"),
@@ -491,6 +492,7 @@ export default function LocalMembersPage() {
                   `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/members/${id}/delete/`,
                   {
                     method: "DELETE",
+                    credentials: "include",
                     headers: {
                       "Content-Type": "application/json",
                       "X-CSRFToken": getCookie("csrftoken"),

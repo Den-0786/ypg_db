@@ -401,6 +401,11 @@ export default function DashboardLayout({
         return;
       }
 
+      if (!otpCode || otpCode.length !== 6) {
+        showError("Enter the 6-digit SMS verification code below first");
+        return;
+      }
+
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/security/`,
         {
@@ -412,6 +417,7 @@ export default function DashboardLayout({
           body: JSON.stringify({
             username: newUsername,
             currentUsername: originalUsername,
+            otp_code: otpCode,
             congregation_id: "district",
           }),
         }
@@ -421,6 +427,8 @@ export default function DashboardLayout({
       if (response.ok && data.success) {
         showSuccess("Username updated successfully!");
         setOriginalUsername(newUsername);
+        setOtpCode("");
+        setOtpSent(false);
       } else {
         showError(data.error || "Failed to update username");
       }
@@ -490,7 +498,9 @@ export default function DashboardLayout({
           },
           credentials: "include",
           body: JSON.stringify({
-            username: profileData.username,
+            ...(profileData.username !== originalUsername
+              ? { username: profileData.username }
+              : {}),
             currentPassword: securityData.currentPassword,
             newPassword: securityData.newPassword,
             confirmPassword: securityData.confirmPassword,
@@ -1448,6 +1458,9 @@ export default function DashboardLayout({
                                 "Update Username"
                               )}
                             </button>
+                            <p className="text-xs text-gray-500 mt-1">
+                              Requires the 6-digit SMS verification code from the password section below.
+                            </p>
                           </div>
                           <div>
                             <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">

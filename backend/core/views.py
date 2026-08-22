@@ -2891,29 +2891,26 @@ def api_settings_security(request):
                     if not target_user:
                         return JsonResponse({'success': False, 'error': 'User not found'}, status=404)
 
-                    if target_user.username == username:
-                                return JsonResponse({
-                                    'success': False,
-                                    'error': 'New username cannot be the same as current username. Please use a different username.'
-                                }, status=400)
-                            
-                    if User.objects.filter(username=username).exclude(pk=target_user.pk).exists():
-                        return JsonResponse({'success': False, 'error': 'Username already taken'}, status=400)
+                    # An unchanged username is a no-op so password-only
+                    # requests that also carry the current username succeed.
+                    if target_user.username != username:
+                        if User.objects.filter(username=username).exclude(pk=target_user.pk).exists():
+                            return JsonResponse({'success': False, 'error': 'Username already taken'}, status=400)
 
-                    target_user.username = username
-                    target_user.save()
+                        target_user.username = username
+                        target_user.save()
 
-                    # Refresh session if acting user changed their own username
-                    if request.user.is_authenticated and request.user.pk == target_user.pk:
-                        login(request, target_user)
+                        # Refresh session if acting user changed their own username
+                        if request.user.is_authenticated and request.user.pk == target_user.pk:
+                            login(request, target_user)
 
-                    # Maintain global data for district
-                    try:
-                        district_congregation = Congregation.objects.get(is_district=True)
-                        if district_congregation.user and district_congregation.user.pk == target_user.pk:
-                            DISTRICT_PROFILE_DATA['username'] = target_user.username
-                    except Congregation.DoesNotExist:
-                        pass
+                        # Maintain global data for district
+                        try:
+                            district_congregation = Congregation.objects.get(is_district=True)
+                            if district_congregation.user and district_congregation.user.pk == target_user.pk:
+                                DISTRICT_PROFILE_DATA['username'] = target_user.username
+                        except Congregation.DoesNotExist:
+                            pass
                 except Exception as e:
                     return JsonResponse({
                         'success': False,

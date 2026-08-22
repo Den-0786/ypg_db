@@ -613,14 +613,33 @@ export default function LocalDashboardLayout({
   const updateProfile = async (updatedData) => {
     try {
       setProfileSaving(true);
+
+      // Persist to the backend so the profile follows the account across devices
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/profile/`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(updatedData),
+        }
+      );
+
+      const data = await response.json();
+      if (!response.ok || !data.success) {
+        showError(data.error || "Failed to update profile");
+        return false;
+      }
+
+      // Mirror to congregation-specific localStorage for offline/fast reads
       const congregationName = localStorage.getItem("congregationName");
-
-      // Save to congregation-specific localStorage
       const localKey = `profile_${congregationName}`;
-      localStorage.setItem(localKey, JSON.stringify(updatedData));
+      const saved = data.profile || updatedData;
+      localStorage.setItem(localKey, JSON.stringify(saved));
 
-      // Update local state
-      setProfileData(updatedData);
+      setProfileData(saved);
       showSuccess("Profile updated successfully!");
       return true;
     } catch (error) {
@@ -740,6 +759,11 @@ export default function LocalDashboardLayout({
         return;
       }
 
+      if (!otpCode || otpCode.length !== 6) {
+        showError("Enter the 6-digit SMS verification code below first");
+        return;
+      }
+
       setSecuritySaving(true);
 
       // Make API call to update username in database
@@ -754,6 +778,7 @@ export default function LocalDashboardLayout({
           body: JSON.stringify({
             username: securityData.username,
             currentUsername: profileData.username,
+            otp_code: otpCode,
             congregation_id: localStorage.getItem("congregationId"),
             congregation_name: localStorage.getItem("congregationName"),
           }),
@@ -769,6 +794,8 @@ export default function LocalDashboardLayout({
             ...prev,
             username: securityData.username,
           }));
+          setOtpCode("");
+          setOtpSent(false);
         } else {
           showError(data.error || "Failed to update username");
         }
@@ -855,7 +882,6 @@ export default function LocalDashboardLayout({
           },
           credentials: "include",
           body: JSON.stringify({
-            username: profileData.username,
             currentPassword: securityData.currentPassword,
             newPassword: securityData.newPassword,
             confirmPassword: securityData.confirmPassword,
@@ -1657,6 +1683,9 @@ export default function LocalDashboardLayout({
                                   "Update Username"
                                 )}
                               </button>
+                              <p className="text-xs text-gray-500 -mt-2 mb-4">
+                                Requires the 6-digit SMS verification code from the password section below.
+                              </p>
                               <div>
                                 <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                                   Current Password
