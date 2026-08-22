@@ -18,7 +18,7 @@ class Command(BaseCommand):
                 defaults={
                     'first_name': 'District',
                     'last_name': 'Administrator',
-                    'email': 'ahinsandistrictypg@gmail.com',
+                    'email': 'ypgahinsandistrict@gmail.com',
                     'is_staff': True,
                     'is_superuser': False,
                 }
