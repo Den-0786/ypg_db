@@ -613,8 +613,53 @@ export default function DashboardLayout({
     }
   };
 
-  const handleNotificationUpdate = () => {
-    showSuccess("Notification preferences updated successfully!");
+  const handleNotificationUpdate = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/preferences/`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ notifications: notificationPrefs }),
+        }
+      );
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && data.success) {
+        showSuccess("Notification preferences saved!");
+      } else {
+        showError(data.error || "Failed to save preferences");
+      }
+    } catch (e) {
+      console.error("Error saving preferences:", e);
+      showError("Failed to save preferences");
+    }
+  };
+
+  const FONT_SIZE_PX = { small: "14px", medium: "16px", large: "18px" };
+
+  const handleAppearanceUpdate = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/preferences/`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ appearance: appearancePrefs }),
+        }
+      );
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && data.success) {
+        document.documentElement.style.fontSize =
+          FONT_SIZE_PX[appearancePrefs.font_size] || "16px";
+        localStorage.setItem("ypg_font_size", appearancePrefs.font_size);
+        showSuccess("Appearance settings applied!");
+      } else {
+        showError(data.error || "Failed to apply appearance settings");
+      }
+    } catch (e) {
+      console.error("Error applying appearance:", e);
+      showError("Failed to apply appearance settings");
+    }
   };
 
   const handleLogout = () => {
@@ -1007,6 +1052,45 @@ export default function DashboardLayout({
   });
   const [websiteLoading, setWebsiteLoading] = useState(false);
 
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    email_notifications: true,
+    new_member_alerts: true,
+    weekly_reports: false,
+    system_updates: true,
+  });
+  const [appearancePrefs, setAppearancePrefs] = useState({
+    language: "English",
+    font_size:
+      (typeof window !== "undefined" &&
+        localStorage.getItem("ypg_font_size")) ||
+      "medium",
+  });
+  const [prefsLoading, setPrefsLoading] = useState(false);
+
+  const fetchPreferences = async () => {
+    try {
+      setPrefsLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/preferences/`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          if (data.notifications) {
+            setNotificationPrefs((p) => ({ ...p, ...data.notifications }));
+          }
+          if (data.appearance) {
+            setAppearancePrefs((p) => ({ ...p, ...data.appearance }));
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error fetching preferences:", e);
+    } finally {
+      setPrefsLoading(false);
+    }
+  };
+
   const fetchWebsiteData = async () => {
     try {
       setWebsiteLoading(true);
@@ -1035,6 +1119,13 @@ export default function DashboardLayout({
   useEffect(() => {
     if (settingsOpen && activeSettingsTab === "website") {
       fetchWebsiteData();
+    }
+    if (
+      settingsOpen &&
+      (activeSettingsTab === "notifications" ||
+        activeSettingsTab === "appearance")
+    ) {
+      fetchPreferences();
     }
   }, [settingsOpen, activeSettingsTab]);
 
@@ -2003,7 +2094,13 @@ export default function DashboardLayout({
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={notificationPrefs.email_notifications}
+                            onChange={(e) =>
+                              setNotificationPrefs((p) => ({
+                                ...p,
+                                email_notifications: e.target.checked,
+                              }))
+                            }
                             className="rounded"
                           />
                         </div>
@@ -2018,7 +2115,13 @@ export default function DashboardLayout({
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={notificationPrefs.new_member_alerts}
+                            onChange={(e) =>
+                              setNotificationPrefs((p) => ({
+                                ...p,
+                                new_member_alerts: e.target.checked,
+                              }))
+                            }
                             className="rounded"
                           />
                         </div>
@@ -2031,7 +2134,17 @@ export default function DashboardLayout({
                               Receive weekly summary reports
                             </p>
                           </div>
-                          <input type="checkbox" className="rounded" />
+                          <input
+                            type="checkbox"
+                            checked={notificationPrefs.weekly_reports}
+                            onChange={(e) =>
+                              setNotificationPrefs((p) => ({
+                                ...p,
+                                weekly_reports: e.target.checked,
+                              }))
+                            }
+                            className="rounded"
+                          />
                         </div>
                         <div className="flex items-center justify-between">
                           <div>
@@ -2044,11 +2157,21 @@ export default function DashboardLayout({
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={notificationPrefs.system_updates}
+                            onChange={(e) =>
+                              setNotificationPrefs((p) => ({
+                                ...p,
+                                system_updates: e.target.checked,
+                              }))
+                            }
                             className="rounded"
                           />
                         </div>
-                        <button className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base">
+                        <button
+                          onClick={handleNotificationUpdate}
+                          disabled={prefsLoading}
+                          className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                           Save Preferences
                         </button>
                       </div>
@@ -2078,7 +2201,16 @@ export default function DashboardLayout({
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Language
                           </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
+                          <select
+                            value={appearancePrefs.language}
+                            onChange={(e) =>
+                              setAppearancePrefs((p) => ({
+                                ...p,
+                                language: e.target.value,
+                              }))
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                          >
                             <option>English</option>
                             <option>Twi</option>
                             <option>Ga</option>
@@ -2089,13 +2221,26 @@ export default function DashboardLayout({
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Font Size
                           </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
-                            <option>Small</option>
-                            <option>Medium</option>
-                            <option>Large</option>
+                          <select
+                            value={appearancePrefs.font_size}
+                            onChange={(e) =>
+                              setAppearancePrefs((p) => ({
+                                ...p,
+                                font_size: e.target.value,
+                              }))
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                          >
+                            <option value="small">Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large">Large</option>
                           </select>
                         </div>
-                        <button className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base">
+                        <button
+                          onClick={handleAppearanceUpdate}
+                          disabled={prefsLoading}
+                          className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                           Apply Changes
                         </button>
                       </div>

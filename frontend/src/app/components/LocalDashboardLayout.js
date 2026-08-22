@@ -426,6 +426,44 @@ export default function LocalDashboardLayout({
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState("profile");
+  const [notificationPrefs, setNotificationPrefs] = useState({
+    email_notifications: true,
+    new_member_alerts: true,
+    weekly_reports: false,
+    system_updates: true,
+  });
+  const [appearancePrefs, setAppearancePrefs] = useState({
+    language: "English",
+    font_size:
+      (typeof window !== "undefined" &&
+        localStorage.getItem("ypg_font_size")) ||
+      "medium",
+  });
+  const [prefsLoading, setPrefsLoading] = useState(false);
+
+  const fetchPreferences = async () => {
+    try {
+      setPrefsLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/preferences/`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          if (data.notifications) {
+            setNotificationPrefs((p) => ({ ...p, ...data.notifications }));
+          }
+          if (data.appearance) {
+            setAppearancePrefs((p) => ({ ...p, ...data.appearance }));
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error fetching preferences:", e);
+    } finally {
+      setPrefsLoading(false);
+    }
+  };
   const [settingsSidebarOpen, setSettingsSidebarOpen] = useState(true);
   const [securityMethod, setSecurityMethod] = useState("password"); // 'password' or 'pin'
   const [pinModalOpen, setPinModalOpen] = useState(false);
@@ -455,6 +493,17 @@ export default function LocalDashboardLayout({
       window.location.href = "/login";
     }
   }, []);
+
+  // Load saved preferences when the notifications/appearance tabs open
+  useEffect(() => {
+    if (
+      settingsOpen &&
+      (activeSettingsTab === "notifications" ||
+        activeSettingsTab === "appearance")
+    ) {
+      fetchPreferences();
+    }
+  }, [settingsOpen, activeSettingsTab]);
 
   // Security state management
   const [securityData, setSecurityData] = useState({
@@ -572,11 +621,31 @@ export default function LocalDashboardLayout({
     try {
       setProfileLoading(true);
       const congregationName = localStorage.getItem("congregationName");
-
-      // Try to get congregation-specific settings from localStorage first
       const localKey = `profile_${congregationName}`;
-      const localData = localStorage.getItem(localKey);
 
+      // Server is the source of truth so profiles follow the account across devices
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/profile/`,
+        { credentials: "include" }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.profile && data.profile.fullName) {
+          setProfileData({
+            username: data.profile.username || "",
+            fullName: data.profile.fullName || "",
+            email: data.profile.email || "",
+            phone: data.profile.phone || "",
+            role: data.profile.role || "Local Executive",
+            avatar: data.profile.avatar || null,
+          });
+          localStorage.setItem(localKey, JSON.stringify(data.profile));
+          return;
+        }
+      }
+
+      // Fall back to cached data when offline/unauthenticated
+      const localData = localStorage.getItem(localKey);
       if (localData) {
         const data = JSON.parse(localData);
         setProfileData({
@@ -587,21 +656,18 @@ export default function LocalDashboardLayout({
           role: data.role || "Local Executive",
           avatar: data.avatar || null,
         });
-        setProfileLoading(false);
         return;
       }
 
-      // No local data found, use default values for this congregation
-      const defaultProfile = {
+      // Nothing anywhere: sensible defaults
+      setProfileData({
         username: "",
         fullName: "",
         email: "",
         phone: "",
         role: "Local Executive",
         avatar: null,
-      };
-      setProfileData(defaultProfile);
-      localStorage.setItem(localKey, JSON.stringify(defaultProfile));
+      });
     } catch (error) {
       console.error("Error fetching profile:", error);
       showError("Failed to load profile data");
@@ -1002,8 +1068,53 @@ export default function LocalDashboardLayout({
     }
   };
 
-  const handleNotificationUpdate = () => {
-    showSuccess("Notification preferences updated successfully!");
+  const handleNotificationUpdate = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/preferences/`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ notifications: notificationPrefs }),
+        }
+      );
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && data.success) {
+        showSuccess("Notification preferences saved!");
+      } else {
+        showError(data.error || "Failed to save preferences");
+      }
+    } catch (e) {
+      console.error("Error saving preferences:", e);
+      showError("Failed to save preferences");
+    }
+  };
+
+  const FONT_SIZE_PX = { small: "14px", medium: "16px", large: "18px" };
+
+  const handleAppearanceUpdate = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/preferences/`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ appearance: appearancePrefs }),
+        }
+      );
+      const data = await response.json().catch(() => ({}));
+      if (response.ok && data.success) {
+        document.documentElement.style.fontSize =
+          FONT_SIZE_PX[appearancePrefs.font_size] || "16px";
+        localStorage.setItem("ypg_font_size", appearancePrefs.font_size);
+        showSuccess("Appearance settings applied!");
+      } else {
+        showError(data.error || "Failed to apply appearance settings");
+      }
+    } catch (e) {
+      console.error("Error applying appearance:", e);
+      showError("Failed to apply appearance settings");
+    }
   };
 
   // Data Management Functions
@@ -2037,7 +2148,13 @@ export default function LocalDashboardLayout({
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={notificationPrefs.email_notifications}
+                            onChange={(e) =>
+                              setNotificationPrefs((p) => ({
+                                ...p,
+                                email_notifications: e.target.checked,
+                              }))
+                            }
                             className="rounded"
                           />
                         </div>
@@ -2052,7 +2169,13 @@ export default function LocalDashboardLayout({
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={notificationPrefs.new_member_alerts}
+                            onChange={(e) =>
+                              setNotificationPrefs((p) => ({
+                                ...p,
+                                new_member_alerts: e.target.checked,
+                              }))
+                            }
                             className="rounded"
                           />
                         </div>
@@ -2065,7 +2188,17 @@ export default function LocalDashboardLayout({
                               Receive weekly summary reports
                             </p>
                           </div>
-                          <input type="checkbox" className="rounded" />
+                          <input
+                            type="checkbox"
+                            checked={notificationPrefs.weekly_reports}
+                            onChange={(e) =>
+                              setNotificationPrefs((p) => ({
+                                ...p,
+                                weekly_reports: e.target.checked,
+                              }))
+                            }
+                            className="rounded"
+                          />
                         </div>
                         <div className="flex items-center justify-between">
                           <div>
@@ -2078,11 +2211,21 @@ export default function LocalDashboardLayout({
                           </div>
                           <input
                             type="checkbox"
-                            defaultChecked
+                            checked={notificationPrefs.system_updates}
+                            onChange={(e) =>
+                              setNotificationPrefs((p) => ({
+                                ...p,
+                                system_updates: e.target.checked,
+                              }))
+                            }
                             className="rounded"
                           />
                         </div>
-                        <button className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base">
+                        <button
+                          onClick={handleNotificationUpdate}
+                          disabled={prefsLoading}
+                          className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                           Save Preferences
                         </button>
                       </div>
@@ -2117,7 +2260,16 @@ export default function LocalDashboardLayout({
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Language
                           </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
+                          <select
+                            value={appearancePrefs.language}
+                            onChange={(e) =>
+                              setAppearancePrefs((p) => ({
+                                ...p,
+                                language: e.target.value,
+                              }))
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                          >
                             <option>English</option>
                             <option>Twi</option>
                             <option>Ga</option>
@@ -2128,13 +2280,26 @@ export default function LocalDashboardLayout({
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Font Size
                           </label>
-                          <select className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base">
-                            <option>Small</option>
-                            <option>Medium</option>
-                            <option>Large</option>
+                          <select
+                            value={appearancePrefs.font_size}
+                            onChange={(e) =>
+                              setAppearancePrefs((p) => ({
+                                ...p,
+                                font_size: e.target.value,
+                              }))
+                            }
+                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
+                          >
+                            <option value="small">Small</option>
+                            <option value="medium">Medium</option>
+                            <option value="large">Large</option>
                           </select>
                         </div>
-                        <button className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base">
+                        <button
+                          onClick={handleAppearanceUpdate}
+                          disabled={prefsLoading}
+                          className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors text-xs sm:text-base disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                           Apply Changes
                         </button>
                       </div>

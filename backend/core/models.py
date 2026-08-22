@@ -402,6 +402,60 @@ class SystemSettings(models.Model):
         return message
 
 
+class WebsiteSettings(models.Model):
+    """Singleton storing editable website content and dashboard preferences."""
+    DEFAULT_NOTIFICATION_PREFS = {
+        'email_notifications': True,
+        'new_member_alerts': True,
+        'weekly_reports': False,
+        'system_updates': True,
+    }
+    DEFAULT_APPEARANCE_PREFS = {
+        'language': 'English',
+        'font_size': 'medium',
+    }
+
+    about = models.TextField(blank=True, default='')
+    mission = models.TextField(blank=True, default='')
+    vision = models.TextField(blank=True, default='')
+    contact_email = models.EmailField(blank=True, default='')
+    contact_phone = models.CharField(max_length=20, blank=True, default='')
+    notification_prefs = models.JSONField(default=dict, blank=True)
+    appearance_prefs = models.JSONField(default=dict, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Website Settings"
+        verbose_name_plural = "Website Settings"
+
+    def __str__(self):
+        return "Website Settings"
+
+    @classmethod
+    def get_instance(cls):
+        instance, _ = cls.objects.get_or_create(pk=1)
+        return instance
+
+    def merged_notification_prefs(self):
+        prefs = dict(self.DEFAULT_NOTIFICATION_PREFS)
+        prefs.update(self.notification_prefs or {})
+        return prefs
+
+    def merged_appearance_prefs(self):
+        prefs = dict(self.DEFAULT_APPEARANCE_PREFS)
+        prefs.update(self.appearance_prefs or {})
+        return prefs
+
+    def to_website_dict(self):
+        return {
+            'about': self.about,
+            'mission': self.mission,
+            'vision': self.vision,
+            'contact_email': self.contact_email,
+            'contact_phone': self.contact_phone,
+        }
+
+
 # Quiz Models
 class Quiz(models.Model):
     """Model for storing quiz information"""

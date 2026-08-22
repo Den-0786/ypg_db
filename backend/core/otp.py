@@ -5,7 +5,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.utils import timezone
 
-from .models import PasswordChangeOTP
+from .models import PasswordChangeOTP, UserProfile, Congregation
 from .sms import send_sms
 
 OTP_LIFETIME_MINUTES = 10
@@ -28,15 +28,48 @@ def otp_recipient():
     return getattr(settings, 'OTP_RECIPIENT', '') or '0245660786'
 
 
+def masked_number(number):
+    n = str(number or '')
+    if len(n) >= 5:
+        return n[:3] + "****" + n[-2:]
+    return n
+
+
 def masked_recipient():
-    number = otp_recipient()
-    if len(number) >= 5:
-        return number[:3] + "****" + number[-2:]
-    return number
+    return masked_number(otp_recipient())
 
 
-def issue_otp(identifier, user=None, purpose='password_change'):
-    """Generate an OTP, store its hash, and SMS it to the configured recipient."""
+def resolve_user_phone(user):
+    """Best-effort phone lookup: profile phone first, then congregation leader phone."""
+    if not user or not getattr(user, 'is_authenticated', False):
+        return ''
+    try:
+        profile = UserProfile.objects.get(user=user)
+        if profile.phone_number:
+            return profile.phone_number
+    except Exception:
+        pass
+    try:
+        congregation = Congregation.objects.get(user=user)
+        if congregation.leader_phone:
+            return congregation.leader_phone
+    except Exception:
+        pass
+    return ''
+
+
+def recipient_for(user=None, phone=None):
+    """The number an OTP should go to for this user, with district fallback."""
+    explicit = str(phone or '').strip()
+    if explicit:
+        return explicit
+    return resolve_user_phone(user) or otp_recipient()
+
+
+def issue_otp(identifier, user=None, purpose='password_change', phone=None):
+    """Generate an OTP, store its hash, and SMS it to the user's own phone
+    (profile phone, else congregation leader phone), falling back to the
+    configured district recipient when no personal number is on file."""
     now = timezone.now()
 
     existing = PasswordChangeOTP.objects.filter(
@@ -58,7 +91,7 @@ def issue_otp(identifier, user=None, purpose='password_change'):
 
     app_name = getattr(settings, 'APP_NAME', 'YPG')
     message = f"Your {app_name} password change code is {code}. It expires in {OTP_LIFETIME_MINUTES} minutes. Do not share it."
-    sent = send_sms(normalize_recipient(otp_recipient()), message)
+    sent = send_sms(normalize_recipient(recipient_for(user, phone)), message)
     if not sent:
         return False, 'Could not send the SMS code. Please try again later.'
     return True, None

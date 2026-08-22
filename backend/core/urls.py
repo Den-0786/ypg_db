@@ -115,6 +115,7 @@ urlpatterns = [
     path('api/settings/security/', views.api_settings_security, name='api_settings_security'),
     path('api/settings/security/otp-request', views.api_request_password_change_otp, name='api_request_password_change_otp'),
     path('api/settings/website/', views.api_settings_website, name='api_settings_website'),
+    path('api/settings/preferences/', views.api_settings_preferences, name='api_settings_preferences'),
     path('api/validate-pin/', views.api_validate_pin, name='api_validate_pin'),
     path('api/congregation/initials/', views.api_congregation_initials, name='api_congregation_initials'),
     path('api/congregations/create/', views.api_congregation_create, name='api_congregation_create'),
@@ -148,6 +149,4 @@ urlpatterns = [
     path('api/events/', views.api_events, name='api_events'),
     path('api/events/<int:event_id>/', views.api_events, name='api_events_detail'),
     
-    # Council API URLs
-    path('api/council/', views.api_council, name='api_council'),
 ]

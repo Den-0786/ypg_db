@@ -19,7 +19,7 @@ from django.contrib.auth import update_session_auth_hash, authenticate, login, l
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
-from .otp import issue_otp, verify_otp, masked_recipient
+from .otp import issue_otp, verify_otp, masked_number, recipient_for
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
@@ -52,7 +52,8 @@ from .forms import (BulkGuilderForm, ChangePINForm, CongregationForm,
 from .models import (DISTRICT_EXECUTIVE_POSITIONS, LOCAL_EXECUTIVE_POSITIONS,
                      BirthdayMessageLog, BulkProfileCart, Congregation,
                      DataBackup, Guilder, Notification, Role,
-                     SundayAttendance, Quiz, QuizSubmission, UserProfile, LoginAttempt)
+                     SundayAttendance, Quiz, QuizSubmission, UserProfile,
+                     LoginAttempt, WebsiteSettings)
 
 LOGIN_RATE_LIMIT_ENABLED = True
 
@@ -2804,18 +2805,19 @@ def api_validate_pin(request):
 
 @csrf_exempt
 def api_request_password_change_otp(request):
-    """Sends an SMS OTP to the configured district phone number (authenticated users only)."""
+    """Sends an SMS OTP to the requester's own phone when on file, else the district phone."""
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
 
-    ok, error_message = issue_otp(request.user.username, user=request.user)
+    recipient = recipient_for(request.user)
+    ok, error_message = issue_otp(request.user.username, user=request.user, phone=recipient)
     if not ok:
         status_code = 429 if 'wait' in (error_message or '') else 500
         return JsonResponse({'success': False, 'error': error_message}, status=status_code)
 
-    return JsonResponse({'success': True, 'message': f'A verification code was sent via SMS to {masked_recipient()}'})
+    return JsonResponse({'success': True, 'message': f'A verification code was sent via SMS to {masked_number(recipient)}'})
 
 
 @csrf_exempt
@@ -3135,65 +3137,100 @@ def api_settings_website(request):
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for website settings"""
     try:
+        settings_obj = WebsiteSettings.get_instance()
+
         if request.method == "GET":
-            # Get current website settings
-            website_settings = {
-                'websiteTitle': 'PCG Ahinsan District YPG',
-                'contactEmail': 'youth@presbyterian.org',
-                'phoneNumber': '+233 20 123 4567',
-                'address': 'Ahinsan District, Kumasi, Ghana',
-                'description': 'Presbyterian Church of Ghana Youth Ministry - Ahinsan District',
-                'socialMedia': {
-                    'facebook': 'https://facebook.com/presbyterianyouth',
-                    'instagram': 'https://instagram.com/presbyterianyouth',
-                    'twitter': 'https://twitter.com/presbyterianyouth',
-                    'youtube': 'https://youtube.com/presbyterianyouth',
-                    'linkedin': 'https://linkedin.com/company/presbyterianyouth',
-                },
-                'appearance': {
-                    'theme': 'light',
-                    'language': 'English',
-                    'primaryColor': '#3B82F6',
-                    'borderRadius': 'medium',
-                },
-            }
-            return JsonResponse({'success': True, 'settings': website_settings})
-        
-        elif request.method == "PUT":
-            # Update website settings
-            data = json.loads(request.body)
-            
-            # Validate required fields
-            errors = {}
-            if not data.get('websiteTitle', '').strip():
-                errors['websiteTitle'] = 'Website title is required'
-            
-            if not data.get('contactEmail', '').strip():
-                errors['contactEmail'] = 'Contact email is required'
-            elif not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', data['contactEmail']):
-                errors['contactEmail'] = 'Please enter a valid email address'
-            
-            if not data.get('phoneNumber', '').strip():
-                errors['phoneNumber'] = 'Phone number is required'
-            elif not re.match(r'^(\+233|0)[0-9]{9}$', data['phoneNumber']):
-                errors['phoneNumber'] = 'Please enter a valid Ghanaian phone number'
-            
-            if errors:
-                return JsonResponse({
-                    'success': False,
-                    'errors': errors
-                }, status=400)
-            
-            # In a real application, you would save these to a database
-            # For now, we'll just return success
             return JsonResponse({
-                'success': True, 
-                'message': 'Website settings updated successfully'
+                'success': True,
+                'website': settings_obj.to_website_dict()
             })
-            
+
+        # PUT - update website content
+        data = json.loads(request.body)
+
+        errors = {}
+        email = str(data.get('contact_email', '') or '').strip()
+        if email and not re.match(r'^[^\s@]+@[^\s@]+\.[^\s@]+$', email):
+            errors['contact_email'] = 'Please enter a valid email address'
+
+        phone = str(data.get('contact_phone', '') or '').strip()
+        if phone and not re.match(r'^(\+233|0)[0-9]{9}$', phone):
+            errors['contact_phone'] = 'Please enter a valid Ghanaian phone number'
+
+        if errors:
+            return JsonResponse({'success': False, 'errors': errors}, status=400)
+
+        settings_obj.about = str(data.get('about', '') or '')
+        settings_obj.mission = str(data.get('mission', '') or '')
+        settings_obj.vision = str(data.get('vision', '') or '')
+        settings_obj.contact_email = email
+        settings_obj.contact_phone = phone
+        settings_obj.save()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Website content updated successfully',
+            'website': settings_obj.to_website_dict()
+        })
+
     except Exception as e:
         return JsonResponse({
-            'success': False, 
+            'success': False,
+            'error': str(e)
+        }, status=400)
+
+
+NOTIFICATION_PREF_KEYS = ('email_notifications', 'new_member_alerts', 'weekly_reports', 'system_updates')
+APPEARANCE_FONT_SIZES = ('small', 'medium', 'large')
+
+
+@csrf_exempt
+@require_http_methods(["GET", "PUT"])
+def api_settings_preferences(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    """API endpoint for dashboard notification and appearance preferences"""
+    try:
+        settings_obj = WebsiteSettings.get_instance()
+
+        if request.method == "GET":
+            return JsonResponse({
+                'success': True,
+                'notifications': settings_obj.merged_notification_prefs(),
+                'appearance': settings_obj.merged_appearance_prefs(),
+            })
+
+        data = json.loads(request.body)
+
+        notif = data.get('notifications')
+        if isinstance(notif, dict):
+            current = settings_obj.merged_notification_prefs()
+            for key in NOTIFICATION_PREF_KEYS:
+                if key in notif:
+                    current[key] = bool(notif[key])
+            settings_obj.notification_prefs = current
+
+        appearance = data.get('appearance')
+        if isinstance(appearance, dict):
+            current = settings_obj.merged_appearance_prefs()
+            if 'language' in appearance and str(appearance['language']).strip():
+                current['language'] = str(appearance['language']).strip()
+            if 'font_size' in appearance and appearance['font_size'] in APPEARANCE_FONT_SIZES:
+                current['font_size'] = appearance['font_size']
+            settings_obj.appearance_prefs = current
+
+        settings_obj.save()
+
+        return JsonResponse({
+            'success': True,
+            'message': 'Preferences updated successfully',
+            'notifications': settings_obj.merged_notification_prefs(),
+            'appearance': settings_obj.merged_appearance_prefs(),
+        })
+
+    except Exception as e:
+        return JsonResponse({
+            'success': False,
             'error': str(e)
         }, status=400)
 
@@ -3531,72 +3568,6 @@ def api_events(request, event_id=None):
             delete_type = request.GET.get('type', 'both')
             # In a real application, you would delete from database
             return JsonResponse({'success': True, 'message': 'Event deleted successfully'})
-            
-    except Exception as e:
-        return JsonResponse({
-            'success': False, 
-            'error': str(e)
-        }, status=400)
-
-
-# Council API Views
-@csrf_exempt
-@require_http_methods(["GET", "POST", "PUT", "DELETE"])
-def api_council(request):
-    """API endpoint for council members"""
-    try:
-        if request.method == "GET":
-            # Get all council members
-            council_members = [
-                {
-                    'id': 1,
-                    'name': 'John Doe',
-                    'position': 'Branch President',
-                    'congregation': 'Emmanuel Congregation Ahinsan',
-                    'phone': '+233244123456',
-                    'email': 'john.doe@example.com',
-                    'description': 'Branch President of Emmanuel Congregation',
-                    'image': None,
-                }
-            ]
-            return JsonResponse({'success': True, 'councilMembers': council_members})
-        
-        elif request.method == "POST":
-            # Create new council member
-            data = json.loads(request.body)
-            new_member = {
-                'id': len(council_members) + 1,
-                'name': data.get('name', ''),
-                'position': data.get('position', ''),
-                'congregation': data.get('congregation', ''),
-                'phone': data.get('phone', ''),
-                'email': data.get('email', ''),
-                'description': data.get('description', ''),
-                'image': data.get('image', None),
-            }
-            return JsonResponse({'success': True, 'councilMember': new_member})
-        
-        elif request.method == "PUT":
-            # Update council member
-            data = json.loads(request.body)
-            updated_member = {
-                'id': data.get('id', 1),
-                'name': data.get('name', ''),
-                'position': data.get('position', ''),
-                'congregation': data.get('congregation', ''),
-                'phone': data.get('phone', ''),
-                'email': data.get('email', ''),
-                'description': data.get('description', ''),
-                'image': data.get('image', None),
-            }
-            return JsonResponse({'success': True, 'councilMember': updated_member})
-        
-        elif request.method == "DELETE":
-            # Delete council member
-            member_id = request.GET.get('id')
-            delete_type = request.GET.get('type', 'both')
-            # In a real application, you would delete from database
-            return JsonResponse({'success': True, 'message': 'Council member deleted successfully'})
             
     except Exception as e:
         return JsonResponse({
