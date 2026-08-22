@@ -2456,7 +2456,7 @@ def api_create_test_notifications(request):
 DISTRICT_PROFILE_DATA = {
     'username': 'district_admin',
     'fullName': 'District Admin',
-    'email': 'district@ypg.com',
+    'email': 'ahinsandistrictypg@gmail.com',
     'phone': '+233 20 123 4567',
     'role': 'System Administrator',
 }
@@ -2492,7 +2492,7 @@ def api_settings_profile(request):
                     profile_data = {
                         'username': DISTRICT_PROFILE_DATA.get('username', 'district_admin') or '',
                         'fullName': DISTRICT_PROFILE_DATA.get('fullName', 'District Admin') or '',
-                        'email': DISTRICT_PROFILE_DATA.get('email', 'district@ypg.com') or '',
+                        'email': DISTRICT_PROFILE_DATA.get('email', 'ahinsandistrictypg@gmail.com') or '',
                         'phone': DISTRICT_PROFILE_DATA.get('phone', '+233 20 123 4567') or '',
                         'role': DISTRICT_PROFILE_DATA.get('role', 'System Administrator') or '',
                         'avatar': None,
@@ -2502,7 +2502,7 @@ def api_settings_profile(request):
                 profile_data = {
                     'username': DISTRICT_PROFILE_DATA.get('username', 'district_admin') or '',
                     'fullName': DISTRICT_PROFILE_DATA.get('fullName', 'District Admin') or '',
-                    'email': DISTRICT_PROFILE_DATA.get('email', 'district@ypg.com') or '',
+                    'email': DISTRICT_PROFILE_DATA.get('email', 'ahinsandistrictypg@gmail.com') or '',
                     'phone': DISTRICT_PROFILE_DATA.get('phone', '+233 20 123 4567') or '',
                     'role': DISTRICT_PROFILE_DATA.get('role', 'System Administrator') or '',
                     'avatar': None,
@@ -2560,7 +2560,7 @@ def api_settings_profile(request):
                     DISTRICT_PROFILE_DATA.update({
                         'username': data.get('username', 'district_admin'),
                         'fullName': data.get('fullName', 'District Admin'),
-                        'email': data.get('email', 'district@ypg.com'),
+                        'email': data.get('email', 'ahinsandistrictypg@gmail.com'),
                         'phone': data.get('phone', '+233 20 123 4567'),
                         'role': data.get('role', 'System Administrator'),
                     })
