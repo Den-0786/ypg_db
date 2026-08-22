@@ -290,3 +290,83 @@ class PasswordResetEmailTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(mail.outbox), 0)
         self.assertNotIn('reset_link', response.json())
+
+
+class CongregationCreateTests(TestCase):
+    """District admins create congregation accounts; email is mandatory."""
+
+    def setUp(self):
+        self.url = reverse('core:api_congregation_create')
+        self.district_user = User.objects.create_user(
+            username='district_admin', password='pass12345'
+        )
+        Congregation.objects.create(
+            name='District Admin', is_district=True, user=self.district_user
+        )
+        self.local_user = User.objects.create_user(
+            username='emmanuel', password='pass12345'
+        )
+        Congregation.objects.create(
+            name='Emmanuel Congregation Ahinsan', user=self.local_user
+        )
+        self.valid_payload = {
+            'name': 'New Test Congregation',
+            'location': 'Test Town',
+            'username': 'new_leader',
+            'email': 'leader@example.com',
+            'password': 'Str0ngPass!x',
+        }
+
+    def test_anonymous_cannot_create_congregation(self):
+        response = self.client.post(
+            self.url, data=json.dumps(self.valid_payload),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 401)
+
+    def test_local_user_cannot_create_congregation(self):
+        self.client.login(username='emmanuel', password='pass12345')
+        response = self.client.post(
+            self.url, data=json.dumps(self.valid_payload),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 403)
+
+    def test_missing_email_is_rejected(self):
+        self.client.login(username='district_admin', password='pass12345')
+        payload = dict(self.valid_payload)
+        del payload['email']
+        response = self.client.post(
+            self.url, data=json.dumps(payload), content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(
+            Congregation.objects.filter(name='New Test Congregation').exists()
+        )
+
+    def test_invalid_email_is_rejected(self):
+        self.client.login(username='district_admin', password='pass12345')
+        payload = dict(self.valid_payload, email='not-an-email')
+        response = self.client.post(
+            self.url, data=json.dumps(payload), content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_duplicate_username_is_rejected(self):
+        self.client.login(username='district_admin', password='pass12345')
+        payload = dict(self.valid_payload, username='emmanuel')
+        response = self.client.post(
+            self.url, data=json.dumps(payload), content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+
+    def test_district_admin_can_create_congregation_with_email(self):
+        self.client.login(username='district_admin', password='pass12345')
+        response = self.client.post(
+            self.url, data=json.dumps(self.valid_payload),
+            content_type='application/json',
+        )
+        self.assertEqual(response.status_code, 201)
+        congregation = Congregation.objects.get(name='New Test Congregation')
+        self.assertIsNotNone(congregation.user_id)
+        self.assertEqual(congregation.user.email, 'leader@example.com')

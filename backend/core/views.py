@@ -20,6 +20,9 @@ from django.utils.encoding import force_bytes, force_str
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.core.validators import EmailValidator
 from django.core.management.color import no_style
 from django.core.paginator import Paginator
 from django.core.serializers.json import DjangoJSONEncoder
@@ -3994,6 +3997,93 @@ def _get_district_admin_user(request):
     if Congregation.objects.filter(user=user, is_district=True).exists():
         return user
     return None
+
+
+@csrf_exempt
+@require_POST
+def api_congregation_create(request):
+    """District admins create congregation accounts.
+
+    The email is REQUIRED — it is what lets the leader reset their own
+    password later. No more placeholder addresses.
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+
+    requester_cong, is_district = _get_requester_congregation(request)
+    if not is_district or requester_cong is None:
+        return JsonResponse({
+            'success': False,
+            'error': 'Only district admins can create congregations.'
+        }, status=403)
+
+    try:
+        data = json.loads(request.body)
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON data'}, status=400)
+
+    name = (data.get('name') or '').strip()
+    location = (data.get('location') or '').strip()
+    initials = (data.get('initials') or '').strip().upper()
+    background_color = (data.get('background_color') or '#f0f0f0').strip()
+    pin = (data.get('pin') or '').strip()
+    username = (data.get('username') or '').strip()
+    email = (data.get('email') or '').strip().lower()
+    password = data.get('password') or ''
+
+    if not name:
+        return JsonResponse({'success': False, 'error': 'Congregation name is required.'}, status=400)
+    if Congregation.objects.filter(name__iexact=name).exists():
+        return JsonResponse({'success': False, 'error': 'A congregation with this name already exists.'}, status=400)
+
+    if not email:
+        return JsonResponse({'success': False, 'error': 'Leader email is required so they can reset their password.'}, status=400)
+    try:
+        EmailValidator()(email)
+    except DjangoValidationError:
+        return JsonResponse({'success': False, 'error': 'Enter a valid email address.'}, status=400)
+    if User.objects.filter(email__iexact=email).exists():
+        return JsonResponse({'success': False, 'error': 'This email is already used by another account.'}, status=400)
+
+    if not username:
+        return JsonResponse({'success': False, 'error': 'Username is required.'}, status=400)
+    if User.objects.filter(username__iexact=username).exists():
+        return JsonResponse({'success': False, 'error': 'This username is already taken.'}, status=400)
+
+    if not password:
+        return JsonResponse({'success': False, 'error': 'Password is required.'}, status=400)
+    try:
+        validate_password(password)
+    except DjangoValidationError as e:
+        return JsonResponse({'success': False, 'error': ' '.join(e.messages)}, status=400)
+
+    if pin and not re.fullmatch(r'\d{4}', pin):
+        return JsonResponse({'success': False, 'error': 'PIN must be exactly 4 digits.'}, status=400)
+    if len(initials) > 10:
+        return JsonResponse({'success': False, 'error': 'Initials must be 10 characters or fewer.'}, status=400)
+
+    user = User.objects.create_user(username=username, email=email, password=password)
+    congregation = Congregation.objects.create(
+        name=name,
+        location=location,
+        background_color=background_color or '#f0f0f0',
+        pin=pin or '1234',
+        initials=initials,
+        user=user,
+    )
+
+    logger.info("District admin %s created congregation '%s' (leader: %s)", request.user.username, name, username)
+
+    return JsonResponse({
+        'success': True,
+        'message': f"Congregation '{name}' created successfully.",
+        'congregation': {
+            'id': congregation.id,
+            'name': congregation.name,
+            'username': username,
+            'email': email,
+        }
+    }, status=201)
 
 
 def _get_requester_congregation(request):

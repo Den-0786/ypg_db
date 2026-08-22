@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import DashboardLayout from "../components/DashboardLayout";
 import AttendanceWaveChart from "../components/AttendanceWaveChart";
+import CreateCongregationModal from "../components/CreateCongregationModal";
 import autoLogout from "../utils/autoLogout";
 import getDataStore from "../utils/dataStore";
 
 export default function DashboardPage() {
+  const [showCreateModal, setShowCreateModal] = useState(false);
   // Redirect local users to their local dashboard
   useEffect(() => {
     try {
@@ -95,6 +97,12 @@ export default function DashboardPage() {
                 {loading ? "..." : dashboardStats.totalCongregations}{" "}
                 congregations in the district
               </p>
+              <button
+                onClick={() => setShowCreateModal(true)}
+                className="inline-flex items-center gap-2 bg-white text-blue-700 hover:bg-blue-50 font-medium px-4 py-2 rounded-lg shadow transition-colors"
+              >
+                <i className="fas fa-plus"></i> New Congregation
+              </button>
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center gap-1">
                   <div className="w-2 h-2 bg-green-300 rounded-full"></div>
@@ -254,6 +262,11 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      <CreateCongregationModal
+        show={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreated={fetchDashboardData}
+      />
     </DashboardLayout>
   );
 }
