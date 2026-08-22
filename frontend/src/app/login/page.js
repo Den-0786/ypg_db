@@ -138,6 +138,7 @@ export default function LoginPage() {
                 type="text"
                 id="username"
                 name="username"
+                autoComplete="username"
                 value={formData.username}
                 onChange={handleChange}
                 required
@@ -155,6 +156,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
+                  autoComplete="current-password"
                   value={formData.password}
                   onChange={handleChange}
                   required
