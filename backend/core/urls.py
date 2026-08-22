@@ -113,6 +113,7 @@ urlpatterns = [
     # Settings API URLs
     path('api/settings/profile/', views.api_settings_profile, name='api_settings_profile'),
     path('api/settings/security/', views.api_settings_security, name='api_settings_security'),
+    path('api/settings/security/otp-request', views.api_request_password_change_otp, name='api_request_password_change_otp'),
     path('api/settings/website/', views.api_settings_website, name='api_settings_website'),
     path('api/validate-pin/', views.api_validate_pin, name='api_validate_pin'),
     path('api/congregation/initials/', views.api_congregation_initials, name='api_congregation_initials'),

@@ -19,6 +19,7 @@ from django.contrib.auth import update_session_auth_hash, authenticate, login, l
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from .otp import issue_otp, verify_otp, masked_recipient
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
@@ -2803,6 +2804,22 @@ def api_validate_pin(request):
 
 @csrf_exempt
 @require_http_methods(["GET", "PUT"])
+@csrf_exempt
+def api_request_password_change_otp(request):
+    """Sends an SMS OTP to the configured district phone number (authenticated users only)."""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+
+    ok, error_message = issue_otp(request.user.username, user=request.user)
+    if not ok:
+        status_code = 429 if 'wait' in (error_message or '') else 500
+        return JsonResponse({'success': False, 'error': error_message}, status=status_code)
+
+    return JsonResponse({'success': True, 'message': f'A verification code was sent via SMS to {masked_recipient()}'})
+
+
 def api_settings_security(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
@@ -2840,7 +2857,17 @@ def api_settings_security(request):
         elif request.method == "PUT":
             # Update security settings
             data = json.loads(request.body)
-            
+
+            # Require SMS OTP verification for username/password changes
+            if data.get('username') or data.get('newPassword'):
+                otp_ok, otp_error = verify_otp(
+                    request.user.username if request.user.is_authenticated else (data.get('currentUsername') or ''),
+                    data.get('otp_code'),
+                    purpose='password_change'
+                )
+                if not otp_ok:
+                    return JsonResponse({'success': False, 'error': otp_error}, status=400)
+
             # Handle username and password change
             username = data.get('username')
             if username:

@@ -270,6 +270,10 @@ export default function DashboardLayout({
     requirePinForActions: true,
   });
 
+  const [otpCode, setOtpCode] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
+
   // Password visibility states
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -427,6 +431,30 @@ export default function DashboardLayout({
     }
   };
 
+  const handleRequestOTP = async () => {
+    try {
+      setOtpLoading(true);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/security/otp-request`,
+        {
+          method: "POST",
+          credentials: "include",
+        }
+      );
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setOtpSent(true);
+        showSuccess(data.message || "Verification code sent via SMS");
+      } else {
+        showError(data.error || "Failed to send SMS code");
+      }
+    } catch (error) {
+      showError("Network error while sending SMS code");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
   const handlePasswordUpdate = async () => {
     try {
       setSecurityLoading(true);
@@ -448,6 +476,10 @@ export default function DashboardLayout({
         showError("New password must be at least 8 characters long");
         return;
       }
+      if (!otpCode || otpCode.length !== 6) {
+        showError("Enter the 6-digit SMS verification code");
+        return;
+      }
 
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/settings/security/`,
@@ -462,6 +494,7 @@ export default function DashboardLayout({
             currentPassword: securityData.currentPassword,
             newPassword: securityData.newPassword,
             confirmPassword: securityData.confirmPassword,
+            otp_code: otpCode,
             twoFactorAuth: securityData.twoFactorAuth,
             congregation_id: "district",
           }),
@@ -479,6 +512,8 @@ export default function DashboardLayout({
             newPassword: "",
             confirmPassword: "",
           }));
+          setOtpCode("");
+          setOtpSent(false);
         } else {
           showError(
             data.error ||
@@ -1602,6 +1637,39 @@ export default function DashboardLayout({
                                 )}
                               </button>
                             </div>
+                          </div>
+                          <div>
+                            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                              SMS Verification Code
+                            </label>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={otpCode}
+                                onChange={(e) =>
+                                  setOtpCode(e.target.value.replace(/\D/g, "").slice(0, 6))
+                                }
+                                placeholder="6-digit code"
+                                maxLength={6}
+                                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base tracking-widest"
+                                disabled={securityLoading}
+                              />
+                              <button
+                                type="button"
+                                onClick={handleRequestOTP}
+                                disabled={otpLoading}
+                                className={`px-3 py-2 whitespace-nowrap rounded-lg text-xs font-medium text-white transition ${
+                                  otpSent
+                                    ? "bg-green-600 hover:bg-green-700"
+                                    : "bg-amber-500 hover:bg-amber-600"
+                                } disabled:opacity-50`}
+                              >
+                                {otpLoading ? "Sending..." : otpSent ? "Resend Code" : "Send Code"}
+                              </button>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">
+                              A 6-digit code will be sent to the registered district phone.
+                            </p>
                           </div>
                           <div className="flex items-center space-x-2">
                             <input

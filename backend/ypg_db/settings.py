@@ -263,3 +263,6 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'District YPG Database <nor
 
 ARKESEL_API_KEY = os.getenv('ARKESEL_API_KEY')
 SMS_SENDER_ID = os.getenv('SMS_SENDER_ID', 'DistYPG')
+
+# Phone number that receives OTP SMS for password changes
+OTP_RECIPIENT = os.getenv('OTP_RECIPIENT', '0245660786')

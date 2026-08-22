@@ -516,3 +516,30 @@ class DataBackup(models.Model):
 
 
 
+
+
+class PasswordChangeOTP(models.Model):
+    """One-time SMS code required before a password/username change is applied."""
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='otp_codes'
+    )
+    identifier = models.CharField(max_length=150, blank=True, default='')
+    code_hash = models.CharField(max_length=64)
+    purpose = models.CharField(max_length=30, default='password_change')
+    attempts = models.IntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"OTP for {self.identifier or self.user_id} ({self.purpose})"
+
+    @property
+    def is_expired(self):
+        return timezone.now() > self.expires_at
