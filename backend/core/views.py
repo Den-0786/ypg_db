@@ -1,6 +1,8 @@
 import csv
 import json
 import logging
+import io
+import os
 import re
 from collections import defaultdict
 from datetime import datetime, timedelta
@@ -4084,6 +4086,25 @@ def api_congregation_create(request):
             'email': email,
         }
     }, status=201)
+
+
+@csrf_exempt
+@require_GET
+def api_cron_birthday_sms(request):
+    """Daily birthday-SMS trigger for external cron services.
+
+    Guarded by a shared secret: set CRON_SECRET in Render env and use
+    https://api-database.ahinsandistrictypg.com/api/cron/birthday-sms/?token=<secret>
+    """
+    secret = os.getenv('CRON_SECRET', '')
+    token = request.GET.get('token', '')
+    if not secret or token != secret:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    from django.core.management import call_command
+    out = io.StringIO()
+    call_command('send_birthday_sms', stdout=out)
+    return JsonResponse({'success': True, 'output': out.getvalue()})
 
 
 def _get_requester_congregation(request):

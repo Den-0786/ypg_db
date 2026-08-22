@@ -1,3 +1,6 @@
+import os
+from unittest.mock import patch
+
 import json
 
 from django.contrib.auth.models import User
@@ -370,3 +373,48 @@ class CongregationCreateTests(TestCase):
         congregation = Congregation.objects.get(name='New Test Congregation')
         self.assertIsNotNone(congregation.user_id)
         self.assertEqual(congregation.user.email, 'leader@example.com')
+
+
+class BirthdaySmsTests(TestCase):
+    """Birthday SMS: sends once per member per day; cron route is secret-guarded."""
+
+    def setUp(self):
+        from django.utils import timezone
+        self.today = timezone.now().date()
+        self.birthday_member = Guilder.objects.create(
+            first_name='Kojo', last_name='Birthday',
+            congregation=Congregation.objects.create(name='Cron Test Cong'),
+            date_of_birth=self.today.replace(year=2000),
+            phone_number='0241234567',
+        )
+        self.cron_url = reverse('core:api_cron_birthday_sms')
+
+    @patch('core.management.commands.send_birthday_sms.send_sms', return_value=True)
+    def test_sends_once_and_is_idempotent(self, mock_send):
+        from django.core.management import call_command
+        call_command('send_birthday_sms')
+        call_command('send_birthday_sms')
+        self.assertEqual(mock_send.call_count, 1)
+
+    @patch('core.management.commands.send_birthday_sms.send_sms', return_value=True)
+    def test_non_birthday_members_ignored(self, mock_send):
+        from django.core.management import call_command
+        Guilder.objects.create(
+            first_name='Not', last_name='Birthday',
+            congregation_id=self.birthday_member.congregation_id,
+            date_of_birth=self.today.replace(year=1995, month=1, day=1),
+            phone_number='0550000000',
+        )
+        call_command('send_birthday_sms')
+        self.assertEqual(mock_send.call_count, 1)
+
+    def test_cron_requires_secret(self):
+        response = self.client.get(self.cron_url)
+        self.assertEqual(response.status_code, 403)
+
+    @patch.dict(os.environ, {'CRON_SECRET': 's3cret'})
+    @patch('core.management.commands.send_birthday_sms.send_sms', return_value=True)
+    def test_cron_with_valid_token_runs(self, mock_send):
+        response = self.client.get(self.cron_url, {'token': 's3cret'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(mock_send.call_count, 1)
