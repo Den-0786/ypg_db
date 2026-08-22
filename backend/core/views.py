@@ -2803,8 +2803,6 @@ def api_validate_pin(request):
 
 
 @csrf_exempt
-@require_http_methods(["GET", "PUT"])
-@csrf_exempt
 def api_request_password_change_otp(request):
     """Sends an SMS OTP to the configured district phone number (authenticated users only)."""
     if request.method != 'POST':
@@ -2820,6 +2818,8 @@ def api_request_password_change_otp(request):
     return JsonResponse({'success': True, 'message': f'A verification code was sent via SMS to {masked_recipient()}'})
 
 
+@csrf_exempt
+@require_http_methods(["GET", "PUT"])
 def api_settings_security(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
