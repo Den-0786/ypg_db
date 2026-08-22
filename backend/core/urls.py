@@ -118,6 +118,7 @@ urlpatterns = [
     path('api/congregation/initials/', views.api_congregation_initials, name='api_congregation_initials'),
     path('api/congregations/create/', views.api_congregation_create, name='api_congregation_create'),
     path('api/cron/birthday-sms/', views.api_cron_birthday_sms, name='api_cron_birthday_sms'),
+    path('api/cron/sunday-reminders/', views.api_cron_sunday_reminders, name='api_cron_sunday_reminders'),
     path('api/get-current-pin/', views.api_get_current_pin, name='api_get_current_pin'),
     
     # Data Management API URLs

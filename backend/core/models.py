@@ -55,6 +55,12 @@ class Congregation(models.Model):
     is_district = models.BooleanField(
         default=False, help_text="Is this a district congregation?"
     )
+    leader_phone = models.CharField(
+        max_length=20,
+        blank=True,
+        default="",
+        help_text="Leader's phone for SMS reminders (e.g. 0241234567)",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -283,6 +289,19 @@ class SundayAttendance(models.Model):
 
     def __str__(self):
         return f"{self.congregation.name} - {self.date} | Total: {self.total_count}"
+
+
+class SundayReminderLog(models.Model):
+    """Tracks which congregations got the Sunday non-submission SMS reminder."""
+    congregation = models.ForeignKey(Congregation, on_delete=models.CASCADE)
+    sent_date = models.DateField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["congregation", "sent_date"]
+
+    def __str__(self):
+        return f"Sunday reminder to {self.congregation.name} on {self.sent_date}"
 
 
 class BirthdayMessageLog(models.Model):

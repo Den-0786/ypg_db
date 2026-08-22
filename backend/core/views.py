@@ -4107,6 +4107,26 @@ def api_cron_birthday_sms(request):
     return JsonResponse({'success': True, 'output': out.getvalue()})
 
 
+@csrf_exempt
+@require_GET
+def api_cron_sunday_reminders(request):
+    """Sunday 5PM non-submission reminder trigger for external cron services.
+
+    Set CRON_SECRET in Render env and schedule:
+    https://api-database.ahinsandistrictypg.com/api/cron/sunday-reminders/?token=<secret>
+    (Sundays only; the command itself no-ops on other days.)
+    """
+    secret = os.getenv('CRON_SECRET', '')
+    token = request.GET.get('token', '')
+    if not secret or token != secret:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    from django.core.management import call_command
+    out = io.StringIO()
+    call_command('send_sunday_attendance_reminders', stdout=out)
+    return JsonResponse({'success': True, 'output': out.getvalue()})
+
+
 def _get_requester_congregation(request):
     """Return (congregation_or_None, is_district) for the logged-in user."""
     try:

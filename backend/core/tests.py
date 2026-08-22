@@ -418,3 +418,65 @@ class BirthdaySmsTests(TestCase):
         response = self.client.get(self.cron_url, {'token': 's3cret'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(mock_send.call_count, 1)
+
+
+class SundayReminderTests(TestCase):
+    """Leaders get one SMS per Sunday when attendance is missing."""
+
+    def setUp(self):
+        from django.utils import timezone
+        self.today = timezone.now().date()
+        self.congregation = Congregation.objects.create(
+            name='Reminder Test Cong', leader_phone='0241234567'
+        )
+        self.cron_url = reverse('core:api_cron_sunday_reminders')
+
+    def _run(self):
+        from django.core.management import call_command
+        call_command('send_sunday_attendance_reminders')
+
+    @patch('core.management.commands.send_sunday_attendance_reminders.send_sms', return_value=True)
+    @patch('django.utils.timezone.now')
+    def test_reminds_when_not_submitted_on_sunday_5pm(self, mock_now, mock_send):
+        from datetime import datetime, timedelta
+        from django.utils import timezone as tz
+        # Find the upcoming Sunday 17:00 local time
+        d = self.today
+        while d.weekday() != 6:
+            d += timedelta(days=1)
+        mock_now.return_value = tz.make_aware(datetime(d.year, d.month, d.day, 17, 0))
+        self._run()
+        self.assertEqual(mock_send.call_count, 1)
+
+    @patch('core.management.commands.send_sunday_attendance_reminders.send_sms', return_value=True)
+    @patch('django.utils.timezone.now')
+    def test_no_duplicate_reminder_same_sunday(self, mock_now, mock_send):
+        from datetime import datetime, timedelta
+        from django.utils import timezone as tz
+        d = self.today
+        while d.weekday() != 6:
+            d += timedelta(days=1)
+        mock_now.return_value = tz.make_aware(datetime(d.year, d.month, d.day, 17, 0))
+        self._run()
+        self._run()
+        self.assertEqual(mock_send.call_count, 1)
+
+    @patch('core.management.commands.send_sunday_attendance_reminders.send_sms', return_value=True)
+    @patch('django.utils.timezone.now')
+    def test_skips_congregations_that_submitted(self, mock_now, mock_send):
+        from datetime import datetime, timedelta
+        from django.utils import timezone as tz
+        from .models import SundayAttendance
+        d = self.today
+        while d.weekday() != 6:
+            d += timedelta(days=1)
+        mock_now.return_value = tz.make_aware(datetime(d.year, d.month, d.day, 17, 0))
+        SundayAttendance.objects.create(
+            congregation=self.congregation, date=d, male_count=10, female_count=12,
+        )
+        self._run()
+        mock_send.assert_not_called()
+
+    def test_cron_requires_secret(self):
+        response = self.client.get(self.cron_url)
+        self.assertEqual(response.status_code, 403)
