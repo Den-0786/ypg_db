@@ -138,7 +138,7 @@ export default function HomePage() {
           <span className="text-xl font-bold text-gray-800">Ahinsan District YPG</span>
           <div className="flex items-center space-x-3">
             <a
-              href="https://ypg-website.vercel.app"
+              href="https://www.ahinsandistrictypg.com"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-600 hover:text-gray-800 text-sm font-medium hidden sm:inline"
@@ -181,7 +181,7 @@ export default function HomePage() {
                 Get Started
               </Link>
               <a
-                href="https://ypg-website.vercel.app"
+                href="https://www.ahinsandistrictypg.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="border border-white text-white hover:bg-white/10 font-semibold py-3 px-8 rounded-lg transition-colors text-sm"
@@ -254,7 +254,7 @@ export default function HomePage() {
             <div className="text-center sm:text-right">
               <p className="text-gray-400 text-sm mb-3">Visit our main website</p>
               <a
-                href="https://ypg-website.vercel.app"
+                href="https://www.ahinsandistrictypg.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-lg transition-colors text-sm"
