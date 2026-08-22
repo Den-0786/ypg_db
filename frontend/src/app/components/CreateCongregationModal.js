@@ -159,6 +159,7 @@ export default function CreateCongregationModal({ show, onClose, onCreated }) {
             </label>
             <input
               type="password"
+                autoComplete="new-password"
               required
               value={form.password}
               onChange={handleChange("password")}

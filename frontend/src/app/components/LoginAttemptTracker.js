@@ -168,6 +168,7 @@ const LoginAttemptTracker = ({ onLoginSuccess }) => {
           </label>
           <input
             type={loginType === "password" ? "password" : "text"}
+              autoComplete={loginType === "password" ? "current-password" : "one-time-code"}
             name={loginType === "password" ? "password" : "pin"}
             value={
               loginType === "password" ? loginData.password : loginData.pin

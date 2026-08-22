@@ -1806,6 +1806,7 @@ export default function LocalDashboardLayout({
                                     type={
                                       showCurrentPassword ? "text" : "password"
                                     }
+                                      autoComplete="current-password"
                                     value={securityData.currentPassword}
                                     onChange={(e) =>
                                       setSecurityData((prev) => ({
@@ -1838,6 +1839,7 @@ export default function LocalDashboardLayout({
                                 <div className="relative">
                                   <input
                                     type={showNewPassword ? "text" : "password"}
+                                      autoComplete="new-password"
                                     value={securityData.newPassword}
                                     onChange={(e) =>
                                       setSecurityData((prev) => ({
@@ -1870,6 +1872,7 @@ export default function LocalDashboardLayout({
                                     type={
                                       showConfirmPassword ? "text" : "password"
                                     }
+                                      autoComplete="new-password"
                                     value={securityData.confirmPassword}
                                     onChange={(e) =>
                                       setSecurityData((prev) => ({

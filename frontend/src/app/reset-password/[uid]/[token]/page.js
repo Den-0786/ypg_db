@@ -171,6 +171,7 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
                   id="newPassword"
                   name="newPassword"
                   value={formData.newPassword}
@@ -196,6 +197,7 @@ export default function ResetPasswordPage() {
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}

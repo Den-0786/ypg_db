@@ -1560,6 +1560,7 @@ export default function DashboardLayout({
                             <div className="relative">
                               <input
                                 type={showCurrentPassword ? "text" : "password"}
+                                  autoComplete="current-password"
                                 value={securityData.currentPassword}
                                 onChange={(e) =>
                                   setSecurityData((prev) => ({
@@ -1623,6 +1624,7 @@ export default function DashboardLayout({
                             <div className="relative">
                               <input
                                 type={showNewPassword ? "text" : "password"}
+                                  autoComplete="new-password"
                                 value={securityData.newPassword}
                                 onChange={(e) =>
                                   setSecurityData((prev) => ({
@@ -1686,6 +1688,7 @@ export default function DashboardLayout({
                             <div className="relative">
                               <input
                                 type={showConfirmPassword ? "text" : "password"}
+                                  autoComplete="new-password"
                                 value={securityData.confirmPassword}
                                 onChange={(e) =>
                                   setSecurityData((prev) => ({
