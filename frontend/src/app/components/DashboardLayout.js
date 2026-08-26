@@ -3099,6 +3099,9 @@ function CustomSMSPanel({ darkMode }) {
     }
     const filterLabel = recipientFilter === "all" ? "All Guilders"
       : recipientFilter === "active" ? "Active Guilders"
+      : recipientFilter === "executives" ? "All Executives"
+      : recipientFilter === "local_executives" ? "Local Executives"
+      : recipientFilter === "district_executives" ? "District Executives"
       : "Selected Congregation";
     if (!window.confirm(`Send SMS to ${filterLabel}?\n\nMessage: ${message}`)) return;
 
@@ -3179,6 +3182,9 @@ function CustomSMSPanel({ darkMode }) {
                 { value: "all", label: "All Guilders" },
                 { value: "active", label: "Active Only" },
                 { value: "congregation", label: "By Congregation" },
+                { value: "executives", label: "All Executives" },
+                { value: "local_executives", label: "Local Executives" },
+                { value: "district_executives", label: "District Executives" },
               ].map((opt) => (
                 <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer">
                   <input

@@ -4281,6 +4281,12 @@ def api_custom_sms_send(request):
         guilders = guilders.filter(membership_status='Active')
     elif recipient_filter == 'congregation' and congregation_id:
         guilders = guilders.filter(congregation_id=congregation_id)
+    elif recipient_filter == 'executives':
+        guilders = guilders.filter(is_executive=True)
+    elif recipient_filter == 'local_executives':
+        guilders = guilders.filter(is_executive=True, executive_level__in=['local', 'both'])
+    elif recipient_filter == 'district_executives':
+        guilders = guilders.filter(is_executive=True, executive_level__in=['district', 'both'])
 
     sender_name = request.user.get_full_name() or request.user.username
     sent_count = 0
