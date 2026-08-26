@@ -261,12 +261,6 @@ export default function ResetPasswordPage() {
       </div>
 
       <ToastContainer />
-      <ToastContainer
-        show={showToast}
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setShowToast(false)}
-      />
     </div>
   );
 }

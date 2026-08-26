@@ -123,12 +123,6 @@ export default function ForgotPasswordPage() {
       </div>
 
       <ToastContainer />
-      <ToastContainer
-        show={showToast}
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setShowToast(false)}
-      />
     </div>
   );
 }

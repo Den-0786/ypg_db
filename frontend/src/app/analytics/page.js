@@ -849,6 +849,10 @@ export default function AnalyticsPage() {
             Congregations Database Analytics
           </h2>
 
+          <div className="mb-6">
+            <MemberTypeToggle value={memberTypeFilter} onChange={setMemberTypeFilter} />
+          </div>
+
           {/* Members Key Metrics */}
           <div className="mb-8">
             {/* Large screens - Grid layout */}
@@ -1169,10 +1173,6 @@ export default function AnalyticsPage() {
             <i className="fas fa-user-plus text-emerald-600 mr-3"></i>
             New Members Analytics
           </h2>
-
-          <div className="mb-6">
-            <MemberTypeToggle value={memberTypeFilter} onChange={setMemberTypeFilter} />
-          </div>
 
           {/* New Members Key Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">

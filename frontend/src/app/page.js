@@ -272,12 +272,6 @@ export default function HomePage() {
       </footer>
 
       <ToastContainer />
-      <ToastContainer
-        show={showToast}
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setShowToast(false)}
-      />
     </div>
   );
 }
