@@ -192,8 +192,8 @@ export default function PersonalInfoSection({
                 : "text-blue-700 dark:text-blue-300"
             }`}>
               {currentMember.member_type === "new"
-                ? `YPG-NM-${new Date().getFullYear()}-xxx`
-                : "YPG-EX-xxx"}
+                ? `{Initials}NM/${String(new Date().getFullYear()).slice(-2)}/001`
+                : "YPG-EX-001"}
             </p>
           </div>
         </div>

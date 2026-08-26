@@ -2005,7 +2005,7 @@ def api_promote_member(request, member_id):
     """Promote a new member to existing member status.
 
     - Changes member_type from 'new' to 'existing'
-    - Preserves the original YPG-NM-... ID in original_new_member_id
+    - Preserves the original {Initials}NM/YY/... ID in original_new_member_id
     - Generates a new YPG-EX-... ID as the primary member_id
     """
     if not request.user.is_authenticated:

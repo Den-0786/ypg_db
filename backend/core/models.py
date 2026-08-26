@@ -226,7 +226,7 @@ class Guilder(models.Model):
     # Permissions/roles
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # Auto-generated unique member ID (e.g. YPG-EX-001, YPG-NM-2026-001)
+    # Auto-generated unique member ID (e.g. YPG-EX-001, ENM/26/001)
     member_id = models.CharField(max_length=30, unique=True, blank=True, null=True)
 
     # Preserved original new member ID after promotion to existing
@@ -234,7 +234,7 @@ class Guilder(models.Model):
         max_length=30,
         blank=True,
         null=True,
-        help_text="Preserved YPG-NM-... ID when a new member is promoted to existing",
+        help_text="Preserved congregation-scoped NM ID when a new member is promoted to existing",
     )
 
     # Profile picture
@@ -260,9 +260,20 @@ class Guilder(models.Model):
         if not self.member_id:
             from django.utils import timezone
             year = timezone.now().year
+            short_year = str(year)[-2:]  # e.g. "26"
             if self.member_type == "new":
-                count = Guilder.objects.filter(member_type="new").count() + 1
-                self.member_id = f"YPG-NM-{year}-{count:03d}"
+                # Use congregation initials + NM + short year + per-congregation sequence
+                initials = ""
+                if self.congregation:
+                    initials = (self.congregation.initials or "").upper()
+                if not initials:
+                    initials = "YPG"
+                count = Guilder.objects.filter(
+                    member_type="new",
+                    congregation=self.congregation,
+                    member_id__startswith=f"{initials}NM/{short_year}/"
+                ).count() + 1
+                self.member_id = f"{initials}NM/{short_year}/{count:03d}"
             else:
                 count = Guilder.objects.filter(member_type="existing").count() + 1
                 self.member_id = f"YPG-EX-{count:03d}"
