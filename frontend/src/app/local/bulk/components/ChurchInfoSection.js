@@ -245,7 +245,6 @@ export default function ChurchInfoSection({
           </select>
         </div>
         )}
-        </div>
 
         <div className="sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
