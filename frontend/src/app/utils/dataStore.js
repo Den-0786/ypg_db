@@ -186,6 +186,8 @@ class DataStore {
         congregation: member.congregation,
         membership_status:
           member.membership_status || member.status || "Active",
+        member_type: member.member_type || "existing",
+        purpose_of_joining: member.purpose_of_joining || "",
         is_executive: member.is_executive || false,
         executive_position: member.is_executive
           ? member.executive_position || member.position || ""
@@ -404,6 +406,8 @@ class DataStore {
           is_confirmed: member.is_confirmed,
           is_communicant: member.is_communicant,
           member_id: member.member_id || "",
+          member_type: member.member_type || "existing",
+          purpose_of_joining: member.purpose_of_joining || "",
           profile_picture: member.profile_picture || null,
           timestamp: new Date().toISOString(),
         }));
@@ -501,6 +505,14 @@ class DataStore {
           existingMember.membership_status ??
           updatedData.status ??
           "Active",
+        member_type:
+          updatedData.member_type ??
+          existingMember.member_type ??
+          "existing",
+        purpose_of_joining:
+          updatedData.purpose_of_joining ??
+          existingMember.purpose_of_joining ??
+          "",
         is_executive: isExecutive,
         executive_position: isExecutive
           ? (updatedData.executive_position ??

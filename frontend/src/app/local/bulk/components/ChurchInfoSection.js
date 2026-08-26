@@ -221,6 +221,7 @@ export default function ChurchInfoSection({
           </div>
         </div>
 
+        {currentMember.member_type !== "new" && (
         <div className="sm:col-span-1">
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Membership Status
@@ -242,6 +243,8 @@ export default function ChurchInfoSection({
               Inactive
             </option>
           </select>
+        </div>
+        )}
         </div>
 
         <div className="sm:col-span-1">

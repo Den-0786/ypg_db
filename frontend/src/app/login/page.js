@@ -17,19 +17,24 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("");
-  const [toastType, setToastType] = useState("success");
 
   useEffect(() => {
     setMounted(true);
+    // Show any pending toast from logout
     if (typeof window !== "undefined") {
-      window.showToast = (message, type = "success", duration = 3000) => {
-        setToastMessage(message);
-        setToastType(type);
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), duration);
-      };
+      const pendingToast = sessionStorage.getItem("pendingToast");
+      if (pendingToast) {
+        sessionStorage.removeItem("pendingToast");
+        try {
+          const { message, type } = JSON.parse(pendingToast);
+          // Wait for ToastContainer to mount and set window.showToast
+          setTimeout(() => {
+            if (window.showToast) {
+              window.showToast(message, type || "info", 3000);
+            }
+          }, 100);
+        } catch (e) {}
+      }
     }
   }, []);
 
@@ -86,11 +91,11 @@ export default function LoginPage() {
 
         autoLogout.updateLoginStatus(true);
 
-        setToastMessage(
-          `Welcome back, ${data.congregation?.name || "District Admin"}!`
-        );
-        setToastType("success");
-        setShowToast(true);
+        // Store welcome toast for dashboard to show
+        sessionStorage.setItem("pendingToast", JSON.stringify({
+          message: `Welcome back, ${data.congregation?.name || "District Admin"}!`,
+          type: "success",
+        }));
 
         setTimeout(() => {
           if (data.congregation?.id === "1" || !data.congregation) {
@@ -98,7 +103,7 @@ export default function LoginPage() {
           } else {
             window.location.href = "/local/dashboard";
           }
-        }, 1500);
+        }, 500);
       } else {
         if (response.status === 429) {
           setError(
@@ -209,12 +214,6 @@ export default function LoginPage() {
       </div>
 
       <ToastContainer />
-      <ToastContainer
-        show={showToast}
-        message={toastMessage}
-        type={toastType}
-        onClose={() => setShowToast(false)}
-      />
     </div>
   );
 }

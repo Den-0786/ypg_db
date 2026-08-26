@@ -472,6 +472,19 @@ export default function LocalDashboardLayout({
   const [securityAccessGranted, setSecurityAccessGranted] = useState(false);
   const { toasts, showSuccess, showError, removeToast } = useToast();
 
+  // Show any pending toast from sessionStorage (e.g., after login)
+  useEffect(() => {
+    const pendingToast = sessionStorage.getItem("pendingToast");
+    if (pendingToast) {
+      sessionStorage.removeItem("pendingToast");
+      try {
+        const { message, type } = JSON.parse(pendingToast);
+        const fn = type === "success" ? showSuccess : showError;
+        setTimeout(() => fn(message), 200);
+      } catch (e) {}
+    }
+  }, []);
+
   // Profile state management
   const [profileData, setProfileData] = useState({
     username: "",

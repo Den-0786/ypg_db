@@ -1765,6 +1765,8 @@ def api_members(request):
             "local_executive_position": member.local_executive_position,
             "district_executive_position": member.district_executive_position,
             "profile_picture": request.build_absolute_uri(member.profile_picture.url) if member.profile_picture else None,
+            "member_type": member.member_type,
+            "purpose_of_joining": member.purpose_of_joining or "",
         }
         data.append(member_data)
 
@@ -1844,6 +1846,11 @@ def api_add_member(request):
                     data["executive_position"] = data["local_executive_position"]
                 elif data.get("district_executive_position"):
                     data["executive_position"] = data["district_executive_position"]
+
+        # Auto-set membership_status for new members
+        member_type = data.get("member_type", "existing")
+        if member_type == "new" and not data.get("membership_status"):
+            data["membership_status"] = "New"
         
         form = GuilderForm(data, files)
 
@@ -2153,6 +2160,8 @@ def api_dashboard_stats(request):
         active_members = Guilder.objects.filter(membership_status="Active").count()
         distant_members = Guilder.objects.filter(membership_status="Distant").count()
         total_congregations = Congregation.objects.count()
+        new_members_count = Guilder.objects.filter(member_type="new").count()
+        existing_members_count = Guilder.objects.filter(member_type="existing").count()
 
         # Get executives and members for district view
         # District executives: those with district or both level
@@ -2181,6 +2190,8 @@ def api_dashboard_stats(request):
                     "active_members": active_members,
                     "distant_members": distant_members,
                     "total_congregations": total_congregations,
+                    "new_members_count": new_members_count,
+                    "existing_members_count": existing_members_count,
                 },
                 "district_executives": [
                     {
@@ -2228,6 +2239,12 @@ def api_dashboard_stats(request):
         distant_members = Guilder.objects.filter(
             congregation=user_congregation, membership_status="Distant"
         ).count()
+        new_members_count = Guilder.objects.filter(
+            congregation=user_congregation, member_type="new"
+        ).count()
+        existing_members_count = Guilder.objects.filter(
+            congregation=user_congregation, member_type="existing"
+        ).count()
 
         # Get executives and members
         # Local executives: those with local or both level from this congregation
@@ -2250,6 +2267,8 @@ def api_dashboard_stats(request):
                     "total_female": total_female,
                     "active_members": active_members,
                     "distant_members": distant_members,
+                    "new_members_count": new_members_count,
+                    "existing_members_count": existing_members_count,
                 },
                 "executives": [
                     {

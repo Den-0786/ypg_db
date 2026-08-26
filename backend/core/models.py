@@ -160,7 +160,7 @@ class Guilder(models.Model):
     # Section B – Church Participation
     membership_status = models.CharField(
         max_length=20,
-        choices=[("Active", "Active"), ("Inactive", "Inactive"), ("Distant", "Distant")],
+        choices=[("Active", "Active"), ("Inactive", "Inactive"), ("Distant", "Distant"), ("New", "New")],
         default="Active",
     )
     member_level = models.CharField(
@@ -168,6 +168,18 @@ class Guilder(models.Model):
         choices=[("local", "Local"), ("district", "District")],
         default="local",
         help_text="Whether this member was added from a local or district dashboard",
+    )
+    member_type = models.CharField(
+        max_length=10,
+        choices=[("existing", "Existing"), ("new", "New")],
+        default="existing",
+        help_text="Whether this is an existing (old) or new member",
+    )
+    purpose_of_joining = models.TextField(
+        blank=True,
+        null=True,
+        default="",
+        help_text="What brought you or purpose of joining",
     )
     position = models.CharField(max_length=100, blank=True)
     favorite_quote = models.TextField(blank=True)

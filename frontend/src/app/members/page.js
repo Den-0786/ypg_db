@@ -6,6 +6,7 @@ import DeleteConfirmationModal from "../components/DeleteConfirmationModal";
 import formatPosition from "../utils/formatPosition";
 import ExecutivesTable from "../components/ExecutivesTable";
 import MembersTable from "../components/MembersTable";
+import MemberTypeToggle from "../components/MemberTypeToggle";
 import PinModal from "../components/PinModal";
 import ToastContainer from "../components/ToastContainer";
 import getDataStore from "../utils/dataStore";
@@ -30,6 +31,7 @@ export default function MembersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [genderFilter, setGenderFilter] = useState("all");
   const [congregationFilter, setCongregationFilter] = useState("all");
+  const [memberTypeFilter, setMemberTypeFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [membersPerPage] = useState(10);
   const [showPinModal, setShowPinModal] = useState(false);
@@ -586,8 +588,14 @@ export default function MembersPage() {
               )}
             </div>
           </div>
+
+          {/* Member Type Filter */}
+          <div className="mb-4">
+            <MemberTypeToggle value={memberTypeFilter} onChange={setMemberTypeFilter} />
+          </div>
+
           <MembersTable
-            members={members}
+            members={memberTypeFilter === "all" ? members : members.filter((m) => m.member_type === memberTypeFilter)}
             onView={handleViewDetails}
             onEdit={handleEditMember}
             onDelete={handleDeleteMember}

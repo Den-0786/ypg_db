@@ -185,22 +185,17 @@ class AutoLogout {
       sessionStorage.removeItem("authToken");
       sessionStorage.removeItem("user");
       sessionStorage.removeItem("welcomeShown");
-    }
 
-    // Show logout toast then redirect
-    if (typeof window !== "undefined" && window.showToast) {
-      window.showToast(
-        "You have been logged out due to inactivity.",
-        "info",
-        3000
-      );
+      // Store logout toast for login page to show
+      sessionStorage.setItem("pendingToast", JSON.stringify({
+        message: "You have been logged out due to inactivity.",
+        type: "info",
+      }));
     }
 
     // Redirect to login page
     if (typeof window !== "undefined") {
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 1500);
+      window.location.href = "/login";
     }
   }
 
@@ -231,22 +226,17 @@ class AutoLogout {
       sessionStorage.removeItem("authToken");
       sessionStorage.removeItem("user");
       sessionStorage.removeItem("welcomeShown");
-    }
 
-    // Show logout toast
-    if (typeof window !== "undefined" && window.showToast) {
-      window.showToast(
-        "You have been logged out successfully.",
-        "success",
-        3000
-      );
+      // Store logout toast for login page to show
+      sessionStorage.setItem("pendingToast", JSON.stringify({
+        message: "You have been logged out successfully.",
+        type: "success",
+      }));
     }
 
     // Redirect to login page
     if (typeof window !== "undefined") {
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 1500);
+      window.location.href = "/login";
     }
   }
 

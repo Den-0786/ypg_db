@@ -6,6 +6,7 @@ import PinModal from "../../components/PinModal";
 import formatPosition from "../../utils/formatPosition";
 import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useToast, ToastContainer } from "../../components/Toast";
+import MemberTypeToggle from "../../components/MemberTypeToggle";
 import getDataStore from "../../utils/dataStore";
 
 export default function LocalMembersPage() {
@@ -172,6 +173,7 @@ export default function LocalMembersPage() {
   const [selectedMembers, setSelectedMembers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [genderFilter, setGenderFilter] = useState("all");
+  const [memberTypeFilter, setMemberTypeFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const membersPerPage = 15;
 
@@ -331,7 +333,9 @@ export default function LocalMembersPage() {
       member.gender.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesGender =
       genderFilter === "all" || member.gender.toLowerCase() === genderFilter;
-    return matchesSearch && matchesGender;
+    const matchesType =
+      memberTypeFilter === "all" || member.member_type === memberTypeFilter;
+    return matchesSearch && matchesGender && matchesType;
   });
 
   // Pagination logic
@@ -343,7 +347,7 @@ export default function LocalMembersPage() {
   // Reset to first page when search or filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, genderFilter]);
+  }, [searchTerm, genderFilter, memberTypeFilter]);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -904,6 +908,11 @@ export default function LocalMembersPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Member Type Filter */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4">
+          <MemberTypeToggle value={memberTypeFilter} onChange={setMemberTypeFilter} />
         </div>
 
         {/* Executives Table */}

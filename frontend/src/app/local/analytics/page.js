@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from "react";
 import LocalDashboardLayout from "../../components/LocalDashboardLayout";
+import MemberTypeToggle from "../../components/MemberTypeToggle";
+import NewMemberStreamGraph from "../../components/NewMemberStreamGraph";
 import getDataStore from "../../utils/dataStore";
 
 export default function LocalAnalyticsPage() {
@@ -17,6 +19,8 @@ export default function LocalAnalyticsPage() {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   const [filtered, setFiltered] = useState(null);
   const [currentCongregationName, setCurrentCongregationName] = useState(null);
+  const [memberTypeFilter, setMemberTypeFilter] = useState("all");
+  const [allMembers, setAllMembers] = useState([]);
 
   useEffect(() => {
     // Get current congregation from localStorage
@@ -120,6 +124,7 @@ export default function LocalAnalyticsPage() {
       // Get data from data store
       const dataStore = getDataStore();
       const members = await dataStore.getMembers({ congregation: congregationName });
+      setAllMembers(members);
       const attendanceRecords = await dataStore.getAttendanceRecords({ congregation: congregationName });
 
       console.log("Analytics - Members data:", members);
@@ -976,6 +981,94 @@ export default function LocalAnalyticsPage() {
             </div>
           </div>
         </div>
+
+        {/* New Members Analytics Section */}
+        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            <i className="fas fa-user-plus text-emerald-600 mr-3"></i>
+            New Members Analytics
+          </h2>
+
+          <div className="mb-6">
+            <MemberTypeToggle value={memberTypeFilter} onChange={setMemberTypeFilter} />
+          </div>
+
+          {/* New Members Key Metrics */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-4 shadow-lg dark:shadow-emerald-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-emerald-400/5 to-emerald-600/5 dark:from-emerald-400/20 dark:to-emerald-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Total New Members</p>
+                  <p className="text-2xl font-bold">{allMembers.filter((m) => m.member_type === "new").length}</p>
+                </div>
+                <i className="fas fa-user-plus text-2xl text-emerald-600 dark:text-emerald-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+            <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-4 shadow-lg dark:shadow-blue-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/5 to-blue-600/5 dark:from-blue-400/20 dark:to-blue-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Male New Members</p>
+                  <p className="text-2xl font-bold">{allMembers.filter((m) => m.member_type === "new" && m.gender === "Male").length}</p>
+                </div>
+                <i className="fas fa-mars text-2xl text-blue-600 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+            <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-4 shadow-lg dark:shadow-pink-500/20 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-r from-pink-400/5 to-pink-600/5 dark:from-pink-400/20 dark:to-pink-600/20 animate-pulse"></div>
+              <div className="relative z-10 flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Female New Members</p>
+                  <p className="text-2xl font-bold">{allMembers.filter((m) => m.member_type === "new" && m.gender === "Female").length}</p>
+                </div>
+                <i className="fas fa-venus text-2xl text-pink-600 dark:text-pink-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
+              </div>
+            </div>
+          </div>
+
+          {/* New vs Existing Growth Card */}
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">New vs Existing Members</h3>
+            <div className="flex items-center gap-6">
+              <div className="flex-1">
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">New</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {allMembers.filter((m) => m.member_type === "new").length} / {allMembers.length}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
+                  <div
+                    className="h-3 rounded-full bg-emerald-500 transition-all duration-500"
+                    style={{ width: `${allMembers.length > 0 ? (allMembers.filter((m) => m.member_type === "new").length / allMembers.length) * 100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
+              <div className="flex-1">
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="text-blue-600 dark:text-blue-400 font-medium">Existing</span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {allMembers.filter((m) => m.member_type === "existing").length} / {allMembers.length}
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
+                  <div
+                    className="h-3 rounded-full bg-blue-500 transition-all duration-500"
+                    style={{ width: `${allMembers.length > 0 ? (allMembers.filter((m) => m.member_type === "existing").length / allMembers.length) * 100 : 0}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* New Members Stream Graph */}
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">New Members Over Time</h3>
+            <NewMemberStreamGraph members={allMembers} />
+          </div>
+        </div>
+
       </div>
     </LocalDashboardLayout>
   );

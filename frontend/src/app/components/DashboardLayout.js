@@ -148,6 +148,19 @@ export default function DashboardLayout({
   }, []);
   const { toasts, showSuccess, showError, removeToast } = useToast();
 
+  // Show any pending toast from sessionStorage (e.g., after login)
+  useEffect(() => {
+    const pendingToast = sessionStorage.getItem("pendingToast");
+    if (pendingToast) {
+      sessionStorage.removeItem("pendingToast");
+      try {
+        const { message, type } = JSON.parse(pendingToast);
+        const fn = type === "success" ? showSuccess : showError;
+        setTimeout(() => fn(message), 200);
+      } catch (e) {}
+    }
+  }, []);
+
   // Initialize sidebar based on screen size
   useEffect(() => {
     if (typeof window === "undefined") return;

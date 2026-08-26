@@ -142,6 +142,58 @@ export default function PersonalInfoSection({
         Section A: Personal Information
       </h4>
 
+      {/* Member Type Toggle */}
+      <div className="sm:col-span-2 lg:col-span-3">
+        <label className="block text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-2">
+          Member Type <span className="text-red-500 font-bold">*</span>
+        </label>
+        <div className="flex items-center bg-gray-100 dark:bg-gray-700 border border-light-border dark:border-dark-border rounded-xl p-1 gap-1">
+          {["existing", "new"].map((type) => (
+            <button
+              key={type}
+              type="button"
+              onClick={() =>
+                setCurrentMember({
+                  ...currentMember,
+                  member_type: type,
+                  membership_status: type === "new" ? "New" : "Active",
+                })
+              }
+              className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                currentMember.member_type === type
+                  ? type === "new"
+                    ? "bg-emerald-600 text-white shadow-md"
+                    : "bg-blue-600 text-white shadow-md"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+              }`}
+            >
+              {type === "existing" ? "Existing (Old) Member" : "New Member"}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Purpose of Joining — only for new members */}
+      {currentMember.member_type === "new" && (
+        <div className="sm:col-span-2 lg:col-span-3">
+          <label className="block text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-2">
+            Purpose of Joining <span className="text-red-500 font-bold">*</span>
+          </label>
+          <textarea
+            value={currentMember.purpose_of_joining}
+            onChange={(e) =>
+              setCurrentMember({
+                ...currentMember,
+                purpose_of_joining: capitalizeWords(e.target.value),
+              })
+            }
+            className="w-full px-2 py-1.5 lg:px-3 lg:py-2 border border-light-border dark:border-dark-border rounded-md focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface text-sm lg:text-base neumorphic-light-inset dark:neumorphic-dark-inset resize-none"
+            rows={3}
+            placeholder="What brought you here or your purpose of joining?"
+          />
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
         <div className="sm:col-span-1">
           <label className="block text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-2">

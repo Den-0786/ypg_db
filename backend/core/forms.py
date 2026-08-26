@@ -37,6 +37,8 @@ class GuilderForm(forms.ModelForm):
             "congregation",
             "membership_status",
             "member_level",
+            "member_type",
+            "purpose_of_joining",
             "position",
             "favorite_quote",
             "is_baptized",
@@ -66,6 +68,9 @@ class GuilderForm(forms.ModelForm):
         self.fields["date_of_birth"].required = False
         self.fields["member_level"].required = False
         self.fields["member_level"].initial = "local"
+        self.fields["member_type"].required = False
+        self.fields["member_type"].initial = "existing"
+        self.fields["purpose_of_joining"].required = False
         # Make executive fields required only if is_executive is True
         self.fields["executive_position"].required = False
         self.fields["executive_level"].required = False
