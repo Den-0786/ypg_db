@@ -25,7 +25,7 @@ def normalize_recipient(recipient):
 
 
 def otp_recipient():
-    return getattr(settings, 'OTP_RECIPIENT', '') or '0245660786'
+    return getattr(settings, 'OTP_RECIPIENT', '') or ''
 
 
 def masked_number(number):
@@ -89,9 +89,13 @@ def issue_otp(identifier, user=None, purpose='password_change', phone=None):
         expires_at=now + timedelta(minutes=OTP_LIFETIME_MINUTES),
     )
 
+    recipient = recipient_for(user, phone)
+    if not recipient:
+        return False, 'No phone number configured. Please set your phone number in your profile.'
+
     app_name = getattr(settings, 'APP_NAME', 'YPG')
     message = f"Your {app_name} password change code is {code}. It expires in {OTP_LIFETIME_MINUTES} minutes. Do not share it."
-    sent = send_sms(normalize_recipient(recipient_for(user, phone)), message)
+    sent = send_sms(normalize_recipient(recipient), message)
     if not sent:
         return False, 'Could not send the SMS code. Please try again later.'
     return True, None

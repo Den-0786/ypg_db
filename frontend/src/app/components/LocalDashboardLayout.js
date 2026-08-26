@@ -1941,7 +1941,7 @@ export default function LocalDashboardLayout({
                                   </button>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-1">
-                                  A 6-digit code will be sent to the registered district phone.
+                                  A 6-digit code will be sent to your registered phone number.
                                 </p>
                               </div>
                               <div className="flex items-center space-x-2">

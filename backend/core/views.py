@@ -2873,11 +2873,20 @@ def api_validate_pin(request):
 
 @csrf_exempt
 def api_request_password_change_otp(request):
-    """Sends an SMS OTP to the requester's own phone when on file, else the district phone."""
+    """Sends an SMS OTP to the requester's own phone when on file."""
     if request.method != 'POST':
         return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+
+    # Rate limit: max 5 OTP requests per IP per 10 minutes
+    from django.core.cache import cache
+    ip = request.META.get('HTTP_X_FORWARDED_FOR', request.META.get('REMOTE_ADDR', '')).split(',')[0].strip()
+    cache_key = f'otp_rate_{ip}'
+    otp_count = cache.get(cache_key, 0)
+    if otp_count >= 5:
+        return JsonResponse({'success': False, 'error': 'Too many OTP requests. Please try again later.'}, status=429)
+    cache.set(cache_key, otp_count + 1, 600)  # 10 minutes
 
     recipient = recipient_for(request.user)
     ok, error_message = issue_otp(request.user.username, user=request.user, phone=recipient)
@@ -4066,6 +4075,15 @@ def _get_district_admin_user(request):
 
 @csrf_exempt
 @require_POST
+def api_congregations_list(request):
+    """Return list of all congregations (id, name)."""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+
+    congregations = Congregation.objects.order_by('name').values('id', 'name')
+    return JsonResponse({'success': True, 'congregations': list(congregations)})
+
+
 def api_congregation_create(request):
     """District admins create congregation accounts.
 
@@ -4188,6 +4206,153 @@ def api_cron_sunday_reminders(request):
     out = io.StringIO()
     call_command('send_sunday_attendance_reminders', stdout=out)
     return JsonResponse({'success': True, 'output': out.getvalue()})
+
+
+@csrf_exempt
+@require_GET
+def api_cron_new_month_sms(request):
+    """1st-of-month new month SMS trigger."""
+    secret = os.getenv('CRON_SECRET', '')
+    token = request.GET.get('token', '')
+    if not secret or token != secret:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    from django.core.management import call_command
+    out = io.StringIO()
+    call_command('send_new_month_sms', stdout=out)
+    return JsonResponse({'success': True, 'output': out.getvalue()})
+
+
+@csrf_exempt
+@require_GET
+def api_cron_new_year_sms(request):
+    """January 1st new year SMS trigger."""
+    secret = os.getenv('CRON_SECRET', '')
+    token = request.GET.get('token', '')
+    if not secret or token != secret:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    from django.core.management import call_command
+    out = io.StringIO()
+    call_command('send_new_year_sms', stdout=out)
+    return JsonResponse({'success': True, 'output': out.getvalue()})
+
+
+@csrf_exempt
+@require_GET
+def api_cron_dues_reminder(request):
+    """Last-day-of-month dues reminder SMS trigger."""
+    secret = os.getenv('CRON_SECRET', '')
+    token = request.GET.get('token', '')
+    if not secret or token != secret:
+        return JsonResponse({'success': False, 'error': 'Unauthorized'}, status=403)
+
+    from django.core.management import call_command
+    out = io.StringIO()
+    call_command('send_dues_reminder_sms', stdout=out)
+    return JsonResponse({'success': True, 'output': out.getvalue()})
+
+
+@csrf_exempt
+def api_custom_sms_send(request):
+    """Send a custom SMS to selected recipients."""
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+
+    try:
+        data = json.loads(request.body)
+    except (json.JSONDecodeError, ValueError):
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
+
+    title = (data.get('title') or '').strip()
+    message = (data.get('message') or '').strip()
+    recipient_filter = data.get('recipient_filter', 'all')
+    congregation_id = data.get('congregation_id')
+
+    if not title:
+        return JsonResponse({'success': False, 'error': 'Title is required'}, status=400)
+    if not message:
+        return JsonResponse({'success': False, 'error': 'Message is required'}, status=400)
+
+    guilders = Guilder.objects.exclude(phone_number="")
+    if recipient_filter == 'active':
+        guilders = guilders.filter(membership_status='Active')
+    elif recipient_filter == 'congregation' and congregation_id:
+        guilders = guilders.filter(congregation_id=congregation_id)
+
+    sender_name = request.user.get_full_name() or request.user.username
+    sent_count = 0
+    failed_count = 0
+
+    for guilder in guilders:
+        if send_sms(guilder.phone_number, message):
+            sent_count += 1
+        else:
+            failed_count += 1
+
+    from .models import CustomSMSLog
+    CustomSMSLog.objects.create(
+        title=title,
+        message=message,
+        sender=sender_name,
+        recipient_filter=recipient_filter,
+        congregation_id=congregation_id if recipient_filter == 'congregation' else None,
+        recipient_count=sent_count,
+        sent_by=request.user,
+    )
+
+    return JsonResponse({
+        'success': True,
+        'message': f'SMS sent to {sent_count} recipient(s), {failed_count} failed.',
+        'sent_count': sent_count,
+        'failed_count': failed_count,
+    })
+
+
+@csrf_exempt
+def api_custom_sms_history(request):
+    """Return recent custom SMS history."""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+
+    from .models import CustomSMSLog
+    logs = CustomSMSLog.objects.all()[:50]
+    data = []
+    for log in logs:
+        data.append({
+            'id': log.id,
+            'title': log.title,
+            'message': log.message,
+            'sender': log.sender,
+            'recipient_filter': log.recipient_filter,
+            'recipient_count': log.recipient_count,
+            'sent_at': log.sent_at.strftime('%Y-%m-%d %H:%M'),
+        })
+
+    return JsonResponse({'success': True, 'history': data})
+
+
+@csrf_exempt
+def api_scheduled_sms_history(request):
+    """Return scheduled SMS history (new month, new year, dues reminder)."""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+
+    from .models import ScheduledSMSLog
+    logs = ScheduledSMSLog.objects.all()[:50]
+    data = []
+    for log in logs:
+        data.append({
+            'id': log.id,
+            'message_type': log.message_type,
+            'message_type_display': log.get_message_type_display(),
+            'sent_date': log.sent_date.strftime('%Y-%m-%d'),
+            'recipient_count': log.recipient_count,
+        })
+
+    return JsonResponse({'success': True, 'history': data})
 
 
 def _get_requester_congregation(request):

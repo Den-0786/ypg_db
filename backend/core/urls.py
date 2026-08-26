@@ -120,8 +120,15 @@ urlpatterns = [
     path('api/validate-pin/', views.api_validate_pin, name='api_validate_pin'),
     path('api/congregation/initials/', views.api_congregation_initials, name='api_congregation_initials'),
     path('api/congregations/create/', views.api_congregation_create, name='api_congregation_create'),
+    path('api/congregations/', views.api_congregations_list, name='api_congregations_list'),
     path('api/cron/birthday-sms/', views.api_cron_birthday_sms, name='api_cron_birthday_sms'),
     path('api/cron/sunday-reminders/', views.api_cron_sunday_reminders, name='api_cron_sunday_reminders'),
+    path('api/cron/new-month-sms/', views.api_cron_new_month_sms, name='api_cron_new_month_sms'),
+    path('api/cron/new-year-sms/', views.api_cron_new_year_sms, name='api_cron_new_year_sms'),
+    path('api/cron/dues-reminder/', views.api_cron_dues_reminder, name='api_cron_dues_reminder'),
+    path('api/sms/custom-send/', views.api_custom_sms_send, name='api_custom_sms_send'),
+    path('api/sms/history/', views.api_custom_sms_history, name='api_custom_sms_history'),
+    path('api/sms/scheduled-history/', views.api_scheduled_sms_history, name='api_scheduled_sms_history'),
     path('api/get-current-pin/', views.api_get_current_pin, name='api_get_current_pin'),
     
     # Data Management API URLs

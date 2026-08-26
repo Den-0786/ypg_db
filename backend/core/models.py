@@ -632,3 +632,53 @@ class PasswordChangeOTP(models.Model):
     @property
     def is_expired(self):
         return timezone.now() > self.expires_at
+
+
+class CustomSMSLog(models.Model):
+    """Log of custom SMS messages sent by admins."""
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    sender = models.CharField(max_length=150, blank=True, default='')
+    recipient_filter = models.CharField(
+        max_length=30,
+        choices=[
+            ('all', 'All Guilders'),
+            ('active', 'Active Only'),
+            ('congregation', 'By Congregation'),
+        ],
+        default='all',
+    )
+    congregation = models.ForeignKey(
+        Congregation, on_delete=models.SET_NULL, null=True, blank=True,
+    )
+    recipient_count = models.PositiveIntegerField(default=0)
+    sent_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+    )
+    sent_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-sent_at']
+
+    def __str__(self):
+        return f"Custom SMS: {self.title} ({self.recipient_count} recipients)"
+
+
+class ScheduledSMSLog(models.Model):
+    """Log of scheduled SMS campaigns (new month, new year, dues reminder)."""
+    MESSAGE_TYPES = [
+        ('new_month', 'Happy New Month'),
+        ('new_year', 'Happy New Year'),
+        ('dues_reminder', 'Dues Reminder'),
+    ]
+    message_type = models.CharField(max_length=20, choices=MESSAGE_TYPES)
+    sent_date = models.DateField()
+    recipient_count = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['message_type', 'sent_date']
+        ordering = ['-sent_date']
+
+    def __str__(self):
+        return f"{self.get_message_type_display()} on {self.sent_date} ({self.recipient_count} recipients)"

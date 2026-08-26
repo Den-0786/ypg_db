@@ -1399,6 +1399,17 @@ export default function DashboardLayout({
                     >
                       <i className="fas fa-globe mr-2"></i>Website Content
                     </button>
+                    <button
+                      onClick={() => {
+                        setActiveSettingsTab("customsms");
+                        if (window.innerWidth < 1024) {
+                          setSettingsSidebarOpen(false);
+                        }
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSettingsTab === "customsms" ? "bg-blue-100 dark:bg-blue-900 text-orange-700 dark:text-blue-300" : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"}`}
+                    >
+                      <i className="fas fa-paper-plane mr-2"></i>Custom SMS
+                    </button>
                   </nav>
                 </div>
                 {/* Settings Content */}
@@ -1788,7 +1799,7 @@ export default function DashboardLayout({
                               </button>
                             </div>
                             <p className="text-xs text-gray-500 mt-1">
-                              A 6-digit code will be sent to the registered district phone.
+                              A 6-digit code will be sent to your registered phone number.
                             </p>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -3003,6 +3014,9 @@ export default function DashboardLayout({
                       </div>
                     </div>
                   )}
+                  {activeSettingsTab === "customsms" && (
+                    <CustomSMSPanel darkMode={darkMode} />
+                  )}
                 </div>
               </div>
             </div>
@@ -3022,6 +3036,252 @@ export default function DashboardLayout({
 
       {/* Toast Container */}
       <ToastContainer toasts={toasts} removeToast={removeToast} />
+    </div>
+  );
+}
+
+function CustomSMSPanel({ darkMode }) {
+  const [title, setTitle] = useState("");
+  const [message, setMessage] = useState("");
+  const [recipientFilter, setRecipientFilter] = useState("all");
+  const [congregationId, setCongregationId] = useState("");
+  const [congregations, setConggregations] = useState([]);
+  const [sending, setSending] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [scheduledHistory, setScheduledHistory] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+  useEffect(() => {
+    fetchCongregations();
+    fetchHistory();
+    fetchScheduledHistory();
+  }, []);
+
+  const fetchCongregations = async () => {
+    try {
+      const res = await fetch(`${baseUrl}/api/congregations/`);
+      const data = await res.json();
+      if (data.success) setCongregations(data.congregations || []);
+    } catch (e) {
+      console.error("Failed to load congregations", e);
+    }
+  };
+
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch(`${baseUrl}/api/sms/history/`);
+      const data = await res.json();
+      if (data.success) setHistory(data.history || []);
+    } catch (e) {
+      console.error("Failed to load SMS history", e);
+    }
+  };
+
+  const fetchScheduledHistory = async () => {
+    try {
+      const res = await fetch(`${baseUrl}/api/sms/scheduled-history/`);
+      const data = await res.json();
+      if (data.success) setScheduledHistory(data.history || []);
+    } catch (e) {
+      console.error("Failed to load scheduled SMS history", e);
+    }
+  };
+
+  const handleSend = async () => {
+    if (!title.trim()) {
+      if (window.showToast) window.showToast("Title is required", "error");
+      return;
+    }
+    if (!message.trim()) {
+      if (window.showToast) window.showToast("Message is required", "error");
+      return;
+    }
+    const filterLabel = recipientFilter === "all" ? "All Guilders"
+      : recipientFilter === "active" ? "Active Guilders"
+      : "Selected Congregation";
+    if (!window.confirm(`Send SMS to ${filterLabel}?\n\nMessage: ${message}`)) return;
+
+    setSending(true);
+    try {
+      const res = await fetch(`${baseUrl}/api/sms/custom-send/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          title, message, recipient_filter: recipientFilter,
+          congregation_id: recipientFilter === "congregation" ? congregationId : null,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (window.showToast) window.showToast(data.message, "success");
+        setTitle("");
+        setMessage("");
+        fetchHistory();
+      } else {
+        if (window.showToast) window.showToast(data.error || "Failed to send", "error");
+      }
+    } catch (e) {
+      if (window.showToast) window.showToast("Network error", "error");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+          <i className="fas fa-paper-plane mr-2 text-blue-500"></i>Custom SMS
+        </h3>
+        <button
+          onClick={() => setShowHistory(!showHistory)}
+          className="px-3 py-1.5 text-xs sm:text-sm bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        >
+          <i className="fas fa-history mr-1"></i>{showHistory ? "Compose" : "History"}
+        </button>
+      </div>
+
+      {!showHistory ? (
+        <div className="space-y-3 sm:space-y-4">
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Title (for your reference)
+            </label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Council Meeting Reminder"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Message
+            </label>
+            <textarea
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              rows={4}
+              placeholder="Type your SMS message here..."
+              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-sm"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{message.length} characters</p>
+          </div>
+          <div>
+            <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Send To
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: "all", label: "All Guilders" },
+                { value: "active", label: "Active Only" },
+                { value: "congregation", label: "By Congregation" },
+              ].map((opt) => (
+                <label key={opt.value} className="flex items-center gap-1.5 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="recipientFilter"
+                    value={opt.value}
+                    checked={recipientFilter === opt.value}
+                    onChange={(e) => setRecipientFilter(e.target.value)}
+                    className="text-blue-500 focus:ring-blue-500"
+                  />
+                  <span className="text-xs sm:text-sm text-gray-700 dark:text-gray-300">{opt.label}</span>
+                </label>
+              ))}
+            </div>
+            {recipientFilter === "congregation" && (
+              <select
+                value={congregationId}
+                onChange={(e) => setCongregationId(e.target.value)}
+                className="mt-2 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white text-xs sm:text-sm"
+              >
+                <option value="">Select congregation</option>
+                {congregations.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+            )}
+          </div>
+          <button
+            onClick={handleSend}
+            disabled={sending || !title.trim() || !message.trim()}
+            className="w-full sm:w-auto px-6 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {sending ? (
+              <><i className="fas fa-spinner fa-spin mr-2"></i>Sending...</>
+            ) : (
+              <><i className="fas fa-paper-plane mr-2"></i>Send SMS</>
+            )}
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {scheduledHistory.length > 0 && (
+            <div>
+              <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                <i className="fas fa-clock mr-1 text-green-500"></i>Scheduled Messages
+              </h4>
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs sm:text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <th className="text-left py-2 px-3 text-gray-500 dark:text-gray-400">Type</th>
+                      <th className="text-left py-2 px-3 text-gray-500 dark:text-gray-400">Date</th>
+                      <th className="text-right py-2 px-3 text-gray-500 dark:text-gray-400">Recipients</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {scheduledHistory.map((log) => (
+                      <tr key={log.id} className="border-b border-gray-100 dark:border-gray-800">
+                        <td className="py-2 px-3 text-gray-900 dark:text-white">{log.message_type_display}</td>
+                        <td className="py-2 px-3 text-gray-600 dark:text-gray-400">{log.sent_date}</td>
+                        <td className="py-2 px-3 text-right text-gray-600 dark:text-gray-400">{log.recipient_count}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+          <div>
+            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+              <i className="fas fa-paper-plane mr-1 text-blue-500"></i>Custom Messages
+            </h4>
+            {history.length === 0 ? (
+              <p className="text-xs text-gray-500 dark:text-gray-400">No custom SMS sent yet.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-xs sm:text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-200 dark:border-gray-700">
+                      <th className="text-left py-2 px-3 text-gray-500 dark:text-gray-400">Title</th>
+                      <th className="text-left py-2 px-3 text-gray-500 dark:text-gray-400">Sender</th>
+                      <th className="text-left py-2 px-3 text-gray-500 dark:text-gray-400">To</th>
+                      <th className="text-right py-2 px-3 text-gray-500 dark:text-gray-400">Recipients</th>
+                      <th className="text-left py-2 px-3 text-gray-500 dark:text-gray-400">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {history.map((log) => (
+                      <tr key={log.id} className="border-b border-gray-100 dark:border-gray-800">
+                        <td className="py-2 px-3 text-gray-900 dark:text-white">{log.title}</td>
+                        <td className="py-2 px-3 text-gray-600 dark:text-gray-400">{log.sender}</td>
+                        <td className="py-2 px-3 text-gray-600 dark:text-gray-400 capitalize">{log.recipient_filter}</td>
+                        <td className="py-2 px-3 text-right text-gray-600 dark:text-gray-400">{log.recipient_count}</td>
+                        <td className="py-2 px-3 text-gray-600 dark:text-gray-400">{log.sent_at}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
