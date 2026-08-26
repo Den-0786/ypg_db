@@ -618,6 +618,8 @@ export default function LocalAnalyticsPage() {
             <MemberTypeToggle value={memberTypeFilter} onChange={setMemberTypeFilter} />
           </div>
 
+          {memberTypeFilter === "existing" && (
+          <>
           {/* Members Key Metrics */}
           <div className="mb-8">
             {/* Large screens - Grid layout */}
@@ -929,15 +931,11 @@ export default function LocalAnalyticsPage() {
               </div>
             </div>
           </div>
-        </div>
+          </>
+          )}
 
-        {/* New Members Analytics Section */}
-        <div className="bg-white dark:bg-gray-800 shadow rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            <i className="fas fa-user-plus text-emerald-600 mr-3"></i>
-            New Members Analytics
-          </h2>
-
+          {memberTypeFilter === "new" && (
+          <div>
           {/* New Members Key Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             <div className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg p-4 shadow-lg dark:shadow-emerald-500/20 relative overflow-hidden group">
@@ -972,46 +970,14 @@ export default function LocalAnalyticsPage() {
             </div>
           </div>
 
-          {/* New vs Existing Growth Card */}
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">New vs Existing Members</h3>
-            <div className="flex items-center gap-6">
-              <div className="flex-1">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-emerald-600 dark:text-emerald-400 font-medium">New</span>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {allMembers.filter((m) => m.member_type === "new").length} / {allMembers.length}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
-                  <div
-                    className="h-3 rounded-full bg-emerald-500 transition-all duration-500"
-                    style={{ width: `${allMembers.length > 0 ? (allMembers.filter((m) => m.member_type === "new").length / allMembers.length) * 100 : 0}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div className="flex-1">
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-blue-600 dark:text-blue-400 font-medium">Existing</span>
-                  <span className="text-gray-600 dark:text-gray-400">
-                    {allMembers.filter((m) => m.member_type === "existing").length} / {allMembers.length}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
-                  <div
-                    className="h-3 rounded-full bg-blue-500 transition-all duration-500"
-                    style={{ width: `${allMembers.length > 0 ? (allMembers.filter((m) => m.member_type === "existing").length / allMembers.length) * 100 : 0}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
           {/* New Members Stream Graph */}
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">New Members Over Time</h3>
             <NewMemberStreamGraph members={allMembers} />
           </div>
+          </div>
+          )}
+
         </div>
 
       </div>
