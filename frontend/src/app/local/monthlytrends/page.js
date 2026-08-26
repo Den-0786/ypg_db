@@ -10,6 +10,7 @@ export default function MonthlyTrendsPage() {
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState({});
   const [congregationName, setCongregationName] = useState(null);
+  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     // Get congregation name from localStorage
@@ -31,7 +32,11 @@ export default function MonthlyTrendsPage() {
       
       // Get data from data store
       const dataStore = getDataStore();
-      const attendanceRecords = await dataStore.getAttendanceRecords({ congregation: congregationName });
+      const [attendanceRecords, allMembers] = await Promise.all([
+        dataStore.getAttendanceRecords({ congregation: congregationName }),
+        dataStore.getMembers({ congregation: congregationName }),
+      ]);
+      setMembers(allMembers);
 
       console.log("Monthly Trends - Attendance data:", attendanceRecords);
 
@@ -248,6 +253,83 @@ export default function MonthlyTrendsPage() {
                   })()}
                 </p>
               </div>
+            </div>
+
+            {/* New Member Enrollment by Month */}
+            <div className="w-full">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                <i className="fas fa-user-plus text-emerald-500 mr-2"></i>
+                New Member Enrollment
+              </h3>
+              {(() => {
+                const monthOrder = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+                const currentYear = new Date().getFullYear();
+                const enrollment = {};
+                monthOrder.forEach((m) => {
+                  enrollment[`${m} ${currentYear}`] = { month: m, year: currentYear, newMembers: 0, male: 0, female: 0 };
+                });
+                members.filter((m) => m.member_type === "new").forEach((m) => {
+                  const joined = m.date_joined || m.timestamp;
+                  if (!joined) return;
+                  const d = new Date(joined);
+                  if (d.getFullYear() !== currentYear) return;
+                  const mKey = d.toLocaleDateString('en-US', { month: 'long' });
+                  const fullKey = `${mKey} ${currentYear}`;
+                  if (!enrollment[fullKey]) {
+                    enrollment[fullKey] = { month: mKey, year: currentYear, newMembers: 0, male: 0, female: 0 };
+                  }
+                  enrollment[fullKey].newMembers += 1;
+                  if (m.gender === "Male") enrollment[fullKey].male += 1;
+                  else enrollment[fullKey].female += 1;
+                });
+                const newMemberData = monthOrder.map((m) => enrollment[`${m} ${currentYear}`]).filter((d) => d.newMembers > 0 || monthOrder.indexOf(d.month) <= new Date().getMonth());
+                const totalNew = members.filter((m) => m.member_type === "new").length;
+                const yearNewMale = members.filter((m) => m.member_type === "new" && m.gender === "Male").length;
+                const yearNewFemale = members.filter((m) => m.member_type === "new" && m.gender === "Female").length;
+                if (newMemberData.length === 0) return (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-lg text-center">
+                    <div className="text-gray-500 dark:text-gray-400 text-lg">No new member data available</div>
+                  </div>
+                );
+                return (
+                  <>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 md:p-6 shadow-lg border-l-4 border-emerald-500 border dark:border-gray-600 mb-4 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/10 to-emerald-500/5 rounded-full -translate-y-16 translate-x-16"></div>
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-md font-semibold text-gray-900 dark:text-white">New Members - {new Date().getFullYear()}</h4>
+                        <div className="flex items-center space-x-4">
+                          <div className="text-center">
+                            <div className="text-xl font-bold text-emerald-600">{totalNew}</div>
+                            <div className="text-xs text-gray-500">Total New</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-xl font-bold text-blue-500">{yearNewMale}</div>
+                            <div className="text-xs text-gray-500">Male</div>
+                          </div>
+                          <div className="text-center">
+                            <div className="text-xl font-bold text-pink-500">{yearNewFemale}</div>
+                            <div className="text-xs text-gray-500">Female</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 md:p-6 shadow-lg border border-gray-100 dark:border-gray-600">
+                      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        {newMemberData.map((d, i) => (
+                          <div key={i} className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-3 text-center border border-emerald-100 dark:border-emerald-800">
+                            <div className="text-lg font-bold text-emerald-700 dark:text-emerald-300">{d.newMembers}</div>
+                            <div className="text-xs text-emerald-600 dark:text-emerald-400">{d.month}</div>
+                            <div className="flex justify-center gap-2 mt-1">
+                              <span className="text-[10px] text-blue-600 dark:text-blue-400">{d.male}M</span>
+                              <span className="text-[10px] text-pink-600 dark:text-pink-400">{d.female}F</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>

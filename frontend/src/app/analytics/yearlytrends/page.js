@@ -9,6 +9,7 @@ import TrendBarChart from "../../components/TrendBarChart";
 export default function YearlyTrendsPage() {
   const [loading, setLoading] = useState(true);
   const [chartData, setChartData] = useState({});
+  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     fetchAnalyticsData();
@@ -17,7 +18,11 @@ export default function YearlyTrendsPage() {
   const fetchAnalyticsData = async () => {
     try {
       const dataStore = getDataStore();
-      const attendanceRecords = await dataStore.getAttendanceRecords();
+      const [attendanceRecords, allMembers] = await Promise.all([
+        dataStore.getAttendanceRecords(),
+        dataStore.getMembers(),
+      ]);
+      setMembers(allMembers);
       
       console.log("DEBUG: Raw attendance records:", attendanceRecords);
       console.log("DEBUG: Number of records:", attendanceRecords?.length || 0);
@@ -91,7 +96,24 @@ export default function YearlyTrendsPage() {
   }
 
   const yearlyTrend = chartData.sundayAttendance?.yearlyTrend || [];
-  const maxValue = Math.max(...yearlyTrend.map(y => Math.max(y?.male || 0, y?.female || 0, y?.total || 0)), 1);
+
+  // Build new member enrollment by year
+  const buildNewMemberYearlyData = () => {
+    const yearlyEnrollment = {};
+    members.filter((m) => m.member_type === "new").forEach((m) => {
+      const joined = m.date_joined || m.timestamp;
+      if (!joined) return;
+      const year = new Date(joined).getFullYear().toString();
+      if (!yearlyEnrollment[year]) {
+        yearlyEnrollment[year] = { year, newMembers: 0, male: 0, female: 0 };
+      }
+      yearlyEnrollment[year].newMembers += 1;
+      if (m.gender === "Male") yearlyEnrollment[year].male += 1;
+      else yearlyEnrollment[year].female += 1;
+    });
+    return Object.values(yearlyEnrollment).sort((a, b) => parseInt(a.year) - parseInt(b.year));
+  };
+
   const firstYear = yearlyTrend[0] || {};
   const lastYear = yearlyTrend[yearlyTrend.length - 1] || {};
   const difference = (lastYear?.total || 0) - (firstYear?.total || 0);
@@ -219,6 +241,52 @@ export default function YearlyTrendsPage() {
                     : `Yearly attendance has decreased by ${Math.abs(difference)} people. Consider long-term engagement strategies.`}
                 </p>
               </div>
+            </div>
+
+            {/* New Member Enrollment by Year */}
+            <div className="w-full">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                <i className="fas fa-user-plus text-emerald-500 mr-2"></i>
+                New Member Enrollment by Year
+              </h3>
+              {(() => {
+                const newMemberYearly = buildNewMemberYearlyData();
+                const totalNew = members.filter((m) => m.member_type === "new").length;
+                if (newMemberYearly.length === 0) return (
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-lg text-center">
+                    <div className="text-gray-500 dark:text-gray-400 text-lg">No new member data available</div>
+                  </div>
+                );
+                return (
+                  <>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 md:p-6 shadow-lg border-l-4 border-emerald-500 border dark:border-gray-600 mb-4 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-400/10 to-emerald-500/5 rounded-full -translate-y-16 translate-x-16"></div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-md font-semibold text-gray-900 dark:text-white">Total New Members</h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">Across all years</p>
+                        </div>
+                        <div className="text-3xl font-bold text-emerald-600">{totalNew}</div>
+                      </div>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 rounded-lg p-4 md:p-6 shadow-lg border border-gray-100 dark:border-gray-600">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {newMemberYearly.map((d, i) => (
+                          <div key={i} className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 text-center border border-emerald-100 dark:border-emerald-800">
+                            <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400">{d.year}</div>
+                            <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300 mt-1">{d.newMembers}</div>
+                            <div className="text-xs text-emerald-600 dark:text-emerald-400">New Members</div>
+                            <div className="flex justify-center gap-3 mt-2">
+                              <span className="text-xs text-blue-600 dark:text-blue-400">{d.male} Male</span>
+                              <span className="text-xs text-pink-600 dark:text-pink-400">{d.female} Female</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                );
+              })()}
             </div>
           </div>
         </div>

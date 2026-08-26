@@ -970,10 +970,10 @@ export default function LocalAnalyticsPage() {
             </div>
           </div>
 
-          {/* Growth Trend: New vs Existing */}
+          {/* Growth Trend: New vs Existing - 6 Month Trend */}
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">New vs Existing Members</h3>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 mb-6">
               <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 text-center border border-emerald-200 dark:border-emerald-700">
                 <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{allMembers.filter((m) => m.member_type === "new").length}</p>
                 <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1">New Members</p>
@@ -983,6 +983,45 @@ export default function LocalAnalyticsPage() {
                 <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">Existing Members</p>
               </div>
             </div>
+            {/* 6-Month Mini Trend */}
+            {(() => {
+              const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+              const now = new Date();
+              const currentMonth = now.getMonth();
+              const currentYear = now.getFullYear();
+              const trendData = [];
+              for (let i = 5; i >= 0; i--) {
+                const targetMonth = currentMonth - i;
+                const targetYear = targetMonth < 0 ? currentYear - 1 : currentYear;
+                const adjustedMonth = targetMonth < 0 ? targetMonth + 12 : targetMonth;
+                const count = allMembers.filter((m) => {
+                  if (m.member_type !== "new") return false;
+                  const joined = m.date_joined || m.timestamp;
+                  if (!joined) return false;
+                  const d = new Date(joined);
+                  return d.getMonth() === adjustedMonth && d.getFullYear() === targetYear;
+                }).length;
+                trendData.push({ month: monthNames[adjustedMonth], count });
+              }
+              const maxCount = Math.max(...trendData.map((d) => d.count), 1);
+              return (
+                <div>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">6-Month Registration Trend</p>
+                  <div className="flex items-end justify-between gap-2 h-32">
+                    {trendData.map((d, i) => (
+                      <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
+                        <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 mb-1">{d.count}</span>
+                        <div
+                          className="w-full bg-gradient-to-t from-emerald-500 to-emerald-300 rounded-t transition-all duration-500"
+                          style={{ height: `${(d.count / maxCount) * 100}%`, minHeight: d.count > 0 ? '4px' : '2px' }}
+                        ></div>
+                        <span className="text-[10px] text-gray-500 dark:text-gray-400 mt-1">{d.month}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
             <div className="mt-4">
               <div className="flex justify-between text-sm mb-1">
                 <span className="text-gray-600 dark:text-gray-400">
