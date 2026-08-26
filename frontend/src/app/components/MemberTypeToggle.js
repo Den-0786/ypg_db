@@ -5,7 +5,7 @@ import React from "react";
 export default function MemberTypeToggle({ value, onChange }) {
   return (
     <div className="flex items-center bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-1 gap-1 shadow-sm">
-      {["all", "existing", "new"].map((type) => (
+      {["existing", "new"].map((type) => (
         <button
           key={type}
           type="button"
@@ -14,17 +14,11 @@ export default function MemberTypeToggle({ value, onChange }) {
             value === type
               ? type === "new"
                 ? "bg-emerald-600 text-white shadow-md"
-                : type === "existing"
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "bg-gray-700 text-white shadow-md dark:bg-gray-600"
+                : "bg-blue-600 text-white shadow-md"
               : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
           }`}
         >
-          {type === "all"
-            ? "All Members"
-            : type === "existing"
-              ? "Existing"
-              : "New"}
+          {type === "existing" ? "Existing" : "New"}
         </button>
       ))}
     </div>

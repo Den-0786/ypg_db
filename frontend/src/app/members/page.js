@@ -8,7 +8,6 @@ import ExecutivesTable from "../components/ExecutivesTable";
 import MembersTable from "../components/MembersTable";
 import MemberTypeToggle from "../components/MemberTypeToggle";
 import PinModal from "../components/PinModal";
-import ToastContainer from "../components/ToastContainer";
 import getDataStore from "../utils/dataStore";
 
 export default function MembersPage() {
@@ -1684,9 +1683,7 @@ export default function MembersPage() {
         itemName={deleteConfirmConfig.itemName}
         itemCount={deleteConfirmConfig.itemCount}
       />
-
-      {/* Toast Container */}
-      <ToastContainer />
+      
     </DashboardLayout>
   );
 }

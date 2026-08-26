@@ -11,7 +11,6 @@ import AttendanceFilter from "../../components/AttendanceFilter";
 import LogAttendanceModal from "../../components/LogAttendanceModal";
 import JointProgramModal from "../../components/JointProgramModal";
 import PinModal from "../../components/PinModal";
-import ToastContainer from "../../components/ToastContainer";
 import getDataStore from "../../utils/dataStore";
 
 export default function LocalAttendancePage() {
@@ -1051,9 +1050,8 @@ export default function LocalAttendancePage() {
             </div>
           </div>
         </div>
-      )}
-
-      <ToastContainer />
+            )}
+      
     </LocalDashboardLayout>
   );
 }

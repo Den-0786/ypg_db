@@ -38,24 +38,6 @@ export default function LocalDashboardPage() {
       window.location.href = "/local/select-congregation";
       return;
     }
-
-    // Show welcome message only once per session (not on every navigation back)
-    const alreadyWelcomed = sessionStorage.getItem("welcomeShown");
-    if (
-      storedCongregationName &&
-      !alreadyWelcomed &&
-      typeof window !== "undefined" &&
-      window.showToast
-    ) {
-      sessionStorage.setItem("welcomeShown", "1");
-      setTimeout(() => {
-        window.showToast(
-          `Welcome to ${storedCongregationName}!`,
-          "success",
-          3000
-        );
-      }, 1000);
-    }
   }, []);
 
   useEffect(() => {

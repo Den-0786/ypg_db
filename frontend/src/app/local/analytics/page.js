@@ -19,8 +19,19 @@ export default function LocalAnalyticsPage() {
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
   const [filtered, setFiltered] = useState(null);
   const [currentCongregationName, setCurrentCongregationName] = useState(null);
-  const [memberTypeFilter, setMemberTypeFilter] = useState("all");
+  const [memberTypeFilter, setMemberTypeFilter] = useState("existing");
   const [allMembers, setAllMembers] = useState([]);
+  const [filteredMembers, setFilteredMembers] = useState([]);
+
+  useEffect(() => {
+    let result = allMembers;
+    if (memberTypeFilter === "existing") {
+      result = allMembers.filter((m) => m.member_type !== "new");
+    } else if (memberTypeFilter === "new") {
+      result = allMembers.filter((m) => m.member_type === "new");
+    }
+    setFilteredMembers(result);
+  }, [allMembers, memberTypeFilter]);
 
   useEffect(() => {
     // Get current congregation from localStorage
@@ -617,11 +628,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Total Members</p>
                   <p className="text-lg font-bold">
-                      {(
-                        filtered?.membersDatabase?.congregations ||
-                        (filtered?.membersDatabase || chartData.membersDatabase)
-                          ?.congregations
-                      )?.reduce((sum, c) => sum + c.members, 0) || 0}
+                      {filteredMembers.length}
                     </p>
                 </div>
                 <i className="fas fa-users text-xl text-green-600 dark:text-green-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -633,12 +640,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Male Members</p>
                   <p className="text-lg font-bold">
-                      {(
-                        filtered?.membersDatabase || chartData.membersDatabase
-                      )?.genderDistribution?.reduce(
-                        (sum, item) => sum + item.male,
-                        0
-                      ) || 0}
+                      {filteredMembers.filter((m) => m.gender === "Male").length}
                     </p>
                 </div>
                 <i className="fas fa-mars text-xl text-blue-500 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -650,12 +652,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Female Members</p>
                   <p className="text-lg font-bold">
-                      {(
-                        filtered?.membersDatabase || chartData.membersDatabase
-                      )?.genderDistribution?.reduce(
-                        (sum, item) => sum + item.female,
-                        0
-                      ) || 0}
+                      {filteredMembers.filter((m) => m.gender === "Female").length}
                     </p>
                 </div>
                 <i className="fas fa-venus text-xl text-pink-600 dark:text-pink-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -667,12 +664,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Active Guilders</p>
                   <p className="text-lg font-bold">
-                      {(
-                        filtered?.membersDatabase || chartData.membersDatabase
-                      )?.congregations?.reduce(
-                        (sum, c) => sum + (c.active_members || 0),
-                        0
-                      ) || 0}
+                      {filteredMembers.filter((m) => m.membership_status === "Active").length}
                     </p>
                 </div>
                 <i className="fas fa-user-check text-xl text-blue-700 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -684,12 +676,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Inactive Guilders</p>
                   <p className="text-lg font-bold">
-                      {(
-                        filtered?.membersDatabase || chartData.membersDatabase
-                      )?.congregations?.reduce(
-                        (sum, c) => sum + (c.inactive_members || 0),
-                        0
-                      ) || 0}
+                      {filteredMembers.filter((m) => m.membership_status === "Inactive").length}
                     </p>
                 </div>
                 <i className="fas fa-user-times text-xl text-red-600 dark:text-red-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -721,13 +708,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Total Members</p>
                   <p className="text-lg font-bold">
-                          {(
-                            filtered?.membersDatabase ||
-                            chartData.membersDatabase
-                          )?.congregations?.reduce(
-                            (sum, c) => sum + c.members,
-                            0
-                          ) || 0}
+                          {filteredMembers.length}
                         </p>
                 </div>
                 <i className="fas fa-users text-xl text-green-600 dark:text-green-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -739,13 +720,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Male Members</p>
                   <p className="text-lg font-bold">
-                          {(
-                            filtered?.membersDatabase ||
-                            chartData.membersDatabase
-                          )?.genderDistribution?.reduce(
-                            (sum, item) => sum + item.male,
-                            0
-                          ) || 0}
+                          {filteredMembers.filter((m) => m.gender === "Male").length}
                         </p>
                 </div>
                 <i className="fas fa-mars text-xl text-blue-500 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -757,13 +732,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Female Members</p>
                   <p className="text-lg font-bold">
-                          {(
-                            filtered?.membersDatabase ||
-                            chartData.membersDatabase
-                          )?.genderDistribution?.reduce(
-                            (sum, item) => sum + item.female,
-                            0
-                          ) || 0}
+                          {filteredMembers.filter((m) => m.gender === "Female").length}
                         </p>
                 </div>
                 <i className="fas fa-venus text-xl text-pink-600 dark:text-pink-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -775,13 +744,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Active Guilders</p>
                   <p className="text-lg font-bold">
-                          {(
-                            filtered?.membersDatabase ||
-                            chartData.membersDatabase
-                          )?.congregations?.reduce(
-                            (sum, c) => sum + (c.active_members || 0),
-                            0
-                          ) || 0}
+                          {filteredMembers.filter((m) => m.membership_status === "Active").length}
                         </p>
                 </div>
                 <i className="fas fa-user-check text-xl text-blue-700 dark:text-blue-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -793,13 +756,7 @@ export default function LocalAnalyticsPage() {
                 <div>
                   <p className="text-xs text-gray-600 dark:text-gray-400">Inactive Guilders</p>
                   <p className="text-lg font-bold">
-                          {(
-                            filtered?.membersDatabase ||
-                            chartData.membersDatabase
-                          )?.congregations?.reduce(
-                            (sum, c) => sum + (c.inactive_members || 0),
-                            0
-                          ) || 0}
+                          {filteredMembers.filter((m) => m.membership_status === "Inactive").length}
                         </p>
                 </div>
                 <i className="fas fa-user-times text-xl text-red-600 dark:text-red-400 opacity-80 group-hover:scale-110 transition-transform duration-200"></i>
@@ -900,13 +857,7 @@ export default function LocalAnalyticsPage() {
                           <i className="fas fa-mars text-white text-sm"></i>
                         </div>
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {(
-                            filtered?.membersDatabase ||
-                            chartData.membersDatabase
-                          )?.genderDistribution?.reduce(
-                            (sum, item) => sum + item.male,
-                            0
-                          ) || 0}
+                          {filteredMembers.filter((m) => m.gender === "Male").length}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
                           Male
@@ -917,13 +868,7 @@ export default function LocalAnalyticsPage() {
                           <i className="fas fa-venus text-white text-sm"></i>
                         </div>
                         <div className="text-sm font-medium text-gray-900 dark:text-white">
-                          {(
-                            filtered?.membersDatabase ||
-                            chartData.membersDatabase
-                          )?.genderDistribution?.reduce(
-                            (sum, item) => sum + item.female,
-                            0
-                          ) || 0}
+                          {filteredMembers.filter((m) => m.gender === "Female").length}
                         </div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">
                           Female
