@@ -1849,10 +1849,10 @@ def api_add_member(request):
                 elif data.get("district_executive_position"):
                     data["executive_position"] = data["district_executive_position"]
 
-        # Auto-set membership_status for new members
+        # Auto-set membership_status to Active for new members (status is hidden in form)
         member_type = data.get("member_type", "existing")
-        if member_type == "new" and not data.get("membership_status"):
-            data["membership_status"] = "New"
+        if member_type == "new":
+            data["membership_status"] = "Active"
         
         form = GuilderForm(data, files)
 

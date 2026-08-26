@@ -1304,14 +1304,29 @@ export default function LocalMembersPage() {
                               </span>
                             </div>
                           )}
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
-                            {member.name}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-white">
+                              {member.name}
+                            </div>
+                            {member.member_type === "new" && (() => {
+                              const joined = member.date_joined || member.timestamp;
+                              if (!joined) return null;
+                              const joinDate = new Date(joined);
+                              const now = new Date();
+                              const monthsDiff = (now.getFullYear() - joinDate.getFullYear()) * 12 + (now.getMonth() - joinDate.getMonth());
+                              const eligible = monthsDiff >= 12;
+                              return (
+                                <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${eligible ? "bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300" : "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"}`}>
+                                  {eligible ? "Eligible for Existing" : "New Member"}
+                                </span>
+                              );
+                            })()}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                         {member.member_id ? (
-                          <span className="inline-flex px-2 py-1 text-xs font-mono font-semibold rounded bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-700">
+                          <span className={`inline-flex px-2 py-1 text-xs font-mono font-semibold rounded border ${member.member_type === "new" ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300 border-emerald-200 dark:border-emerald-700" : "bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border-blue-200 dark:border-blue-700"}`}>
                             {member.member_id}
                           </span>
                         ) : (

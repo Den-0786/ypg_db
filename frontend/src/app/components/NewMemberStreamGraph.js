@@ -32,7 +32,7 @@ function buildMonthlyData(members) {
 
   members.forEach((m) => {
     if (m.member_type !== "new") return;
-    const ts = m.timestamp || m.created_at || "";
+    const ts = m.date_joined || m.created_at || "";
     if (!ts) return;
     const d = new Date(ts);
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;

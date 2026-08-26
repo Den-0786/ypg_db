@@ -155,8 +155,8 @@ export default function PersonalInfoSection({
               onClick={() =>
                 setCurrentMember({
                   ...currentMember,
-                  member_type: type,
-                  membership_status: type === "new" ? "New" : "Active",
+                member_type: type,
+                membership_status: "Active",
                 })
               }
               className={`flex-1 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
