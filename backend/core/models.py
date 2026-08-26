@@ -226,8 +226,16 @@ class Guilder(models.Model):
     # Permissions/roles
     role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, blank=True)
 
-    # Auto-generated unique member ID (e.g. AE/YPG/001)
+    # Auto-generated unique member ID (e.g. YPG-EX-001, YPG-NM-2026-001)
     member_id = models.CharField(max_length=30, unique=True, blank=True, null=True)
+
+    # Preserved original new member ID after promotion to existing
+    original_new_member_id = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True,
+        help_text="Preserved YPG-NM-... ID when a new member is promoted to existing",
+    )
 
     # Profile picture
     profile_picture = models.ImageField(upload_to='member_pictures/', blank=True, null=True)
@@ -250,10 +258,14 @@ class Guilder(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.member_id:
-            initials = (self.congregation.initials or '').strip().upper()
-            if initials:
-                count = Guilder.objects.filter(congregation=self.congregation).count() + 1
-                self.member_id = f"{initials}/YPG/{count:03d}"
+            from django.utils import timezone
+            year = timezone.now().year
+            if self.member_type == "new":
+                count = Guilder.objects.filter(member_type="new").count() + 1
+                self.member_id = f"YPG-NM-{year}-{count:03d}"
+            else:
+                count = Guilder.objects.filter(member_type="existing").count() + 1
+                self.member_id = f"YPG-EX-{count:03d}"
         super().save(*args, **kwargs)
 
     def is_local_executive(self):

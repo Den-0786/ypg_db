@@ -408,6 +408,8 @@ class DataStore {
           member_id: member.member_id || "",
           member_type: member.member_type || "existing",
           purpose_of_joining: member.purpose_of_joining || "",
+          original_new_member_id: member.original_new_member_id || "",
+          date_joined: member.date_joined || "",
           profile_picture: member.profile_picture || null,
           timestamp: new Date().toISOString(),
         }));
@@ -716,6 +718,38 @@ class DataStore {
       this.saveToStorage("membersData", this.membersData);
       this.updateAnalytics();
       return true;
+    }
+  }
+
+  // Promote a new member to existing member
+  async promoteMember(memberId) {
+    try {
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL || "/";
+      const response = await fetch(`${base}/api/members/${memberId}/promote/`, {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.error || "Failed to promote member");
+      }
+
+      // Update local cache
+      const memberIndex = this.membersData.findIndex((m) => m.id === memberId);
+      if (memberIndex !== -1) {
+        this.membersData[memberIndex].member_type = "existing";
+        this.membersData[memberIndex].membership_status = "Active";
+        this.membersData[memberIndex].member_id = data.generated_member_id;
+        this.membersData[memberIndex].original_new_member_id = data.original_new_member_id;
+        this.saveToStorage("membersData", this.membersData);
+        this.updateAnalytics();
+      }
+      return data;
+    } catch (error) {
+      console.error("Error promoting member:", error);
+      throw error;
     }
   }
 

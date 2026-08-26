@@ -1767,6 +1767,8 @@ def api_members(request):
             "profile_picture": request.build_absolute_uri(member.profile_picture.url) if member.profile_picture else None,
             "member_type": member.member_type,
             "purpose_of_joining": member.purpose_of_joining or "",
+            "original_new_member_id": member.original_new_member_id or "",
+            "date_joined": member.created_at.isoformat() if member.created_at else "",
         }
         data.append(member_data)
 
@@ -1995,6 +1997,53 @@ def api_delete_member(request, member_id):
             "success": False, 
             "error": str(e)
         }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def api_promote_member(request, member_id):
+    """Promote a new member to existing member status.
+
+    - Changes member_type from 'new' to 'existing'
+    - Preserves the original YPG-NM-... ID in original_new_member_id
+    - Generates a new YPG-EX-... ID as the primary member_id
+    """
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    try:
+        try:
+            member = Guilder.objects.get(id=member_id)
+        except Guilder.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Member not found"}, status=404)
+
+        denied = _ensure_member_access(request, member)
+        if denied:
+            return denied
+
+        if member.member_type != "new":
+            return JsonResponse({"success": False, "error": "Only new members can be promoted"}, status=400)
+
+        # Preserve the old NM ID
+        member.original_new_member_id = member.member_id
+
+        # Switch type and generate new EX ID
+        member.member_type = "existing"
+        member.membership_status = "Active"
+
+        # Force regeneration of member_id by clearing it
+        member.member_id = None
+        member.save()
+
+        return JsonResponse({
+            "success": True,
+            "message": "Member promoted to existing successfully",
+            "member_id": member.id,
+            "generated_member_id": member.member_id,
+            "original_new_member_id": member.original_new_member_id,
+        })
+
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 # Advanced Analytics API Endpoints

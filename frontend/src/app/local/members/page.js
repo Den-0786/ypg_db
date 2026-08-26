@@ -282,6 +282,38 @@ export default function LocalMembersPage() {
     setPinModalOpen(true);
   };
 
+  const handlePromoteMember = async (member) => {
+    if (!confirm(`Promote ${member.name} to Existing Member? This will assign a new YPG-EX-... ID and preserve the original NM ID.`)) return;
+    try {
+      setLoading(true);
+      const ds = getDataStore();
+      const result = await ds.promoteMember(member.id);
+      setMembers((prev) =>
+        prev.map((m) =>
+          m.id === member.id
+            ? {
+                ...m,
+                member_type: "existing",
+                membership_status: "Active",
+                member_id: result.generated_member_id,
+                original_new_member_id: result.original_new_member_id,
+              }
+            : m
+        )
+      );
+      if (typeof window !== "undefined" && window.showToast) {
+        window.showToast(`Member promoted successfully! New ID: ${result.generated_member_id}`, "success");
+      }
+    } catch (error) {
+      console.error("Error promoting member:", error);
+      if (typeof window !== "undefined" && window.showToast) {
+        window.showToast(error.message || "Failed to promote member", "error");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleBulkEdit = () => {
     if (selectedMembers.length === 0) {
       showError("Please select members to edit");
@@ -1356,6 +1388,25 @@ export default function LocalMembersPage() {
                           >
                             <i className="fas fa-trash mr-1"></i>Delete
                           </button>
+                          {member.member_type === "new" && (() => {
+                            const joined = member.date_joined || member.timestamp;
+                            if (!joined) return null;
+                            const joinDate = new Date(joined);
+                            const now = new Date();
+                            const months = (now.getFullYear() - joinDate.getFullYear()) * 12 + (now.getMonth() - joinDate.getMonth());
+                            if (months >= 12) {
+                              return (
+                                <button
+                                  onClick={() => handlePromoteMember(member)}
+                                  className="text-amber-600 hover:text-amber-900 dark:text-amber-400 dark:hover:text-amber-300 p-2 rounded font-semibold"
+                                  title="Promote to Existing Member"
+                                >
+                                  <i className="fas fa-arrow-up mr-1"></i>Promote
+                                </button>
+                              );
+                            }
+                            return null;
+                          })()}
                         </div>
                       </td>
                     </tr>
@@ -1817,6 +1868,48 @@ export default function LocalMembersPage() {
                           </div>
                         </div>
                       </div>
+                    </div>
+                  </div>
+
+                  {/* System Info / Audit Section */}
+                  <div className="bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/30 dark:to-slate-900/30 rounded-xl p-4 sm:p-6">
+                    <div className="flex items-center mb-3 sm:mb-4">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center mr-2 sm:mr-3">
+                        <i className="fas fa-id-card text-gray-600 dark:text-gray-300 text-sm sm:text-base"></i>
+                      </div>
+                      <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                        System Info
+                      </h4>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-sm">
+                        <label className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">Member Type</label>
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${selectedMember.member_type === "new" ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200" : "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"}`}>
+                          {selectedMember.member_type === "new" ? "New Member" : "Existing Member"}
+                        </span>
+                      </div>
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-sm">
+                        <label className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">Primary Member ID</label>
+                        <p className="text-sm font-bold font-mono text-gray-900 dark:text-white">{selectedMember.member_id || "N/A"}</p>
+                      </div>
+                      {selectedMember.original_new_member_id && (
+                        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-sm">
+                          <label className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">Original New Member ID</label>
+                          <p className="text-sm font-bold font-mono text-emerald-700 dark:text-emerald-300">{selectedMember.original_new_member_id}</p>
+                        </div>
+                      )}
+                      <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-sm">
+                        <label className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">Date Joined</label>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {selectedMember.date_joined ? new Date(selectedMember.date_joined).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : "N/A"}
+                        </p>
+                      </div>
+                      {selectedMember.member_type === "new" && selectedMember.purpose_of_joining && (
+                        <div className="bg-white dark:bg-gray-800 rounded-lg p-3 sm:p-4 shadow-sm sm:col-span-2">
+                          <label className="text-xs sm:text-sm font-medium text-gray-600 dark:text-gray-400 block mb-1">Purpose of Joining</label>
+                          <p className="text-sm text-gray-900 dark:text-white">{selectedMember.purpose_of_joining}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
 

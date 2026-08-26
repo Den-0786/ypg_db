@@ -67,6 +67,7 @@ urlpatterns = [
     path("api/members/add/", views.api_add_member, name="api_add_member"),
     path("api/members/update/<int:member_id>/", views.api_update_member, name="api_update_member"),
     path("api/members/<int:member_id>/delete/", views.api_delete_member, name="api_delete_member"),
+    path("api/members/<int:member_id>/promote/", views.api_promote_member, name="api_promote_member"),
     path(
         "api/analytics/attendance-chart/",
         views.api_attendance_chart_data,

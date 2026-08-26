@@ -1193,6 +1193,34 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
+          {/* Growth Trend: New vs Existing */}
+          <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mb-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">New vs Existing Members</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-emerald-50 dark:bg-emerald-900/20 rounded-lg p-4 text-center border border-emerald-200 dark:border-emerald-700">
+                <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">{allMembers.filter((m) => m.member_type === "new").length}</p>
+                <p className="text-sm text-emerald-700 dark:text-emerald-300 mt-1">New Members</p>
+              </div>
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 text-center border border-blue-200 dark:border-blue-700">
+                <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">{allMembers.filter((m) => m.member_type === "existing").length}</p>
+                <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">Existing Members</p>
+              </div>
+            </div>
+            <div className="mt-4">
+              <div className="flex justify-between text-sm mb-1">
+                <span className="text-gray-600 dark:text-gray-400">
+                  {allMembers.length > 0 ? `${((allMembers.filter((m) => m.member_type === "new").length / allMembers.length) * 100).toFixed(1)}%` : "0%"} New
+                </span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  {allMembers.length > 0 ? `${((allMembers.filter((m) => m.member_type === "existing").length / allMembers.length) * 100).toFixed(1)}%` : "0%"} Existing
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-3">
+                <div className="h-3 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500" style={{ width: `${allMembers.length > 0 ? (allMembers.filter((m) => m.member_type === "new").length / allMembers.length) * 100 : 0}%` }}></div>
+              </div>
+            </div>
+          </div>
+
           {/* New Members Stream Graph */}
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">New Members Over Time</h3>

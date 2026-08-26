@@ -174,6 +174,31 @@ export default function PersonalInfoSection({
         </div>
       </div>
 
+      {/* Real-time Member ID Preview */}
+      <div className="sm:col-span-2 lg:col-span-3">
+        <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
+          currentMember.member_type === "new"
+            ? "bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700"
+            : "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-700"
+        }`}>
+          <i className={`fas fa-id-card text-lg ${
+            currentMember.member_type === "new" ? "text-emerald-600 dark:text-emerald-400" : "text-blue-600 dark:text-blue-400"
+          }`}></i>
+          <div>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Assigned Member ID</p>
+            <p className={`text-sm font-bold font-mono ${
+              currentMember.member_type === "new"
+                ? "text-emerald-700 dark:text-emerald-300"
+                : "text-blue-700 dark:text-blue-300"
+            }`}>
+              {currentMember.member_type === "new"
+                ? `YPG-NM-${new Date().getFullYear()}-xxx`
+                : "YPG-EX-xxx"}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Purpose of Joining — only for new members */}
       {currentMember.member_type === "new" && (
         <div className="sm:col-span-2 lg:col-span-3">
