@@ -339,8 +339,29 @@ export default function BulkRegistrationPage() {
 
       if (response.ok) {
         const result = await response.json();
-        showToast("Members submitted successfully!", "success");
-        setMembers([]);
+        if (result.added > 0) {
+          showToast(
+            `${result.added} member${result.added > 1 ? "s" : ""} added successfully!`,
+            "success"
+          );
+        } else {
+          showToast("No members were added. Check errors.", "error");
+        }
+        if (result.failed > 0) {
+          console.warn("Bulk import errors:", result.errors);
+          if (typeof window !== "undefined" && window.showToast) {
+            window.showToast(
+              `${result.failed} member${result.failed > 1 ? "s" : ""} had errors. See console for details.`,
+              "error"
+            );
+          }
+        }
+        // Remove successfully added members from the list
+        const badIndexes = new Set((result.errors || []).map((e) => e.index));
+        const remainingMembers = members.filter(
+          (_, idx) => badIndexes.has(idx)
+        );
+        setMembers(remainingMembers);
       } else {
         const errorData = await response.json();
         console.error("Bulk member add error:", errorData);

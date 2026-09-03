@@ -264,5 +264,8 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'District YPG Database <nor
 ARKESEL_API_KEY = os.getenv('ARKESEL_API_KEY')
 SMS_SENDER_ID = os.getenv('SMS_SENDER_ID', 'DistYPG')
 
+# Display brand name used in SMS/email messages (OTP codes, etc.)
+APP_NAME = os.getenv('APP_NAME', 'Ahinsan District YPG')
+
 # Phone number that receives OTP SMS for password changes
 OTP_RECIPIENT = os.getenv('OTP_RECIPIENT', '')

@@ -51,9 +51,9 @@ from .forms import (BulkGuilderForm, ChangePINForm, CongregationForm,
                     SearchForm, SundayAttendanceForm)
 from .models import (DISTRICT_EXECUTIVE_POSITIONS, LOCAL_EXECUTIVE_POSITIONS,
                      BirthdayMessageLog, BulkProfileCart, Congregation,
-                     DataBackup, Guilder, Notification, Role,
+                     DataBackup, Executive, Guilder, Notification, Role,
                      SundayAttendance, Quiz, QuizSubmission, UserProfile,
-                     LoginAttempt, WebsiteSettings)
+                     LoginAttempt, WebsiteSettings, SystemSettings)
 
 LOGIN_RATE_LIMIT_ENABLED = True
 
@@ -876,19 +876,27 @@ def dashboard(request):
         total_congregations = congregations.count()
 
         # Get executives and members for district view
-        # District executives: those with district or both level
+        # District executives: those with a district-level executive role
+        district_exec_ids = Executive.objects.filter(
+            is_active=True,
+            level__in=["district", "both"]
+        ).values_list("guilder_id", flat=True)
         district_executives = Guilder.objects.filter(
-            is_executive=True,
-            executive_level__in=["district", "both"]
-        ).order_by("district_executive_position", "first_name")
+            id__in=district_exec_ids
+        ).order_by("first_name") if district_exec_ids else Guilder.objects.none()
 
-        # Local executives: those with local or both level
+        # Local executives: those with a local-level executive role
+        local_exec_ids = Executive.objects.filter(
+            is_active=True,
+            level__in=["local", "both"]
+        ).values_list("guilder_id", flat=True)
         local_executives = Guilder.objects.filter(
-            is_executive=True,
-            executive_level__in=["local", "both"]
-        ).order_by("congregation__name", "local_executive_position", "first_name")
+            id__in=local_exec_ids
+        ).order_by("congregation__name", "first_name") if local_exec_ids else Guilder.objects.none()
 
-        members = Guilder.objects.filter(is_executive=False).order_by(
+        # Members: everyone WITHOUT any executive role
+        all_exec_ids = Executive.objects.filter(is_active=True).values_list("guilder_id", flat=True)
+        members = Guilder.objects.exclude(id__in=all_exec_ids).order_by(
             "first_name", "last_name"
         )
 
@@ -911,16 +919,27 @@ def dashboard(request):
         total_congregations = 1
 
         # Get executives and members for local view
-        # Local executives: those with local or both level from this congregation
-        executives = Guilder.objects.filter(
+        # Local executives: those with local-level executive role in this congregation or district
+        local_exec_ids = Executive.objects.filter(
+            is_active=True,
+            level__in=["local", "both"],
             congregation=user_congregation,
-            is_executive=True,
-            executive_level__in=["local", "both"]
-        ).order_by("local_executive_position", "first_name")
+        ).values_list("guilder_id", flat=True)
+        # Also include district execs who belong to this congregation
+        district_exec_ids_for_local = Executive.objects.filter(
+            is_active=True,
+            congregation=user_congregation,
+        ).values_list("guilder_id", flat=True)
+        exec_ids = list(set(list(local_exec_ids) + list(district_exec_ids_for_local)))
+        executives = Guilder.objects.filter(
+            id__in=exec_ids
+        ).order_by("first_name") if exec_ids else Guilder.objects.none()
 
+        # Members: everyone in this congregation WITHOUT any executive role
+        all_exec_ids = Executive.objects.filter(is_active=True).values_list("guilder_id", flat=True)
         members = Guilder.objects.filter(
-            congregation=user_congregation, is_executive=False
-        ).order_by("first_name", "last_name")
+            congregation=user_congregation
+        ).exclude(id__in=all_exec_ids).order_by("first_name", "last_name")
 
     context = {
         "congregations": congregations,
@@ -1155,6 +1174,8 @@ def add_member(request):
         form = GuilderForm(request.POST)
         if form.is_valid():
             member = form.save()
+            # Sync executive record if executive data was provided
+            _sync_executive_record(member, request.POST)
             # Notification for district
             create_notification(
                 user=request.user,
@@ -1201,6 +1222,8 @@ def edit_member(request, member_id):
         form = GuilderForm(request.POST, instance=member)
         if form.is_valid():
             member = form.save()
+            # Sync executive record if executive data was provided
+            _sync_executive_record(member, request.POST)
             # Detect changes
             changes = {}
             for field in old_data:
@@ -1448,7 +1471,10 @@ def bulk_cart(request, cart_id):
             for profile_data in cart.profiles:
                 form = GuilderForm(profile_data)
                 if form.is_valid():
-                    form.save()
+                    member = form.save()
+                    # Sync executive record if applicable
+                    if profile_data.get("is_executive"):
+                        _sync_executive_record(member, profile_data)
 
             cart.submitted = True
             cart.save()
@@ -1738,6 +1764,36 @@ def api_members(request):
 
     data = []
     for member in members:
+        # Fetch executive roles for this member
+        exec_roles = Executive.objects.filter(
+            guilder=member, is_active=True
+        ).select_related("congregation")
+        
+        is_executive = exec_roles.exists()
+        exec_level = ""
+        local_pos = ""
+        district_pos = ""
+        
+        if is_executive:
+            # Determine aggregate level across roles
+            levels = set(r.level for r in exec_roles)
+            if "both" in levels:
+                exec_level = "both"
+            elif "district" in levels and "local" in levels:
+                exec_level = "both"
+            elif "district" in levels:
+                exec_level = "district"
+            elif "local" in levels:
+                exec_level = "local"
+            
+            for r in exec_roles:
+                if r.local_position:
+                    if not local_pos:
+                        local_pos = r.local_position
+                if r.district_position:
+                    if not district_pos:
+                        district_pos = r.district_position
+
         member_data = {
             "id": member.id,
             "member_id": member.member_id or "",
@@ -1759,16 +1815,26 @@ def api_members(request):
             "is_baptized": member.is_baptized,
             "is_confirmed": member.is_confirmed,
             "is_communicant": member.is_communicant,
-            "is_executive": member.is_executive,
-            "executive_position": member.executive_position,
-            "executive_level": member.executive_level,
-            "local_executive_position": member.local_executive_position,
-            "district_executive_position": member.district_executive_position,
+            "is_executive": is_executive,
+            "executive_position": local_pos or district_pos or "",
+            "executive_level": exec_level,
+            "local_executive_position": local_pos,
+            "district_executive_position": district_pos,
             "profile_picture": request.build_absolute_uri(member.profile_picture.url) if member.profile_picture else None,
             "member_type": member.member_type,
             "purpose_of_joining": member.purpose_of_joining or "",
             "original_new_member_id": member.original_new_member_id or "",
             "date_joined": member.created_at.isoformat() if member.created_at else "",
+            "executive_roles": [
+                {
+                    "id": r.id,
+                    "level": r.level,
+                    "local_position": r.local_position,
+                    "district_position": r.district_position,
+                    "congregation": r.congregation.name,
+                }
+                for r in exec_roles
+            ] if is_executive else [],
         }
         data.append(member_data)
 
@@ -1805,12 +1871,18 @@ def api_add_member(request):
         # Support both JSON and multipart/form-data
         content_type = request.content_type or ""
         if "multipart" in content_type or "form-data" in content_type:
-            data = request.POST.dict()
+            raw_data = request.POST.dict()
             files = request.FILES
         else:
-            data = json.loads(request.body)
+            raw_body = json.loads(request.body)
+            # Handle bulk import: { members: [...] }
+            if isinstance(raw_body, dict) and isinstance(raw_body.get("members"), list):
+                return _api_bulk_add_members(request, raw_body["members"])
+            raw_data = raw_body
             files = {}
-        
+
+        data = dict(raw_data)
+
         print(f"api_add_member - Received data: {data}")
 
         # Preprocess date_of_birth: convert MM-DD to 1900-MM-DD before form validation
@@ -1833,32 +1905,31 @@ def api_add_member(request):
                     "success": False, 
                     "error": f"Congregation '{data['congregation']}' not found"
                 }, status=400)
-        
-        # Handle executive level and position mapping
-        if data.get("is_executive"):
-            executive_level = data.get("executive_level")
-            if executive_level == "local":
-                if data.get("local_executive_position"):
-                    data["executive_position"] = data["local_executive_position"]
-            elif executive_level == "district":
-                if data.get("district_executive_position"):
-                    data["executive_position"] = data["district_executive_position"]
-            elif executive_level == "both":
-                if data.get("local_executive_position"):
-                    data["executive_position"] = data["local_executive_position"]
-                elif data.get("district_executive_position"):
-                    data["executive_position"] = data["district_executive_position"]
+
+        # Extract executive data before passing to form (form no longer handles exec fields)
+        _executive_data = {
+            "is_executive": data.pop("is_executive", False),
+            "executive_level": data.pop("executive_level", ""),
+            "local_executive_position": data.pop("local_executive_position", ""),
+            "district_executive_position": data.pop("district_executive_position", ""),
+        }
+        # Remove legacy unused field to avoid form errors
+        data.pop("executive_position", None)
 
         # Auto-set membership_status to Active for new members (status is hidden in form)
         member_type = data.get("member_type", "existing")
         if member_type == "new":
             data["membership_status"] = "Active"
-        
+
         form = GuilderForm(data, files)
 
         if form.is_valid():
             member = form.save()
             print(f"api_add_member - Member saved successfully with ID: {member.id}")
+
+            # Create Executive record if needed
+            _sync_executive_record(member, _executive_data)
+
             return JsonResponse({
                 "success": True,
                 "message": "Member added successfully",
@@ -1923,31 +1994,26 @@ def api_update_member(request, member_id):
                     "success": False, 
                     "error": f"Congregation '{data['congregation']}' not found"
                 }, status=400)
-        
-        # Handle executive level and position mapping
-        if data.get("is_executive"):
-            executive_level = data.get("executive_level")
-            
-            if executive_level == "local":
-                if data.get("local_executive_position"):
-                    data["executive_position"] = data["local_executive_position"]
-                    
-            elif executive_level == "district":
-                if data.get("district_executive_position"):
-                    data["executive_position"] = data["district_executive_position"]
-                    
-            elif executive_level == "both":
-                # Set primary position to the first available position
-                if data.get("local_executive_position"):
-                    data["executive_position"] = data["local_executive_position"]
-                elif data.get("district_executive_position"):
-                    data["executive_position"] = data["district_executive_position"]
-        
+
+        # Extract executive data before passing to form (form no longer handles exec fields)
+        _executive_data = {
+            "is_executive": data.pop("is_executive", False),
+            "executive_level": data.pop("executive_level", ""),
+            "local_executive_position": data.pop("local_executive_position", ""),
+            "district_executive_position": data.pop("district_executive_position", ""),
+        }
+        # Remove legacy unused field to avoid form errors
+        data.pop("executive_position", None)
+
         form = GuilderForm(data, files, instance=member)
 
         if form.is_valid():
             updated_member = form.save()
             print(f"api_update_member - Member updated successfully with ID: {updated_member.id}")
+
+            # Sync Executive record - if is_executive is present in update data
+            _sync_executive_record(updated_member, _executive_data)
+
             return JsonResponse({
                 "success": True,
                 "message": "Member updated successfully",
@@ -2213,21 +2279,55 @@ def api_dashboard_stats(request):
         existing_members_count = Guilder.objects.filter(member_type="existing").count()
 
         # Get executives and members for district view
-        # District executives: those with district or both level
+        # District executives: those with a district-level executive role
+        district_exec_ids = Executive.objects.filter(
+            is_active=True,
+            level__in=["district", "both"]
+        ).values_list("guilder_id", flat=True)
         district_executives = Guilder.objects.filter(
-            is_executive=True,
-            executive_level__in=["district", "both"]
-        ).order_by("district_executive_position", "first_name")
+            id__in=district_exec_ids
+        ).order_by("first_name") if district_exec_ids else Guilder.objects.none()
 
-        # Local executives: those with local or both level
+        # Local executives: those with a local-level executive role
+        local_exec_ids = Executive.objects.filter(
+            is_active=True,
+            level__in=["local", "both"]
+        ).values_list("guilder_id", flat=True)
         local_executives = Guilder.objects.filter(
-            is_executive=True,
-            executive_level__in=["local", "both"]
-        ).order_by("congregation__name", "local_executive_position", "first_name")
+            id__in=local_exec_ids
+        ).order_by("congregation__name", "first_name") if local_exec_ids else Guilder.objects.none()
 
-        members = Guilder.objects.filter(is_executive=False).order_by(
+        # Members: everyone WITHOUT any executive role
+        all_exec_ids = Executive.objects.filter(is_active=True).values_list("guilder_id", flat=True)
+        members = Guilder.objects.exclude(id__in=all_exec_ids).order_by(
             "first_name", "last_name"
-        )
+        ) if all_exec_ids else Guilder.objects.all().order_by("first_name", "last_name")
+
+        def _exec_data(exec_obj, level):
+            """Helper to serialize an executive Guilder for API."""
+            roles = exec_obj.executive_roles.filter(is_active=True)
+            local_pos = ""
+            district_pos = ""
+            exec_level = ""
+            for r in roles:
+                if r.local_position and not local_pos:
+                    local_pos = r.local_position
+                if r.district_position and not district_pos:
+                    district_pos = r.district_position
+                if not exec_level:
+                    exec_level = r.level
+                elif r.level != exec_level:
+                    exec_level = "both"
+            position = district_pos if level == "district" else (local_pos or district_pos)
+            if not position:
+                position = local_pos or district_pos
+            return {
+                "id": exec_obj.id,
+                "name": f"{exec_obj.first_name} {exec_obj.last_name}",
+                "position": position,
+                "congregation": exec_obj.congregation.name,
+                "level": exec_level or level,
+            }
 
         return JsonResponse(
             {
@@ -2243,24 +2343,12 @@ def api_dashboard_stats(request):
                     "existing_members_count": existing_members_count,
                 },
                 "district_executives": [
-                    {
-                        "id": exec.id,
-                        "name": f"{exec.first_name} {exec.last_name}",
-                        "position": exec.district_executive_position or exec.executive_position,
-                        "congregation": exec.congregation.name,
-                        "level": exec.executive_level,
-                    }
-                    for exec in district_executives
+                    _exec_data(exec_obj, "district")
+                    for exec_obj in district_executives
                 ],
                 "local_executives": [
-                    {
-                        "id": exec.id,
-                        "name": f"{exec.first_name} {exec.last_name}",
-                        "position": exec.local_executive_position or exec.executive_position,
-                        "congregation": exec.congregation.name,
-                        "level": exec.executive_level,
-                    }
-                    for exec in local_executives
+                    _exec_data(exec_obj, "local")
+                    for exec_obj in local_executives
                 ],
                 "members": [
                     {
@@ -2296,16 +2384,20 @@ def api_dashboard_stats(request):
         ).count()
 
         # Get executives and members
-        # Local executives: those with local or both level from this congregation
-        executives = Guilder.objects.filter(
+        # Local executives: anyone with an executive role in this congregation
+        local_exec_ids = Executive.objects.filter(
+            is_active=True,
             congregation=user_congregation,
-            is_executive=True,
-            executive_level__in=["local", "both"]
-        ).order_by("local_executive_position", "first_name")
+        ).values_list("guilder_id", flat=True)
+        executives = Guilder.objects.filter(
+            id__in=local_exec_ids
+        ).order_by("first_name") if local_exec_ids else Guilder.objects.none()
 
+        # Members: everyone in this congregation WITHOUT any executive role
+        all_exec_ids = Executive.objects.filter(is_active=True).values_list("guilder_id", flat=True)
         members = Guilder.objects.filter(
-            congregation=user_congregation, is_executive=False
-        ).order_by("first_name", "last_name")
+            congregation=user_congregation
+        ).exclude(id__in=all_exec_ids).order_by("first_name", "last_name")
 
         return JsonResponse(
             {
@@ -2321,12 +2413,18 @@ def api_dashboard_stats(request):
                 },
                 "executives": [
                     {
-                        "id": exec.id,
-                        "name": f"{exec.first_name} {exec.last_name}",
-                        "position": exec.local_executive_position or exec.executive_position,
-                        "level": exec.executive_level,
+                        "id": exec_obj.id,
+                        "name": f"{exec_obj.first_name} {exec_obj.last_name}",
+                        "position": next(
+                            (r.local_position or r.district_position for r in exec_obj.executive_roles.filter(is_active=True) if r.local_position or r.district_position),
+                            exec_obj.executive_roles.filter(is_active=True).first().district_position if exec_obj.executive_roles.filter(is_active=True).exists() else ""
+                        ),
+                        "level": next(
+                            (r.level for r in exec_obj.executive_roles.filter(is_active=True)),
+                            "local"
+                        ),
                     }
-                    for exec in executives
+                    for exec_obj in executives
                 ],
                 "members": [
                     {
@@ -2363,9 +2461,20 @@ def send_birthday_sms(request, guilder_id):
         return JsonResponse({"success": False, "message": "SMS already sent today"})
 
     # TODO: Integrate with Twilio or SMS provider
-    message = (
-        f"Happy Birthday {guilder.first_name}! May God bless you abundantly. - YPG"
+    # Use the editable SystemSettings template when available, otherwise a catchy default.
+    birthday_setting = SystemSettings.objects.filter(
+        setting_type="birthday_message", is_active=True
+    ).first()
+    template = (
+        birthday_setting.message_template
+        if birthday_setting and birthday_setting.message_template
+        else (
+            "On your special day, {name}, Ahinsan District YPG celebrates you! "
+            "Wishing you joy, good health, and God's abundant favour in the year ahead. "
+            "Happy Birthday!"
+        )
     )
+    message = template.replace("{name}", f"{guilder.first_name}")
 
     # Log the message
     BirthdayMessageLog.objects.create(guilder=guilder, sent_date=today, message=message)
@@ -3324,7 +3433,7 @@ def api_home_stats(request):
         total_male = Guilder.objects.filter(gender="Male").count()
         total_female = Guilder.objects.filter(gender="Female").count()
         total_congregations = Congregation.objects.filter(is_district=False).count()
-        executive_members = Guilder.objects.filter(is_executive=True).count()
+        executive_members = Executive.objects.filter(is_active=True).values("guilder_id").distinct().count()
         
         # Calculate Sunday attendance (average of recent records)
         recent_attendance = SundayAttendance.objects.filter(
@@ -4282,11 +4391,14 @@ def api_custom_sms_send(request):
     elif recipient_filter == 'congregation' and congregation_id:
         guilders = guilders.filter(congregation_id=congregation_id)
     elif recipient_filter == 'executives':
-        guilders = guilders.filter(is_executive=True)
+        exec_ids = Executive.objects.filter(is_active=True).values_list('guilder_id', flat=True)
+        guilders = guilders.filter(id__in=exec_ids)
     elif recipient_filter == 'local_executives':
-        guilders = guilders.filter(is_executive=True, executive_level__in=['local', 'both'])
+        exec_ids = Executive.objects.filter(is_active=True, level__in=['local', 'both']).values_list('guilder_id', flat=True)
+        guilders = guilders.filter(id__in=exec_ids)
     elif recipient_filter == 'district_executives':
-        guilders = guilders.filter(is_executive=True, executive_level__in=['district', 'both'])
+        exec_ids = Executive.objects.filter(is_active=True, level__in=['district', 'both']).values_list('guilder_id', flat=True)
+        guilders = guilders.filter(id__in=exec_ids)
 
     sender_name = request.user.get_full_name() or request.user.username
     sent_count = 0
@@ -4370,6 +4482,131 @@ def _get_requester_congregation(request):
     return congregation, bool(congregation.is_district)
 
 
+def _sync_executive_record(member, exec_data):
+    """Create or update the Executive record for a member based on submitted data.
+
+    exec_data is a dict with keys: is_executive, executive_level,
+    local_executive_position, district_executive_position.
+    """
+    is_executive = exec_data.get("is_executive") or exec_data.get("is_executive") is True
+    # Allow string "true"/"false"
+    if isinstance(is_executive, str):
+        is_executive = is_executive.lower() in ("true", "1", "yes")
+
+    if not is_executive:
+        # Remove active executive roles for this member
+        Executive.objects.filter(guilder=member, is_active=True).update(is_active=False)
+        return
+
+    level = exec_data.get("executive_level") or "local"
+    local_pos = exec_data.get("local_executive_position") or ""
+    district_pos = exec_data.get("district_executive_position") or ""
+
+    # Handle legacy executive_position if provided via other path
+    legacy_pos = exec_data.get("executive_position") or ""
+
+    if level == "local" and not local_pos and legacy_pos:
+        local_pos = legacy_pos
+    elif level == "district" and not district_pos and legacy_pos:
+        district_pos = legacy_pos
+    elif level == "both":
+        if not local_pos and legacy_pos:
+            local_pos = legacy_pos
+        elif not district_pos and legacy_pos:
+            district_pos = legacy_pos
+
+    congregation = member.congregation
+
+    # Get existing active exec role for this member
+    existing = Executive.objects.filter(guilder=member, is_active=True).first()
+
+    if existing:
+        existing.level = level
+        existing.local_position = local_pos or None
+        existing.district_position = district_pos or None
+        existing.congregation = congregation
+        existing.save()
+    else:
+        Executive.objects.create(
+            guilder=member,
+            level=level,
+            local_position=local_pos or None,
+            district_position=district_pos or None,
+            is_active=True,
+            congregation=congregation,
+        )
+
+
+def _api_bulk_add_members(request, members_list):
+    """Handle bulk member creation (members array in request body)."""
+    results = []
+    errors = []
+    success_count = 0
+
+    for idx, m in enumerate(members_list):
+        data = dict(m)
+        try:
+            # Preprocess date_of_birth
+            if data.get("date_of_birth"):
+                dob = data["date_of_birth"].strip()
+                if len(dob) == 5 and dob[2] == "-":
+                    data["date_of_birth"] = f"1900-{dob}"
+                elif len(dob) == 4 and dob[1] == "-":
+                    data["date_of_birth"] = f"1900-0{dob}"
+
+            # Handle congregation name to ID conversion
+            if data.get("congregation") and isinstance(data.get("congregation"), str):
+                cong = Congregation.objects.filter(name=data["congregation"]).first()
+                if cong:
+                    data["congregation"] = cong.id
+                else:
+                    errors.append({"index": idx, "name": m.get("name", ""), "error": f"Congregation '{data['congregation']}' not found"})
+                    continue
+
+            # Extract executive data
+            _executive_data = {
+                "is_executive": data.pop("is_executive", False),
+                "executive_level": data.pop("executive_level", ""),
+                "local_executive_position": data.pop("local_executive_position", ""),
+                "district_executive_position": data.pop("district_executive_position", ""),
+            }
+            data.pop("executive_position", None)
+
+            # Auto-set membership_status to Active for new members
+            member_type = data.get("member_type", "existing")
+            if member_type == "new":
+                data["membership_status"] = "Active"
+
+            form = GuilderForm(data)
+            if form.is_valid():
+                member = form.save()
+                _sync_executive_record(member, _executive_data)
+                success_count += 1
+                results.append({
+                    "index": idx,
+                    "name": f"{member.first_name} {member.last_name}",
+                    "member_id": member.id,
+                    "success": True,
+                })
+            else:
+                errors.append({
+                    "index": idx,
+                    "name": m.get("name", ""),
+                    "error": "; ".join(f"{k}: {v}" for k, v in form.errors.items()),
+                })
+        except Exception as e:
+            errors.append({"index": idx, "name": m.get("name", ""), "error": str(e)})
+
+    return JsonResponse({
+        "success": True,
+        "message": f"Bulk import completed: {success_count} members added, {len(errors)} errors",
+        "results": results,
+        "errors": errors,
+        "added": success_count,
+        "failed": len(errors),
+    })
+
+
 def _ensure_member_access(request, member):
     """403 when a non-district user touches another congregation's member."""
     requester_cong, is_district = _get_requester_congregation(request)
@@ -4388,6 +4625,7 @@ def _create_backup(user, backup_type='manual'):
         'timestamp': timezone.now().isoformat(),
         'congregations': list(Congregation.objects.values()),
         'members': list(Guilder.objects.values()),
+        'executives': list(Executive.objects.values()),
         'attendance': list(SundayAttendance.objects.values()),
     }
     return DataBackup.objects.create(
@@ -4463,6 +4701,7 @@ def api_restore_backup(request):
         with transaction.atomic():
             # Members and attendance are fully replaced by the snapshot
             SundayAttendance.objects.all().delete()
+            Executive.objects.all().delete()
             Guilder.objects.all().delete()
 
             SundayAttendance.objects.bulk_create(
@@ -4471,12 +4710,16 @@ def api_restore_backup(request):
             Guilder.objects.bulk_create(
                 Guilder(**row) for row in payload.get('members', [])
             )
+            if payload.get('executives'):
+                Executive.objects.bulk_create(
+                    Executive(**row) for row in payload['executives']
+                )
 
             # Congregations are merged so user accounts are never cascade-deleted
             for row in payload.get('congregations', []):
                 Congregation.objects.update_or_create(id=row['id'], defaults=row)
 
-            _reset_sequences([Congregation, Guilder, SundayAttendance])
+            _reset_sequences([Congregation, Guilder, SundayAttendance, Executive])
 
         return JsonResponse({
             'success': True,
@@ -4709,28 +4952,28 @@ def api_reminder_settings(request):
             reminder_settings = request.session.get('reminder_settings', {
                 'attendance_reminder': {
                     'title': 'Attendance Reminder',
-                    'message_template': 'Dear {congregation}, please submit your Sunday attendance for {date} ({day}). Thank you!',
+                    'message_template': 'Dear {congregation}, please submit your Sunday attendance for {date} ({day}). Thank you! - Ahinsan District YPG',
                     'is_active': True,
                     'target_congregations': 'all',
                     'selected_congregations': [],
                 },
                 'birthday_message': {
                     'title': 'Birthday Message',
-                    'message_template': 'Happy Birthday {name}! May God bless you abundantly. - YPG',
+                    'message_template': 'On your special day, {name}, Ahinsan District YPG celebrates you! Wishing you joy, good health, and God\'s abundant favour in the year ahead. Happy Birthday!',
                     'is_active': True,
                     'target_congregations': 'all',
                     'selected_congregations': [],
                 },
                 'welcome_message': {
                     'title': 'Welcome Message',
-                    'message_template': 'Welcome {name} to {congregation}! We\'re glad to have you join us.',
+                    'message_template': 'Welcome {name} to {congregation}! We\'re so glad to have you join our family at Ahinsan District YPG.',
                     'is_active': True,
                     'target_congregations': 'all',
                     'selected_congregations': [],
                 },
                 'joint_program_notification': {
                     'title': 'Joint Program Notification',
-                    'message_template': 'Joint program scheduled for {date} ({day}) at {location}. All congregations are invited!',
+                    'message_template': 'Joint program scheduled for {date} ({day}) at {location}. All congregations are invited by Ahinsan District YPG!',
                     'is_active': True,
                     'target_congregations': 'all',
                     'selected_congregations': [],
@@ -4766,11 +5009,19 @@ def api_reminder_settings(request):
 
 def generate_members_csv():
     """Generate CSV data for members"""
-    members = Guilder.objects.all()
+    members = Guilder.objects.all().prefetch_related('executive_roles')
     csv_lines = ['Name,Gender,Date of Birth,Congregation,Phone,Email,Position,Membership Status,Date Added']
     
     for member in members:
-        position = member.get_primary_executive_position() or member.position or "Member"
+        roles = list(member.executive_roles.filter(is_active=True))
+        position = "Member"
+        if roles:
+            role_positions = []
+            for r in roles:
+                role_positions.append(r.local_position or r.district_position)
+            position = " / ".join(p for p in role_positions if p) or "Executive"
+        else:
+            position = member.position or "Member"
         
         csv_lines.append(f'"{member.first_name} {member.last_name}","{member.gender}","{member.date_of_birth}","{member.congregation.name}","{member.phone_number}","{member.email}","{position}","{member.membership_status}","{member.created_at.strftime("%Y-%m-%d")}"')
     

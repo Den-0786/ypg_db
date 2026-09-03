@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from datetime import datetime
 
-from .models import (BulkProfileCart, Congregation, Guilder, Role,
+from .models import (BulkProfileCart, Congregation, Executive, Guilder, Role,
                      SundayAttendance)
 
 
@@ -47,11 +47,6 @@ class GuilderForm(forms.ModelForm):
             "attends_weekly_meetings",
             "attends_sunday_service",
             "joins_other_activities",
-            "is_executive",
-            "executive_position",
-            "executive_level",
-            "local_executive_position",
-            "district_executive_position",
             "role",
             "profile_picture",
         ]
@@ -60,7 +55,6 @@ class GuilderForm(forms.ModelForm):
             "phone_number": forms.TextInput(attrs={"placeholder": "+233XXXXXXXXX"}),
             "email": forms.EmailInput(attrs={"placeholder": "optional@email.com"}),
             "favorite_quote": forms.Textarea(attrs={"rows": 3}),
-            "is_executive": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
     def __init__(self, *args, **kwargs):
@@ -71,11 +65,6 @@ class GuilderForm(forms.ModelForm):
         self.fields["member_type"].required = False
         self.fields["member_type"].initial = "existing"
         self.fields["purpose_of_joining"].required = False
-        # Make executive fields required only if is_executive is True
-        self.fields["executive_position"].required = False
-        self.fields["executive_level"].required = False
-        self.fields["local_executive_position"].required = False
-        self.fields["district_executive_position"].required = False
 
     def clean_date_of_birth(self):
         dob = self.cleaned_data.get("date_of_birth")
@@ -109,37 +98,25 @@ class GuilderForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        is_executive = cleaned_data.get("is_executive")
-        executive_level = cleaned_data.get("executive_level")
-        executive_position = cleaned_data.get("executive_position")
-        local_executive_position = cleaned_data.get("local_executive_position")
-        district_executive_position = cleaned_data.get("district_executive_position")
+        first_name = cleaned_data.get("first_name")
+        last_name = cleaned_data.get("last_name")
+        congregation = cleaned_data.get("congregation")
 
-        if is_executive:
-            # Validate executive level and positions
-            if not executive_level:
-                raise forms.ValidationError("Executive level is required when marking as executive.")
-            
-            if executive_level == "local":
-                if not local_executive_position:
-                    raise forms.ValidationError("Local executive position is required for local executives.")
-                # Set primary position to local position
-                cleaned_data["executive_position"] = local_executive_position
-                
-            elif executive_level == "district":
-                if not district_executive_position:
-                    raise forms.ValidationError("District executive position is required for district executives.")
-                # Set primary position to district position
-                cleaned_data["executive_position"] = district_executive_position
-                
-            elif executive_level == "both":
-                if not local_executive_position and not district_executive_position:
-                    raise forms.ValidationError("At least one position (local or district) is required for dual executives.")
-                # Set primary position to the first available position
-                if local_executive_position:
-                    cleaned_data["executive_position"] = local_executive_position
-                elif district_executive_position:
-                    cleaned_data["executive_position"] = district_executive_position
+        # Skip duplicate check for instance being updated (exclude self)
+        instance = getattr(self, 'instance', None)
+        existing = Guilder.objects.filter(
+            first_name__iexact=first_name,
+            last_name__iexact=last_name,
+            congregation=congregation,
+        )
+        if instance and instance.pk:
+            existing = existing.exclude(pk=instance.pk)
+
+        if first_name and last_name and congregation and existing.exists():
+            raise forms.ValidationError(
+                f"A member named '{first_name} {last_name}' already exists in "
+                f"'{congregation}'. Please check for duplicates before adding."
+            )
 
         return cleaned_data
 

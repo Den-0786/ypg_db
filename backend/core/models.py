@@ -293,11 +293,80 @@ class Guilder(models.Model):
 
     class Meta:
         ordering = ["first_name", "last_name"]
+        unique_together = [("first_name", "last_name", "congregation")]
         indexes = [
             models.Index(fields=['first_name', 'last_name']),
             models.Index(fields=['phone_number']),
             models.Index(fields=['congregation', 'membership_status']),
             models.Index(fields=['is_executive', 'executive_position']),
+        ]
+
+
+class Executive(models.Model):
+    """Separate table for executive roles. Links to a Guilder (member) record."""
+    LEVEL_CHOICES = [
+        ("local", "Local Executive"),
+        ("district", "District Executive"),
+        ("both", "Both Local & District Executive"),
+    ]
+
+    guilder = models.ForeignKey(
+        Guilder,
+        on_delete=models.CASCADE,
+        related_name="executive_roles",
+        help_text="The member who holds this executive role",
+    )
+    level = models.CharField(
+        max_length=20,
+        choices=LEVEL_CHOICES,
+        help_text="Level of this executive role (Local, District, or Both)",
+    )
+    local_position = models.CharField(
+        max_length=50,
+        choices=LOCAL_EXECUTIVE_POSITIONS,
+        blank=True,
+        null=True,
+        help_text="Local executive position if applicable",
+    )
+    district_position = models.CharField(
+        max_length=50,
+        choices=DISTRICT_EXECUTIVE_POSITIONS,
+        blank=True,
+        null=True,
+        help_text="District executive position if applicable",
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether this executive role is currently active",
+    )
+    congregation = models.ForeignKey(
+        Congregation,
+        on_delete=models.CASCADE,
+        help_text="Congregation where this executive role is held",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        pos = self.local_position or self.district_position or "Executive"
+        return f"{self.guilder.first_name} {self.guilder.last_name} - {pos} ({self.level})"
+
+    def get_position(self):
+        """Get the primary position based on level."""
+        if self.level == "local":
+            return self.local_position or ""
+        elif self.level == "district":
+            return self.district_position or ""
+        elif self.level == "both":
+            return self.local_position or self.district_position or ""
+        return ""
+
+    class Meta:
+        ordering = ["guilder__first_name", "guilder__last_name"]
+        indexes = [
+            models.Index(fields=['level', 'is_active']),
+            models.Index(fields=['congregation', 'level']),
+            models.Index(fields=['guilder', 'is_active']),
         ]
 
 

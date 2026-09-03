@@ -116,31 +116,52 @@ export default function MembersPage() {
 
   const getFilteredExecutives = () => {
     if (executiveView === "district") {
-      const districtExecs = executives.filter(
-        (exec) =>
+      // A person is a district executive if they have a district-level role
+      // (either via executive_level='district'/'District'/'both' OR via an
+      // explicit district executive role in executive_roles)
+      const districtExecs = executives.filter((exec) => {
+        const hasDistrictRole = Array.isArray(exec.executive_roles) &&
+          exec.executive_roles.some(
+            (r) => r.level === "district" || r.level === "both"
+          );
+        return (
+          hasDistrictRole ||
           exec.executive_level === "district" ||
           exec.executive_level === "District" ||
           exec.executive_level === "both"
-      );
+        );
+      });
       return districtExecs;
     } else {
-      const localExecs = executives.filter(
-        (exec) =>
+      const localExecs = executives.filter((exec) => {
+        const hasLocalRole = Array.isArray(exec.executive_roles) &&
+          exec.executive_roles.some(
+            (r) => r.level === "local" || r.level === "both"
+          );
+        return (
+          hasLocalRole ||
           exec.executive_level === "local" ||
           exec.executive_level === "Local" ||
           exec.executive_level === "both"
-      );
+        );
+      });
       return localExecs;
     }
   };
 
   const getGroupedLocalExecutives = () => {
-    const localExecutives = executives.filter(
-      (exec) =>
+    const localExecutives = executives.filter((exec) => {
+      const hasLocalRole = Array.isArray(exec.executive_roles) &&
+        exec.executive_roles.some(
+          (r) => r.level === "local" || r.level === "both"
+        );
+      return (
+        hasLocalRole ||
         exec.executive_level === "local" ||
         exec.executive_level === "Local" ||
         exec.executive_level === "both"
-    );
+      );
+    });
     const grouped = {};
 
     localExecutives.forEach((exec) => {

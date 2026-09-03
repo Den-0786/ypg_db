@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 continue
 
             message = (
-                f"YPG Ahinsan: {congregation.name} has not yet submitted today's "
+                f"Ahinsan District YPG: {congregation.name} has not yet submitted today's "
                 "Sunday attendance. Kindly submit it before the day ends. Thank you."
             )
             if send_sms(congregation.leader_phone, message):

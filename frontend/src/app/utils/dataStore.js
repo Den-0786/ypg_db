@@ -312,7 +312,8 @@ class DataStore {
       if (
         typeof error?.message === "string" &&
         (error.message.includes("Position already assigned") ||
-          error.message.includes("District position already assigned"))
+          error.message.includes("District position already assigned") ||
+          error.message.includes("already exists in"))
       ) {
         throw error;
       }
@@ -396,6 +397,7 @@ class DataStore {
           executive_level: member.executive_level || "",
           local_executive_position: member.local_executive_position || "",
           district_executive_position: member.district_executive_position || "",
+          executive_roles: member.executive_roles || [],
           // Map boolean fields to string fields for frontend compatibility
           baptism: member.is_baptized === true ? "Yes" : "No",
           confirmation: member.is_confirmed === true ? "Yes" : "No",

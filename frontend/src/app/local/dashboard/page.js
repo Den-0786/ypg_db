@@ -65,7 +65,18 @@ export default function LocalDashboardPage() {
 
       // Calculate stats locally for this congregation
       const totalMembers = members.length;
-      const localExecutives = members.filter((m) => m.is_executive).length;
+      // Count executives who hold a local-level role in this congregation
+      const localExecutives = members.filter(
+        (m) =>
+          m.is_executive &&
+          (Array.isArray(m.executive_roles) && m.executive_roles.length > 0
+            ? m.executive_roles.some(
+                (r) => r.level === "local" || r.level === "both"
+              )
+            : m.executive_level === "local" ||
+              m.executive_level === "Local" ||
+              m.executive_level === "both")
+      ).length;
 
       // Calculate this week's attendance - use the most recent attendance record's week (Sunday to Saturday)
       const now = new Date();

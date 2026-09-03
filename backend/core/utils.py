@@ -89,10 +89,10 @@ def get_formatted_message(setting_type, **kwargs):
     
     # Default messages if setting not found
     default_messages = {
-        "attendance_reminder": "Dear {congregation}, please submit your Sunday attendance for {date} ({day}). Thank you!",
-        "birthday_message": "Happy Birthday {name}! May God bless you abundantly. - YPG",
-        "welcome_message": "Welcome {name} to {congregation}! We're glad to have you join us.",
-        "joint_program_notification": "Joint program scheduled for {date} ({day}) at {location}. All congregations are invited!",
+        "attendance_reminder": "Dear {congregation}, please submit your Sunday attendance for {date} ({day}). Thank you! - Ahinsan District YPG",
+        "birthday_message": "On your special day, {name}, Ahinsan District YPG celebrates you! Wishing you joy, good health, and God's abundant favour in the year ahead. Happy Birthday!",
+        "welcome_message": "Welcome {name} to {congregation}! We're so glad to have you join our family at Ahinsan District YPG.",
+        "joint_program_notification": "Joint program scheduled for {date} ({day}) at {location}. All congregations are invited by Ahinsan District YPG!",
     }
     
     default_message = default_messages.get(setting_type, "")

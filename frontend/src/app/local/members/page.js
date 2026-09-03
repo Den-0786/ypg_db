@@ -101,10 +101,22 @@ export default function LocalMembersPage() {
               const localMembers = allMembers.filter(
                 (member) => member.member_level !== "district"
               );
-              // Separate executives from regular members
-              const executivesList = localMembers.filter(
-                (member) => member.is_executive
-              );
+              // Separate executives from regular members.
+              // A member is a "local executive" if they have a local-level role
+              // (either via executive_roles array OR via executive_level flag)
+              const executivesList = localMembers.filter((member) => {
+                if (!member.is_executive) return false;
+                if (Array.isArray(member.executive_roles) && member.executive_roles.length > 0) {
+                  return member.executive_roles.some(
+                    (r) => r.level === "local" || r.level === "both"
+                  );
+                }
+                return (
+                  member.executive_level === "local" ||
+                  member.executive_level === "Local" ||
+                  member.executive_level === "both"
+                );
+              });
               const regularMembers = localMembers.filter(
                 (member) => !member.is_executive
               );

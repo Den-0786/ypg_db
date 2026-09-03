@@ -69,13 +69,19 @@ export default function LocalBulkAddPage() {
 
       if (response.ok) {
         const result = await response.json();
-        showToast("Members submitted successfully!", "success");
-        setMembers([]);
-
-        // Redirect to local dashboard after successful bulk addition
-        setTimeout(() => {
-          window.location.href = "/local/dashboard";
-        }, 2000);
+        if (result.added > 0) {
+          showToast(
+            `${result.added} member${result.added > 1 ? "s" : ""} added successfully!`,
+            "success"
+          );
+          setMembers([]);
+          // Redirect to local dashboard after successful bulk addition
+          setTimeout(() => {
+            window.location.href = "/local/dashboard";
+          }, 2000);
+        } else {
+          showToast("No members were added. Check errors.", "error");
+        }
       } else {
         const errorData = await response.json();
         showToast(errorData.message || "Error submitting members", "error");

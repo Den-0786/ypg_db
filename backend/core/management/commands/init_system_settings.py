@@ -10,25 +10,25 @@ class Command(BaseCommand):
             {
                 "setting_type": "attendance_reminder",
                 "title": "Attendance Reminder",
-                "message_template": "Dear {congregation}, please submit your Sunday attendance for {date} ({day}). Thank you!",
+                "message_template": "Dear {congregation}, please submit your Sunday attendance for {date} ({day}). Thank you! - Ahinsan District YPG",
                 "is_active": True,
             },
             {
                 "setting_type": "birthday_message",
                 "title": "Birthday Message",
-                "message_template": "Happy Birthday {name}! May God bless you abundantly. - YPG",
+                "message_template": "On your special day, {name}, Ahinsan District YPG celebrates you! Wishing you joy, good health, and God's abundant favour in the year ahead. Happy Birthday!",
                 "is_active": True,
             },
             {
                 "setting_type": "welcome_message",
                 "title": "Welcome Message",
-                "message_template": "Welcome {name} to {congregation}! We're glad to have you join us.",
+                "message_template": "Welcome {name} to {congregation}! We're so glad to have you join our family at Ahinsan District YPG.",
                 "is_active": True,
             },
             {
                 "setting_type": "joint_program_notification",
                 "title": "Joint Program Notification",
-                "message_template": "Joint program scheduled for {date} ({day}) at {location}. All congregations are invited!",
+                "message_template": "Joint program scheduled for {date} ({day}) at {location}. All congregations are invited by Ahinsan District YPG!",
                 "is_active": True,
             },
         ]

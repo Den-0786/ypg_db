@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (BirthdayMessageLog, BulkProfileCart, Congregation,
-                     Guilder, Role, SundayAttendance, Notification, SystemSettings, Quiz, QuizSubmission, UserProfile, LoginAttempt)
+                     Executive, Guilder, Role, SundayAttendance, Notification, SystemSettings, Quiz, QuizSubmission, UserProfile, LoginAttempt)
 
 
 @admin.register(Congregation)
@@ -66,6 +66,13 @@ class GuilderAdmin(admin.ModelAdmin):
     list_display = ("first_name", "last_name", "phone_number", "gender", "congregation")
     search_fields = ("first_name", "last_name", "phone_number")
     list_filter = ("gender", "congregation", "membership_status")
+
+
+@admin.register(Executive)
+class ExecutiveAdmin(admin.ModelAdmin):
+    list_display = ("guilder", "level", "local_position", "district_position", "congregation", "is_active")
+    search_fields = ("guilder__first_name", "guilder__last_name")
+    list_filter = ("level", "is_active", "congregation")
 
 
 @admin.register(SundayAttendance)

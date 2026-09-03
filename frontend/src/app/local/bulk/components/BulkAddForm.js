@@ -199,7 +199,18 @@ export default function BulkAddForm({
         }, 2000);
       } else {
         const errorData = await response.json();
-        onSubmitSingle(errorData.message || "Error adding member", "error");
+        let errorMsg = errorData.message || "Error adding member";
+        if (errorData.errors) {
+          // Flatten Django form errors
+          const allErrors = Object.entries(errorData.errors).flatMap(
+            ([field, errs]) => errs
+          );
+          errorMsg = allErrors.join(", ") || errorMsg;
+        } else if (errorData.error) {
+          errorMsg = errorData.error;
+        }
+        onSubmitSingle(errorMsg, "error");
+        console.error("Single member add error:", errorData);
       }
     } catch (error) {
       onSubmitSingle("Error adding member. Please try again.", "error");
