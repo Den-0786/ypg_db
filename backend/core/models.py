@@ -762,3 +762,23 @@ class ScheduledSMSLog(models.Model):
 
     def __str__(self):
         return f"{self.get_message_type_display()} on {self.sent_date} ({self.recipient_count} recipients)"
+
+
+class WelcomeSMSLog(models.Model):
+    """Per-member log of welcome SMS sends on registration."""
+    member = models.ForeignKey(
+        Guilder, on_delete=models.CASCADE, null=True, blank=True,
+        related_name='welcome_sms_logs',
+    )
+    phone_number = models.CharField(max_length=20)
+    message = models.TextField()
+    sender = models.CharField(max_length=20, blank=True, default='')
+    success = models.BooleanField(default=False)
+    error = models.TextField(blank=True, default='')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Welcome SMS to {self.phone_number} {'OK' if self.success else 'FAILED'} at {self.created_at}"

@@ -8,6 +8,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 from io import BytesIO
 
+from django.conf import settings
 from django.contrib import messages
 
 logger = logging.getLogger(__name__)
@@ -55,7 +56,7 @@ from .models import (DISTRICT_EXECUTIVE_POSITIONS, LOCAL_EXECUTIVE_POSITIONS,
                      BirthdayMessageLog, BulkProfileCart, Congregation,
                      DataBackup, Executive, Guilder, Notification, Role,
                      SundayAttendance, Quiz, QuizSubmission, UserProfile,
-                     LoginAttempt, WebsiteSettings, SystemSettings)
+                     LoginAttempt, WebsiteSettings, SystemSettings, WelcomeSMSLog)
 
 LOGIN_RATE_LIMIT_ENABLED = True
 
@@ -1163,11 +1164,16 @@ def member_list(request):
     return render(request, "core/member_list.html", context)
 
 
-@login_required
-@transaction.atomic
 def _send_welcome_sms(member):
     phone = (member.phone_number or "").strip()
     if not phone:
+        WelcomeSMSLog.objects.create(
+            member=member,
+            phone_number="",
+            message="No welcome SMS: member has no phone number.",
+            sender=settings.SMS_SENDER_ID or "",
+            success=False,
+        )
         return
     congregation = member.congregation.name if member.congregation else "Ahinsan District YPG"
     message = get_formatted_message(
@@ -1176,8 +1182,23 @@ def _send_welcome_sms(member):
         congregation=congregation,
         member_id=member.member_id or "WIN-001",
     )
-    if message:
-        send_sms(phone, message)
+    if not message:
+        WelcomeSMSLog.objects.create(
+            member=member,
+            phone_number=phone,
+            message="No welcome SMS: welcome_message template missing/inactive.",
+            sender=settings.SMS_SENDER_ID or "",
+            success=False,
+        )
+        return
+    success = send_sms(phone, message)
+    WelcomeSMSLog.objects.create(
+        member=member,
+        phone_number=phone,
+        message=message,
+        sender=settings.SMS_SENDER_ID or "",
+        success=success,
+    )
 
 
 def add_member(request):

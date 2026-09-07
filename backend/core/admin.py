@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import (BirthdayMessageLog, BulkProfileCart, Congregation,
-                     Executive, Guilder, Role, SundayAttendance, Notification, SystemSettings, Quiz, QuizSubmission, UserProfile, LoginAttempt)
+                     Executive, Guilder, Role, SundayAttendance, Notification, SystemSettings, Quiz, QuizSubmission, UserProfile, LoginAttempt, WelcomeSMSLog)
 
 
 @admin.register(Congregation)
@@ -86,6 +86,12 @@ class SundayAttendanceAdmin(admin.ModelAdmin):
 class BirthdayMessageLogAdmin(admin.ModelAdmin):
     list_display = ("guilder", "sent_date")
     list_filter = ("sent_date",)
+
+
+@admin.register(WelcomeSMSLog)
+class WelcomeSMSLogAdmin(admin.ModelAdmin):
+    list_display = ("phone_number", "success", "created_at")
+    list_filter = ("success", "created_at")
 
 
 @admin.register(BulkProfileCart)
