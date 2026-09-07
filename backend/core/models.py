@@ -258,16 +258,18 @@ class Guilder(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.member_id:
+            import re as _re
             from django.utils import timezone
             year = timezone.now().year
             short_year = str(year)[-2:]  # e.g. "26"
+            # Congregation initials, cleaned to letters/digits only (e.g. "CC/AE" -> "CCAE")
+            initials = ""
+            if self.congregation:
+                initials = _re.sub(r"[^A-Za-z0-9]", "", (self.congregation.initials or "").upper())
+            if not initials:
+                initials = "YPG"
             if self.member_type == "new":
                 # Use congregation initials + NM + short year + per-congregation sequence
-                initials = ""
-                if self.congregation:
-                    initials = (self.congregation.initials or "").upper()
-                if not initials:
-                    initials = "YPG"
                 count = Guilder.objects.filter(
                     member_type="new",
                     congregation=self.congregation,
@@ -275,8 +277,18 @@ class Guilder(models.Model):
                 ).count() + 1
                 self.member_id = f"{initials}NM/{short_year}/{count:03d}"
             else:
-                count = Guilder.objects.filter(member_type="existing").count() + 1
-                self.member_id = f"YPG-EX-{count:03d}"
+                count = Guilder.objects.filter(
+                    member_type="existing",
+                    congregation=self.congregation,
+                    member_id__startswith=f"{initials}EX/"
+                ).count() + 1
+                self.member_id = f"{initials}EX/{count:03d}"
+            while Guilder.objects.filter(member_id=self.member_id).exclude(pk=self.pk).exists():
+                count += 1
+                if self.member_type == "new":
+                    self.member_id = f"{initials}NM/{short_year}/{count:03d}"
+                else:
+                    self.member_id = f"{initials}EX/{count:03d}"
         super().save(*args, **kwargs)
 
     def is_local_executive(self):

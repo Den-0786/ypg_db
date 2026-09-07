@@ -20,6 +20,8 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from .otp import issue_otp, verify_otp, masked_number, recipient_for
+from .sms import send_sms
+from .utils import get_formatted_message
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
@@ -1163,6 +1165,21 @@ def member_list(request):
 
 @login_required
 @transaction.atomic
+def _send_welcome_sms(member):
+    phone = (member.phone_number or "").strip()
+    if not phone:
+        return
+    congregation = member.congregation.name if member.congregation else "Ahinsan District YPG"
+    message = get_formatted_message(
+        'welcome_message',
+        name=member.first_name or member.last_name or "friend",
+        congregation=congregation,
+        member_id=member.member_id or "WIN-001",
+    )
+    if message:
+        send_sms(phone, message)
+
+
 def add_member(request):
     try:
         user_congregation = Congregation.objects.get(user=request.user)
@@ -1176,6 +1193,7 @@ def add_member(request):
             member = form.save()
             # Sync executive record if executive data was provided
             _sync_executive_record(member, request.POST)
+            _send_welcome_sms(member)
             # Notification for district
             create_notification(
                 user=request.user,
@@ -1475,6 +1493,7 @@ def bulk_cart(request, cart_id):
                     # Sync executive record if applicable
                     if profile_data.get("is_executive"):
                         _sync_executive_record(member, profile_data)
+                    _send_welcome_sms(member)
 
             cart.submitted = True
             cart.save()
@@ -1929,6 +1948,7 @@ def api_add_member(request):
 
             # Create Executive record if needed
             _sync_executive_record(member, _executive_data)
+            _send_welcome_sms(member)
 
             return JsonResponse({
                 "success": True,
@@ -4581,6 +4601,7 @@ def _api_bulk_add_members(request, members_list):
             if form.is_valid():
                 member = form.save()
                 _sync_executive_record(member, _executive_data)
+                _send_welcome_sms(member)
                 success_count += 1
                 results.append({
                     "index": idx,
@@ -4966,7 +4987,7 @@ def api_reminder_settings(request):
                 },
                 'welcome_message': {
                     'title': 'Welcome Message',
-                    'message_template': 'Welcome {name} to {congregation}! We\'re so glad to have you join our family at Ahinsan District YPG.',
+                    'message_template': 'Welcome {name} to Ahinsan District YPG! You are officially registered in our {congregation} database. Your membership ID is {member_id}. YPG... Service all the way!!!',
                     'is_active': True,
                     'target_congregations': 'all',
                     'selected_congregations': [],

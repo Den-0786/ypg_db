@@ -22,7 +22,7 @@ class Command(BaseCommand):
             {
                 "setting_type": "welcome_message",
                 "title": "Welcome Message",
-                "message_template": "Welcome {name} to {congregation}! We're so glad to have you join our family at Ahinsan District YPG.",
+                "message_template": "Welcome {name} to Ahinsan District YPG! You are officially registered in our {congregation} database. Your membership ID is {member_id}. YPG... Service all the way!!!",
                 "is_active": True,
             },
             {
