@@ -91,7 +91,7 @@ def get_formatted_message(setting_type, **kwargs):
     default_messages = {
         "attendance_reminder": "Dear {congregation}, please submit your Sunday attendance for {date} ({day}). Thank you! - Ahinsan District YPG",
         "birthday_message": "On your special day, {name}, Ahinsan District YPG celebrates you! Wishing you joy, good health, and God's abundant favour in the year ahead. Happy Birthday!",
-        "welcome_message": "Welcome {name} to Ahinsan District YPG! You are officially registered in our {congregation} database. Your membership ID is {member_id}. YPG... Service all the way!!!",
+        "welcome_message": "Welcome {name} to Ahinsan District YPG! You are officially registered in {congregation} database. Your membership ID is {member_id}. YPG... Service all the way!!!",
         "joint_program_notification": "Joint program scheduled for {date} ({day}) at {location}. All congregations are invited by Ahinsan District YPG!",
     }
     
