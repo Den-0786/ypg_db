@@ -1192,7 +1192,7 @@ def add_member(request):
         if form.is_valid():
             member = form.save()
             # Sync executive record if executive data was provided
-            _sync_executive_record(member, request.POST)
+            _sync_executive_record(member, request.POST, is_district=bool(user_congregation.is_district))
             _send_welcome_sms(member)
             # Notification for district
             create_notification(
@@ -1241,7 +1241,7 @@ def edit_member(request, member_id):
         if form.is_valid():
             member = form.save()
             # Sync executive record if executive data was provided
-            _sync_executive_record(member, request.POST)
+            _sync_executive_record(member, request.POST, is_district=bool(user_congregation.is_district))
             # Detect changes
             changes = {}
             for field in old_data:
@@ -1492,7 +1492,8 @@ def bulk_cart(request, cart_id):
                     member = form.save()
                     # Sync executive record if applicable
                     if profile_data.get("is_executive"):
-                        _sync_executive_record(member, profile_data)
+                        req_cong, req_is_district = _get_requester_congregation(request)
+                        _sync_executive_record(member, profile_data, is_district=req_is_district)
                     _send_welcome_sms(member)
 
             cart.submitted = True
@@ -1948,7 +1949,8 @@ def api_add_member(request):
             print(f"api_add_member - Member saved successfully with ID: {member.id}")
 
             # Create Executive record if needed
-            _sync_executive_record(member, _executive_data)
+            _, req_is_district = _get_requester_congregation(request)
+            _sync_executive_record(member, _executive_data, is_district=req_is_district)
             _send_welcome_sms(member)
 
             return JsonResponse({
@@ -2033,7 +2035,8 @@ def api_update_member(request, member_id):
             print(f"api_update_member - Member updated successfully with ID: {updated_member.id}")
 
             # Sync Executive record - if is_executive is present in update data
-            _sync_executive_record(updated_member, _executive_data)
+            _, req_is_district = _get_requester_congregation(request)
+            _sync_executive_record(updated_member, _executive_data, is_district=req_is_district)
 
             return JsonResponse({
                 "success": True,
@@ -4505,34 +4508,41 @@ def _get_requester_congregation(request):
     return congregation, bool(congregation.is_district)
 
 
-def _sync_executive_record(member, exec_data):
+def _sync_executive_record(member, exec_data, is_district=False):
     """Create or update the Executive record for a member based on submitted data.
 
     exec_data is a dict with keys: is_executive, executive_level,
     local_executive_position, district_executive_position.
+
+    Only district admins (is_district=True) may assign a district executive
+    position. Non-district users are restricted to local roles and cannot
+    create, change or remove district roles through this path.
     """
     is_executive = exec_data.get("is_executive") or exec_data.get("is_executive") is True
     # Allow string "true"/"false"
     if isinstance(is_executive, str):
         is_executive = is_executive.lower() in ("true", "1", "yes")
 
-    if not is_executive:
-        # Remove active executive roles for this member
-        Executive.objects.filter(guilder=member, is_active=True).update(is_active=False)
-        return
-
     level = exec_data.get("executive_level") or "local"
-    local_pos = exec_data.get("local_executive_position") or ""
-    district_pos = exec_data.get("district_executive_position") or ""
+    local_pos = (exec_data.get("local_executive_position") or "").strip()
+    district_pos = (exec_data.get("district_executive_position") or "").strip()
+
+    level_low = str(level).lower()
+
+    if not is_district:
+        # Non-district users may only manage LOCAL roles.
+        district_pos = ""
+        if level_low in ("district", "both"):
+            level_low = "local"
 
     # Handle legacy executive_position if provided via other path
     legacy_pos = exec_data.get("executive_position") or ""
 
-    if level == "local" and not local_pos and legacy_pos:
+    if level_low == "local" and not local_pos and legacy_pos:
         local_pos = legacy_pos
-    elif level == "district" and not district_pos and legacy_pos:
+    elif level_low == "district" and not district_pos and legacy_pos:
         district_pos = legacy_pos
-    elif level == "both":
+    elif level_low == "both":
         if not local_pos and legacy_pos:
             local_pos = legacy_pos
         elif not district_pos and legacy_pos:
@@ -4540,19 +4550,36 @@ def _sync_executive_record(member, exec_data):
 
     congregation = member.congregation
 
-    # Get existing active exec role for this member
     existing = Executive.objects.filter(guilder=member, is_active=True).first()
 
+    if not is_executive:
+        if not is_district and existing and existing.district_position:
+            # A local user unchecked "executive" for a member who also holds a
+            # district role: keep the district role, drop only the local part.
+            existing.level = "district"
+            existing.local_position = None
+            existing.save()
+            return
+        # Remove active executive roles for this member
+        Executive.objects.filter(guilder=member, is_active=True).update(is_active=False)
+        return
+
     if existing:
-        existing.level = level
-        existing.local_position = local_pos or None
-        existing.district_position = district_pos or None
+        if not is_district and existing.district_position:
+            # Preserve the district role set by the district admin; only the
+            # local position/level may be touched by a local user.
+            existing.level = "both" if local_pos else "district"
+            existing.local_position = local_pos or None
+        else:
+            existing.level = level_low
+            existing.local_position = local_pos or None
+            existing.district_position = district_pos or None
         existing.congregation = congregation
         existing.save()
     else:
         Executive.objects.create(
             guilder=member,
-            level=level,
+            level=level_low,
             local_position=local_pos or None,
             district_position=district_pos or None,
             is_active=True,
@@ -4603,7 +4630,8 @@ def _api_bulk_add_members(request, members_list):
             form = GuilderForm(data)
             if form.is_valid():
                 member = form.save()
-                _sync_executive_record(member, _executive_data)
+                _, req_is_district = _get_requester_congregation(request)
+                _sync_executive_record(member, _executive_data, is_district=req_is_district)
                 _send_welcome_sms(member)
                 success_count += 1
                 results.append({
