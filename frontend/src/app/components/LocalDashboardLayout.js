@@ -1705,7 +1705,7 @@ export default function LocalDashboardLayout({
                               <input
                                 type="text"
                                 value={congregationInitials}
-                                onChange={(e) => setCongregationInitials(e.target.value.toUpperCase().slice(0, 10))}
+                                onChange={(e) => setCongregationInitials(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10))}
                                 className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base uppercase tracking-widest"
                                 placeholder="e.g. AE"
                                 maxLength={10}
@@ -1723,7 +1723,15 @@ export default function LocalDashboardLayout({
                               </button>
                             </div>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                              New members will get IDs like <span className="font-mono font-semibold">{congregationInitials || "AE"}/YPG/001</span>
+                              Members here will get IDs like{" "}
+                              <span className="font-mono font-semibold">
+                                {congregationInitials || "AE"}EX/001
+                              </span>{" "}
+                              (existing) or{" "}
+                              <span className="font-mono font-semibold">
+                                {congregationInitials || "AE"}NM/26/001
+                              </span>{" "}
+                              (new). Letters/digits only - no slashes or symbols.
                             </p>
                           </div>
 

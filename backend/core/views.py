@@ -2799,7 +2799,8 @@ def api_congregation_initials(request):
             return JsonResponse({"success": True, "initials": congregation.initials or ""})
 
         data = json.loads(request.body)
-        initials = (data.get("initials") or "").strip().upper()
+        import re as _re
+        initials = _re.sub(r"[^A-Za-z0-9]", "", (data.get("initials") or "").strip().upper())
         congregation.initials = initials
         congregation.save()
         return JsonResponse({"success": True, "initials": congregation.initials})
@@ -4237,6 +4238,7 @@ def api_congregation_create(request):
     name = (data.get('name') or '').strip()
     location = (data.get('location') or '').strip()
     initials = (data.get('initials') or '').strip().upper()
+    initials = re.sub(r'[^A-Za-z0-9]', '', initials)
     background_color = (data.get('background_color') or '#f0f0f0').strip()
     pin = (data.get('pin') or '').strip()
     username = (data.get('username') or '').strip()
