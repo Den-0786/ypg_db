@@ -409,6 +409,7 @@ class DataStore {
           is_communicant: member.is_communicant,
           member_id: member.member_id || "",
           member_type: member.member_type || "existing",
+          congregation_initials: member.congregation_initials || "",
           purpose_of_joining: member.purpose_of_joining || "",
           original_new_member_id: member.original_new_member_id || "",
           date_joined: member.date_joined || "",

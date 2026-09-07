@@ -295,7 +295,7 @@ export default function LocalMembersPage() {
   };
 
   const handlePromoteMember = async (member) => {
-    if (!confirm(`Promote ${member.name} to Existing Member? This will assign a new YPG-EX-... ID and preserve the original NM ID.`)) return;
+    if (!confirm(`Promote ${member.name} to Existing Member? This will assign a new ${member.congregation_initials || "YPG"}/YPG/... ID and preserve the original NM ID.`)) return;
     try {
       setLoading(true);
       const ds = getDataStore();

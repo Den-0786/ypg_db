@@ -278,17 +278,16 @@ class Guilder(models.Model):
                 self.member_id = f"{initials}NM/{short_year}/{count:03d}"
             else:
                 count = Guilder.objects.filter(
-                    member_type="existing",
                     congregation=self.congregation,
-                    member_id__startswith=f"{initials}EX/"
+                    member_id__startswith=f"{initials}/YPG/"
                 ).count() + 1
-                self.member_id = f"{initials}EX/{count:03d}"
+                self.member_id = f"{initials}/YPG/{count:03d}"
             while Guilder.objects.filter(member_id=self.member_id).exclude(pk=self.pk).exists():
                 count += 1
                 if self.member_type == "new":
                     self.member_id = f"{initials}NM/{short_year}/{count:03d}"
                 else:
-                    self.member_id = f"{initials}EX/{count:03d}"
+                    self.member_id = f"{initials}/YPG/{count:03d}"
         super().save(*args, **kwargs)
 
     def is_local_executive(self):

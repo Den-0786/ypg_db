@@ -1725,7 +1725,7 @@ export default function LocalDashboardLayout({
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                               Members here will get IDs like{" "}
                               <span className="font-mono font-semibold">
-                                {congregationInitials || "AE"}EX/001
+                                {congregationInitials || "AE"}/YPG/001
                               </span>{" "}
                               (existing) or{" "}
                               <span className="font-mono font-semibold">

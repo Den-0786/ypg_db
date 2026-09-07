@@ -1841,6 +1841,7 @@ def api_members(request):
             "district_executive_position": district_pos,
             "profile_picture": request.build_absolute_uri(member.profile_picture.url) if member.profile_picture else None,
             "member_type": member.member_type,
+            "congregation_initials": member.congregation.initials if member.congregation else "",
             "purpose_of_joining": member.purpose_of_joining or "",
             "original_new_member_id": member.original_new_member_id or "",
             "date_joined": member.created_at.isoformat() if member.created_at else "",
