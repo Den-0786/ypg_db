@@ -1954,9 +1954,8 @@ def api_add_member(request):
             "executive_level": data.pop("executive_level", ""),
             "local_executive_position": data.pop("local_executive_position", ""),
             "district_executive_position": data.pop("district_executive_position", ""),
+            "executive_position": data.pop("executive_position", ""),
         }
-        # Remove legacy unused field to avoid form errors
-        data.pop("executive_position", None)
 
         # Auto-set membership_status to Active for new members (status is hidden in form)
         member_type = data.get("member_type", "existing")

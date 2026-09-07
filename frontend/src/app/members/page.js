@@ -114,6 +114,20 @@ export default function MembersPage() {
     }
   };
 
+  const withDisplayPosition = (member, view) => ({
+    ...member,
+    executive_position:
+      view === "district"
+        ? member.district_executive_position ||
+          member.local_executive_position ||
+          member.executive_position ||
+          ""
+        : member.local_executive_position ||
+          member.executive_position ||
+          member.district_executive_position ||
+          "",
+  });
+
   const getFilteredExecutives = () => {
     if (executiveView === "district") {
       // A person is a district executive if they have a district-level role
@@ -131,7 +145,7 @@ export default function MembersPage() {
           exec.executive_level === "both"
         );
       });
-      return districtExecs;
+      return districtExecs.map((exec) => withDisplayPosition(exec, "district"));
     } else {
       const localExecs = executives.filter((exec) => {
         const hasLocalRole = Array.isArray(exec.executive_roles) &&
@@ -145,7 +159,7 @@ export default function MembersPage() {
           exec.executive_level === "both"
         );
       });
-      return localExecs;
+      return localExecs.map((exec) => withDisplayPosition(exec, "local"));
     }
   };
 
@@ -168,7 +182,7 @@ export default function MembersPage() {
       if (!grouped[exec.congregation]) {
         grouped[exec.congregation] = [];
       }
-      grouped[exec.congregation].push(exec);
+      grouped[exec.congregation].push(withDisplayPosition(exec, "local"));
     });
 
     return grouped;
@@ -212,6 +226,7 @@ export default function MembersPage() {
       is_executive: member.is_executive || false,
       executive_position: member.executive_position || member.position || "",
       executive_level: member.executive_level || "",
+      local_executive_position: member.local_executive_position || "",
       district_executive_position: member.district_executive_position || "",
       date_of_birth: member.date_of_birth || member.dateOfBirth || "",
       place_of_residence: member.place_of_residence || member.residence || "",
@@ -1554,37 +1569,41 @@ export default function MembersPage() {
 
                           <div>
                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                              Executive Position
+                              {editForm.executive_level === "district" ||
+                              editForm.executive_level === "both"
+                                ? "District Executive Position"
+                                : "Local Executive Position"}
                             </label>
                             <input
                               type="text"
-                              value={editForm.executive_position || ""}
-                              onChange={(e) =>
-                                setEditForm({
-                                  ...editForm,
-                                  executive_position: e.target.value,
-                                })
+                              value={
+                                editForm.executive_level === "district" ||
+                                editForm.executive_level === "both"
+                                  ? editForm.district_executive_position || ""
+                                  : editForm.executive_position ||
+                                    editForm.local_executive_position ||
+                                    ""
                               }
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                setEditForm((cur) => {
+                                  const next = {
+                                    ...cur,
+                                    executive_position: value,
+                                  };
+                                  if (
+                                    cur.executive_level === "district" ||
+                                    cur.executive_level === "both"
+                                  ) {
+                                    next.district_executive_position = value;
+                                  } else {
+                                    next.local_executive_position = value;
+                                  }
+                                  return next;
+                                });
+                              }}
                               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                               placeholder="President, Secretary, etc."
-                            />
-                          </div>
-
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                              District Executive Position
-                            </label>
-                            <input
-                              type="text"
-                              value={editForm.district_executive_position || ""}
-                              onChange={(e) =>
-                                setEditForm({
-                                  ...editForm,
-                                  district_executive_position: e.target.value,
-                                })
-                              }
-                              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                              placeholder="District position"
                             />
                           </div>
                         </div>
