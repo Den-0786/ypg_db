@@ -12,44 +12,26 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState("light");
   const [mounted, setMounted] = useState(false);
 
+  // White-only theme: the app always stays light. Dark mode is disabled so a
+  // theme change in one congregation can no longer affect others.
   useEffect(() => {
     setMounted(true);
-
-    // Only access browser APIs after component is mounted
-    if (typeof window !== "undefined") {
-      try {
-        const savedTheme = localStorage.getItem("theme");
-        if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
-          setTheme(savedTheme);
-        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-          setTheme("dark");
-        }
-      } catch (error) {
-        // Fallback to system preference
-        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-          setTheme("dark");
-        }
-      }
+    if (typeof document !== "undefined") {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
     }
   }, []);
 
   useEffect(() => {
-    if (
-      mounted &&
-      typeof window !== "undefined" &&
-      typeof document !== "undefined"
-    ) {
-      try {
-        document.documentElement.classList.remove("light", "dark");
-        document.documentElement.classList.add(theme);
-        localStorage.setItem("theme", theme);
-      } catch (error) {}
+    if (mounted && typeof document !== "undefined") {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.classList.add("light");
     }
-  }, [theme, mounted]);
+  }, [mounted]);
 
   const value = {
-    theme,
-    setTheme,
+    theme: "light",
+    setTheme: () => setTheme("light"),
     mounted,
   };
 

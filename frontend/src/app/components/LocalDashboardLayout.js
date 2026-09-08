@@ -421,7 +421,7 @@ export default function LocalDashboardLayout({
   onBulkEdit = () => {},
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { theme, setTheme, mounted } = useTheme();
+  const { theme, mounted } = useTheme();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -1294,12 +1294,6 @@ export default function LocalDashboardLayout({
       }
       window.autoLogout = autoLogout;
 
-      const congregationId = localStorage.getItem("congregationId");
-      const savedTheme = localStorage.getItem(`theme_${congregationId}`);
-      if (savedTheme && (savedTheme === "light" || savedTheme === "dark")) {
-        setTheme(savedTheme);
-      }
-
       const handleResize = () => {
         if (window.innerWidth >= 1024) {
           setSidebarOpen(true);
@@ -1393,7 +1387,7 @@ export default function LocalDashboardLayout({
     >
       {/* Header */}
       <header
-        className={`${mounted && theme === "dark" ? "bg-gray-800" : "bg-blue-500"} shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
+        className={`${mounted && theme === "dark" ? "bg-gray-800" : "bg-blue-600"} shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
       >
         <div className="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-6">
           <div className="relative lg:hidden">
@@ -2272,25 +2266,6 @@ export default function LocalDashboardLayout({
                         Appearance Settings
                       </h3>
                       <div className="space-y-3 sm:space-y-4">
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
-                            Theme
-                          </label>
-                          <select
-                            value={theme}
-                            onChange={(e) => {
-                              const newTheme = e.target.value;
-                              setTheme(newTheme);
-                              const congregationId = localStorage.getItem("congregationId");
-                              localStorage.setItem(`theme_${congregationId}`, newTheme);
-                            }}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
-                          >
-                            <option value="light">Light Mode</option>
-                            <option value="dark">Dark Mode</option>
-                            <option value="auto">Auto (System)</option>
-                          </select>
-                        </div>
                         <div>
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Language

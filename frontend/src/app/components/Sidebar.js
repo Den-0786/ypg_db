@@ -15,7 +15,7 @@ export default function Sidebar({
   setSidebarOpen,
   setSettingsOpen,
 }) {
-  const { theme, setTheme, mounted } = useTheme();
+  const { theme, mounted } = useTheme();
   const { showSuccess } = useToast();
   const pathname = usePathname();
 
@@ -114,31 +114,26 @@ export default function Sidebar({
     setSidebarOpen,
   ]);
 
-  const toggleTheme = () => {
-    const newTheme = theme === "light" ? "dark" : "light";
-    setTheme(newTheme);
-  };
-
   return (
     <>
       {/* Sidebar */}
       <div
         data-sidebar
-        className={`fixed left-0 top-16 ${mounted && theme === "dark" ? "bg-gray-800" : "bg-white"} shadow-lg transition-all duration-300 z-20 
+        className={`fixed left-0 top-16 bg-orange-600 shadow-lg transition-all duration-300 z-20 
         ${sidebarOpen ? "w-64" : "w-16"} ${sidebarOpen ? "block" : "hidden lg:block"} overflow-y-auto overflow-x-hidden`}
         style={{ height: "calc(100vh - 4rem)" }}
       >
         <div className="flex flex-col min-w-0">
           {/* Sidebar Header */}
           <div
-            className={`${sidebarOpen ? "p-4" : "p-2"} border-b ${mounted && theme === "dark" ? "border-gray-700" : "border-gray-200"}`}
+            className={`${sidebarOpen ? "p-4" : "p-2"} border-b ${"border-orange-400/30"}`}
           >
             <div
               className={`flex items-center ${sidebarOpen ? "justify-between" : "justify-center"} min-w-0`}
             >
               {sidebarOpen && (
                 <h2
-                  className={`text-lg font-semibold ${mounted && theme === "dark" ? "text-white" : "text-gray-800"} truncate`}
+                  className={`text-lg font-semibold ${"text-white"} truncate`}
                 >
                   Navigation
                 </h2>
@@ -146,7 +141,7 @@ export default function Sidebar({
               {/* Collapse button only on desktop */}
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className={`hidden lg:inline ${mounted && theme === "dark" ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-700"} transition-colors flex-shrink-0`}
+                className={`hidden lg:inline ${"text-orange-100 hover:text-white"} transition-colors flex-shrink-0`}
                 aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
                 title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
               >
@@ -170,20 +165,20 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/dashboard"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-white text-orange-600 shadow-lg"
+                    : "bg-white text-orange-600 shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
+                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
               }`}
               title="Dashboard"
             >
               <i
-                className={`fas fa-tachometer-alt text-lg flex-shrink-0 ${pathname === "/dashboard" ? "text-white" : ""}`}
+                className={`fas fa-tachometer-alt text-lg flex-shrink-0 ${pathname === "/dashboard" ? "text-orange-600" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/dashboard" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/dashboard" ? "text-orange-600" : ""}`}
                 >
                   Dashboard
                 </span>
@@ -195,20 +190,20 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-white text-orange-600 shadow-lg"
+                    : "bg-white text-orange-600 shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
+                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
               }`}
               title="Home"
             >
               <i
-                className={`fas fa-home text-lg flex-shrink-0 ${pathname === "/" ? "text-white" : ""}`}
+                className={`fas fa-home text-lg flex-shrink-0 ${pathname === "/" ? "text-orange-600" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/" ? "text-orange-600" : ""}`}
                 >
                   Home
                 </span>
@@ -220,20 +215,20 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/members"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-white text-orange-600 shadow-lg"
+                    : "bg-white text-orange-600 shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
+                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
               }`}
               title="Members"
             >
               <i
-                className={`fas fa-users text-lg flex-shrink-0 ${pathname === "/members" ? "text-white" : ""}`}
+                className={`fas fa-users text-lg flex-shrink-0 ${pathname === "/members" ? "text-orange-600" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/members" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/members" ? "text-orange-600" : ""}`}
                 >
                   Members
                 </span>
@@ -245,20 +240,20 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/attendance"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-white text-orange-600 shadow-lg"
+                    : "bg-white text-orange-600 shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
+                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
               }`}
               title="Attendance"
             >
               <i
-                className={`fas fa-calendar-check text-lg flex-shrink-0 ${pathname === "/attendance" ? "text-white" : ""}`}
+                className={`fas fa-calendar-check text-lg flex-shrink-0 ${pathname === "/attendance" ? "text-orange-600" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/attendance" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/attendance" ? "text-orange-600" : ""}`}
                 >
                   Attendance
                 </span>
@@ -270,20 +265,20 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/analytics"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-white text-orange-600 shadow-lg"
+                    : "bg-white text-orange-600 shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
+                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
               }`}
               title="Analytics"
             >
               <i
-                className={`fas fa-chart-bar text-lg flex-shrink-0 ${pathname === "/analytics" ? "text-white" : ""}`}
+                className={`fas fa-chart-bar text-lg flex-shrink-0 ${pathname === "/analytics" ? "text-orange-600" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/analytics" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/analytics" ? "text-orange-600" : ""}`}
                 >
                   Analytics
                 </span>
@@ -295,90 +290,36 @@ export default function Sidebar({
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/bulk"
                   ? mounted && theme === "dark"
-                    ? "bg-blue-500 text-white shadow-lg"
-                    : "bg-blue-500 text-white shadow-lg"
+                    ? "bg-white text-orange-600 shadow-lg"
+                    : "bg-white text-orange-600 shadow-lg"
                   : mounted && theme === "dark"
                     ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-gray-700 hover:bg-gray-100 hover:text-blue-500"
+                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
               }`}
               title="Add Member"
             >
               <i
-                className={`fas fa-user-plus text-lg flex-shrink-0 ${pathname === "/bulk" ? "text-white" : ""}`}
+                className={`fas fa-user-plus text-lg flex-shrink-0 ${pathname === "/bulk" ? "text-orange-600" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/bulk" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/bulk" ? "text-orange-600" : ""}`}
                 >
                   Add Member
                 </span>
               )}
             </Link>
-
-            {/* Theme Toggle */}
-            <div
-              className={`w-full flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"} rounded-lg transition-colors min-w-0`}
-            >
-              <button
-                onClick={toggleTheme}
-                className="relative w-12 h-6 bg-gray-200 dark:bg-gray-800 rounded-full p-0.5 transition-all duration-300 shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                aria-label="Toggle theme"
-                title={
-                  mounted && theme === "light"
-                    ? "Switch to Dark Mode"
-                    : "Switch to Light Mode"
-                }
-              >
-                {/* Toggle Track */}
-                <div className="relative w-full h-full rounded-full bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 shadow-inner">
-                  {/* Toggle Handle */}
-                  <div
-                    className={`absolute top-0.5 w-5 h-5 bg-white dark:bg-gray-600 rounded-full shadow-lg transition-all duration-300 transform ${
-                      mounted && theme === "dark"
-                        ? "translate-x-6"
-                        : "translate-x-0"
-                    }`}
-                  >
-                    {/* Moon Icon for Dark Mode */}
-                    {mounted && theme === "dark" && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-2.5 h-2.5 bg-cyan-400 rounded-full shadow-lg animate-pulse" />
-                      </div>
-                    )}
-
-                    {/* Sun Icon for Light Mode */}
-                    {mounted && theme === "light" && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-2.5 h-2.5 bg-yellow-400 rounded-full shadow-lg" />
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Glow Effect */}
-                  <div
-                    className={`absolute inset-0 rounded-full transition-all duration-300 ${
-                      mounted && theme === "dark"
-                        ? "bg-gradient-to-r from-cyan-400/20 to-blue-500/20 shadow-lg shadow-cyan-400/30"
-                        : "bg-gradient-to-r from-yellow-400/20 to-blue-500/20 shadow-lg shadow-yellow-400/30"
-                    }`}
-                  />
-                </div>
-              </button>
-              {sidebarOpen && (
-                <span className="font-medium truncate">Theme</span>
-              )}
-            </div>
           </nav>
 
           {/* Notifications */}
           <div
-            className={`p-2 border-t ${mounted && theme === "dark" ? "border-gray-700" : "border-gray-200"}`}
+            className={`p-2 border-t ${"border-orange-400/30"}`}
           >
             <div className="relative">
               <button
                 data-notifications-button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className={`w-full flex items-center space-x-3 p-2 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"} rounded-lg transition-colors relative min-w-0`}
+                className={`w-full flex items-center space-x-3 p-2 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-orange-50 hover:bg-orange-400/40"} rounded-lg transition-colors relative min-w-0`}
                 title="Notifications"
               >
                 <i className="fas fa-bell text-lg flex-shrink-0"></i>
@@ -443,7 +384,7 @@ export default function Sidebar({
                     )}
                   </div>
                   <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-                    <button className="text-xs text-blue-500 dark:text-blue-400 hover:underline truncate">
+                    <button className="text-xs text-orange-100 hover:text-white hover:underline truncate">
                       View all notifications
                     </button>
                   </div>
@@ -454,16 +395,16 @@ export default function Sidebar({
 
           {/* User Menu */}
           <div
-            className={`p-2 border-t ${mounted && theme === "dark" ? "border-gray-700" : "border-gray-200"}`}
+            className={`p-2 border-t ${"border-orange-400/30"}`}
           >
             <div className="relative">
               <button
                 data-user-menu-button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className={`w-full flex items-center space-x-3 p-2 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-gray-700 hover:bg-gray-100"} rounded-lg transition-colors min-w-0`}
+                className={`w-full flex items-center space-x-3 p-2 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-orange-50 hover:bg-orange-400/40"} rounded-lg transition-colors min-w-0`}
                 title={userInfo?.username || "User"}
               >
-                <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 bg-white/25 rounded-full flex items-center justify-center flex-shrink-0">
                   <i className="fas fa-user text-xs text-white"></i>
                 </div>
                 {sidebarOpen && (

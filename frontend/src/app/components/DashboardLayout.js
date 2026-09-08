@@ -20,7 +20,7 @@ export default function DashboardLayout({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const { theme, setTheme, mounted } = useTheme();
+  const { theme, mounted } = useTheme();
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -1173,14 +1173,14 @@ export default function DashboardLayout({
     >
       {/* Header */}
       <header
-        className={`${mounted && theme === "dark" ? "bg-gray-800" : "bg-blue-500"} shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
+        className={`bg-orange-500 shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
       >
         <div className="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-6">
           <div className="relative lg:hidden">
             <button
               data-sidebar-toggle
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-white hover:text-blue-200 transition-colors mr-2 lg:hidden focus:outline-none"
+              className="text-white hover:text-orange-200 transition-colors mr-2 lg:hidden focus:outline-none"
               aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
               onFocus={(e) => {
                 const el = document.getElementById("sidebar-tooltip");
@@ -2210,20 +2210,6 @@ export default function DashboardLayout({
                         Appearance Settings
                       </h3>
                       <div className="space-y-3 sm:space-y-4">
-                        <div>
-                          <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
-                            Theme
-                          </label>
-                          <select
-                            value={theme}
-                            onChange={(e) => setTheme(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white text-xs sm:text-base"
-                          >
-                            <option value="light">Light Mode</option>
-                            <option value="dark">Dark Mode</option>
-                            <option value="auto">Auto (System)</option>
-                          </select>
-                        </div>
                         <div>
                           <label className="block text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 sm:mb-2">
                             Language
