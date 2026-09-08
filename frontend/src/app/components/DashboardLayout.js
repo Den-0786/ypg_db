@@ -1173,14 +1173,14 @@ export default function DashboardLayout({
     >
       {/* Header */}
       <header
-        className={`bg-orange-500 shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
+        className={`bg-gray-900 shadow-lg w-full px-2 sm:px-4 py-2 sm:py-3 flex items-center justify-between fixed top-0 left-0 z-20`}
       >
         <div className="flex items-center space-x-2 sm:space-x-3 pl-2 sm:pl-6">
           <div className="relative lg:hidden">
             <button
               data-sidebar-toggle
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="text-white hover:text-orange-200 transition-colors mr-2 lg:hidden focus:outline-none"
+              className="text-white hover:text-gray-300 transition-colors mr-2 lg:hidden focus:outline-none"
               aria-label={sidebarOpen ? "Close sidebar" : "Open sidebar"}
               onFocus={(e) => {
                 const el = document.getElementById("sidebar-tooltip");
