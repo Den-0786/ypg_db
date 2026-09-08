@@ -8,6 +8,7 @@ import DeleteConfirmationModal from "../../components/DeleteConfirmationModal";
 import { useToast, ToastContainer } from "../../components/Toast";
 import MemberTypeToggle from "../../components/MemberTypeToggle";
 import getDataStore from "../../utils/dataStore";
+import { sortExecutives } from "../../utils/executiveOrder";
 
 export default function LocalMembersPage() {
   // Get congregation info from localStorage
@@ -361,14 +362,17 @@ export default function LocalMembersPage() {
   };
 
   // Filter and search executives
-  const filteredExecutives = executives.filter((member) => {
-    const matchesSearch =
-      member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.gender.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesGender =
-      genderFilter === "all" || member.gender.toLowerCase() === genderFilter;
-    return matchesSearch && matchesGender;
-  });
+  const filteredExecutives = sortExecutives(
+    executives.filter((member) => {
+      const matchesSearch =
+        member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        member.gender.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesGender =
+        genderFilter === "all" || member.gender.toLowerCase() === genderFilter;
+      return matchesSearch && matchesGender;
+    }),
+    "local"
+  );
 
   // Filter and search members
   const filteredMembers = members.filter((member) => {

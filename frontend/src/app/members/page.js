@@ -9,6 +9,7 @@ import MembersTable from "../components/MembersTable";
 import MemberTypeToggle from "../components/MemberTypeToggle";
 import PinModal from "../components/PinModal";
 import getDataStore from "../utils/dataStore";
+import { sortExecutives } from "../utils/executiveOrder";
 
 export default function MembersPage() {
   useEffect(() => {
@@ -145,7 +146,10 @@ export default function MembersPage() {
           exec.executive_level === "both"
         );
       });
-      return districtExecs.map((exec) => withDisplayPosition(exec, "district"));
+      return sortExecutives(
+        districtExecs.map((exec) => withDisplayPosition(exec, "district")),
+        "district"
+      );
     } else {
       const localExecs = executives.filter((exec) => {
         const hasLocalRole = Array.isArray(exec.executive_roles) &&
@@ -159,7 +163,10 @@ export default function MembersPage() {
           exec.executive_level === "both"
         );
       });
-      return localExecs.map((exec) => withDisplayPosition(exec, "local"));
+      return sortExecutives(
+        localExecs.map((exec) => withDisplayPosition(exec, "local")),
+        "local"
+      );
     }
   };
 
@@ -185,7 +192,12 @@ export default function MembersPage() {
       grouped[exec.congregation].push(withDisplayPosition(exec, "local"));
     });
 
-    return grouped;
+    return Object.fromEntries(
+      Object.entries(grouped).map(([congregation, execs]) => [
+        congregation,
+        sortExecutives(execs, "local"),
+      ])
+    );
   };
   const handleExecutiveViewToggle = () => {
     setExecutiveView(executiveView === "district" ? "local" : "district");
