@@ -34,78 +34,13 @@ export default function ChurchInfoSection({
           <label className="block text-sm font-medium text-light-text-secondary dark:text-dark-text-secondary mb-2">
             Congregation <span className="text-red-500 font-bold">*</span>
           </label>
-          <select
+          <input
+            type="text"
             value={currentMember.congregation}
-            onChange={(e) =>
-              setCurrentMember({
-                ...currentMember,
-                congregation: e.target.value,
-              })
-            }
-            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-light-border dark:border-dark-border rounded-md focus:outline-none focus:ring-2 focus:ring-light-accent dark:focus:ring-dark-accent text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface text-sm lg:text-base neumorphic-light-inset dark:neumorphic-dark-inset"
+            readOnly
+            className="w-full max-w-xs lg:max-w-none px-2 py-1.5 lg:px-3 lg:py-2 border border-light-border dark:border-dark-border rounded-md text-light-text dark:text-dark-text bg-light-surface dark:bg-dark-surface text-sm lg:text-base neumorphic-light-inset dark:neumorphic-dark-inset opacity-80 cursor-not-allowed"
             required
-          >
-            <option value="" className="text-light-text dark:text-dark-text">
-              Select Congregation
-            </option>
-            <option
-              value="Emmanuel Congregation Ahinsan"
-              className="text-light-text dark:text-dark-text"
-            >
-              Emmanuel Congregation Ahinsan
-            </option>
-            <option
-              value="Peniel Congregation Esreso No1"
-              className="text-light-text dark:text-dark-text"
-            >
-              Peniel Congregation Esreso No1
-            </option>
-            <option
-              value="Mizpah Congregation Odagya No1"
-              className="text-light-text dark:text-dark-text"
-            >
-              Mizpah Congregation Odagya No1
-            </option>
-            <option
-              value="Christ Congregation Ahinsan Estate"
-              className="text-light-text dark:text-dark-text"
-            >
-              Christ Congregation Ahinsan Estate
-            </option>
-            <option
-              value="Ebenezer Congregation Dompoase Aprabo"
-              className="text-light-text dark:text-dark-text"
-            >
-              Ebenezer Congregation Dompoase Aprabo
-            </option>
-            <option
-              value="Favour Congregation Esreso No2"
-              className="text-light-text dark:text-dark-text"
-            >
-              Favour Congregation Esreso No2
-            </option>
-            <option
-              value="Liberty Congregation Esreso High Tension"
-              className="text-light-text dark:text-dark-text"
-            >
-              Liberty Congregation Esreso High Tension
-            </option>
-            <option
-              value="Odagya No2"
-              className="text-light-text dark:text-dark-text"
-            >
-              Odagya No2
-            </option>
-            <option value="NOM" className="text-light-text dark:text-dark-text">
-              NOM
-            </option>
-            <option
-              value="Kokobriko"
-              className="text-light-text dark:text-dark-text"
-            >
-              Kokobriko
-            </option>
-          </select>
+          />
         </div>
 
         <div className="sm:col-span-1">
