@@ -164,17 +164,17 @@ export default function Sidebar({
               }
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/dashboard"
-                  ? "bg-orange-500 text-white shadow-lg"
+                  ? "bg-white text-gray-900 shadow-lg"
                   : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Dashboard"
             >
               <i
-                className={`fas fa-tachometer-alt text-lg flex-shrink-0 ${pathname === "/dashboard" ? "text-white" : ""}`}
+                className={`fas fa-tachometer-alt text-lg flex-shrink-0 ${pathname === "/dashboard" ? "text-gray-900" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/dashboard" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/dashboard" ? "text-gray-900" : ""}`}
                 >
                   Dashboard
                 </span>
@@ -185,17 +185,17 @@ export default function Sidebar({
               href="/"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/"
-                  ? "bg-orange-500 text-white shadow-lg"
+                  ? "bg-white text-gray-900 shadow-lg"
                   : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Home"
             >
               <i
-                className={`fas fa-home text-lg flex-shrink-0 ${pathname === "/" ? "text-white" : ""}`}
+                className={`fas fa-home text-lg flex-shrink-0 ${pathname === "/" ? "text-gray-900" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/" ? "text-gray-900" : ""}`}
                 >
                   Home
                 </span>
@@ -206,17 +206,17 @@ export default function Sidebar({
               href="/members"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/members"
-                  ? "bg-orange-500 text-white shadow-lg"
+                  ? "bg-white text-gray-900 shadow-lg"
                   : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Members"
             >
               <i
-                className={`fas fa-users text-lg flex-shrink-0 ${pathname === "/members" ? "text-white" : ""}`}
+                className={`fas fa-users text-lg flex-shrink-0 ${pathname === "/members" ? "text-gray-900" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/members" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/members" ? "text-gray-900" : ""}`}
                 >
                   Members
                 </span>
@@ -227,17 +227,17 @@ export default function Sidebar({
               href="/attendance"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/attendance"
-                  ? "bg-orange-500 text-white shadow-lg"
+                  ? "bg-white text-gray-900 shadow-lg"
                   : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Attendance"
             >
               <i
-                className={`fas fa-calendar-check text-lg flex-shrink-0 ${pathname === "/attendance" ? "text-white" : ""}`}
+                className={`fas fa-calendar-check text-lg flex-shrink-0 ${pathname === "/attendance" ? "text-gray-900" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/attendance" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/attendance" ? "text-gray-900" : ""}`}
                 >
                   Attendance
                 </span>
@@ -248,17 +248,17 @@ export default function Sidebar({
               href="/analytics"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/analytics"
-                  ? "bg-orange-500 text-white shadow-lg"
+                  ? "bg-white text-gray-900 shadow-lg"
                   : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Analytics"
             >
               <i
-                className={`fas fa-chart-bar text-lg flex-shrink-0 ${pathname === "/analytics" ? "text-white" : ""}`}
+                className={`fas fa-chart-bar text-lg flex-shrink-0 ${pathname === "/analytics" ? "text-gray-900" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/analytics" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/analytics" ? "text-gray-900" : ""}`}
                 >
                   Analytics
                 </span>
@@ -269,17 +269,17 @@ export default function Sidebar({
               href="/bulk"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/bulk"
-                  ? "bg-orange-500 text-white shadow-lg"
+                  ? "bg-white text-gray-900 shadow-lg"
                   : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Add Member"
             >
               <i
-                className={`fas fa-user-plus text-lg flex-shrink-0 ${pathname === "/bulk" ? "text-white" : ""}`}
+                className={`fas fa-user-plus text-lg flex-shrink-0 ${pathname === "/bulk" ? "text-gray-900" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/bulk" ? "text-white" : ""}`}
+                  className={`font-medium truncate ${pathname === "/bulk" ? "text-gray-900" : ""}`}
                 >
                   Add Member
                 </span>
@@ -360,7 +360,7 @@ export default function Sidebar({
                     )}
                   </div>
                   <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-                    <button className="text-xs text-orange-600 hover:text-orange-700 hover:underline truncate">
+                    <button className="text-xs text-gray-400 hover:text-gray-600 hover:underline truncate">
                       View all notifications
                     </button>
                   </div>
