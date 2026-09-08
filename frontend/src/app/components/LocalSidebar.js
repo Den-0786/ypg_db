@@ -483,7 +483,7 @@ export default function LocalSidebar({
                     <div className="flex justify-center">
                       <button
                         onClick={fetchNotifications}
-                        className="text-xs text-blue-100 hover:text-white hover:underline truncate"
+                        className="text-xs text-blue-600 hover:text-blue-700 hover:underline truncate"
                       >
                         {notificationsLoading
                           ? "Refreshing..."

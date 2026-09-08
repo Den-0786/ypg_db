@@ -15,7 +15,7 @@ export default function Sidebar({
   setSidebarOpen,
   setSettingsOpen,
 }) {
-  const { theme, mounted } = useTheme();
+  const { mounted } = useTheme();
   const { showSuccess } = useToast();
   const pathname = usePathname();
 
@@ -119,14 +119,14 @@ export default function Sidebar({
       {/* Sidebar */}
       <div
         data-sidebar
-        className={`fixed left-0 top-16 bg-orange-600 shadow-lg transition-all duration-300 z-20 
+        className={`fixed left-0 top-16 bg-gray-900 shadow-lg transition-all duration-300 z-20 
         ${sidebarOpen ? "w-64" : "w-16"} ${sidebarOpen ? "block" : "hidden lg:block"} overflow-y-auto overflow-x-hidden`}
         style={{ height: "calc(100vh - 4rem)" }}
       >
         <div className="flex flex-col min-w-0">
           {/* Sidebar Header */}
           <div
-            className={`${sidebarOpen ? "p-4" : "p-2"} border-b ${"border-orange-400/30"}`}
+            className={`${sidebarOpen ? "p-4" : "p-2"} border-b ${"border-gray-800"}`}
           >
             <div
               className={`flex items-center ${sidebarOpen ? "justify-between" : "justify-center"} min-w-0`}
@@ -141,7 +141,7 @@ export default function Sidebar({
               {/* Collapse button only on desktop */}
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className={`hidden lg:inline ${"text-orange-100 hover:text-white"} transition-colors flex-shrink-0`}
+                className={`hidden lg:inline ${"text-gray-400 hover:text-white"} transition-colors flex-shrink-0`}
                 aria-label={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
                 title={sidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
               >
@@ -164,21 +164,17 @@ export default function Sidebar({
               }
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/dashboard"
-                  ? mounted && theme === "dark"
-                    ? "bg-white text-orange-600 shadow-lg"
-                    : "bg-white text-orange-600 shadow-lg"
-                  : mounted && theme === "dark"
-                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
+                  ? "bg-orange-500 text-white shadow-lg"
+                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Dashboard"
             >
               <i
-                className={`fas fa-tachometer-alt text-lg flex-shrink-0 ${pathname === "/dashboard" ? "text-orange-600" : ""}`}
+                className={`fas fa-tachometer-alt text-lg flex-shrink-0 ${pathname === "/dashboard" ? "text-white" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/dashboard" ? "text-orange-600" : ""}`}
+                  className={`font-medium truncate ${pathname === "/dashboard" ? "text-white" : ""}`}
                 >
                   Dashboard
                 </span>
@@ -189,21 +185,17 @@ export default function Sidebar({
               href="/"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/"
-                  ? mounted && theme === "dark"
-                    ? "bg-white text-orange-600 shadow-lg"
-                    : "bg-white text-orange-600 shadow-lg"
-                  : mounted && theme === "dark"
-                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
+                  ? "bg-orange-500 text-white shadow-lg"
+                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Home"
             >
               <i
-                className={`fas fa-home text-lg flex-shrink-0 ${pathname === "/" ? "text-orange-600" : ""}`}
+                className={`fas fa-home text-lg flex-shrink-0 ${pathname === "/" ? "text-white" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/" ? "text-orange-600" : ""}`}
+                  className={`font-medium truncate ${pathname === "/" ? "text-white" : ""}`}
                 >
                   Home
                 </span>
@@ -214,21 +206,17 @@ export default function Sidebar({
               href="/members"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/members"
-                  ? mounted && theme === "dark"
-                    ? "bg-white text-orange-600 shadow-lg"
-                    : "bg-white text-orange-600 shadow-lg"
-                  : mounted && theme === "dark"
-                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
+                  ? "bg-orange-500 text-white shadow-lg"
+                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Members"
             >
               <i
-                className={`fas fa-users text-lg flex-shrink-0 ${pathname === "/members" ? "text-orange-600" : ""}`}
+                className={`fas fa-users text-lg flex-shrink-0 ${pathname === "/members" ? "text-white" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/members" ? "text-orange-600" : ""}`}
+                  className={`font-medium truncate ${pathname === "/members" ? "text-white" : ""}`}
                 >
                   Members
                 </span>
@@ -239,21 +227,17 @@ export default function Sidebar({
               href="/attendance"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/attendance"
-                  ? mounted && theme === "dark"
-                    ? "bg-white text-orange-600 shadow-lg"
-                    : "bg-white text-orange-600 shadow-lg"
-                  : mounted && theme === "dark"
-                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
+                  ? "bg-orange-500 text-white shadow-lg"
+                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Attendance"
             >
               <i
-                className={`fas fa-calendar-check text-lg flex-shrink-0 ${pathname === "/attendance" ? "text-orange-600" : ""}`}
+                className={`fas fa-calendar-check text-lg flex-shrink-0 ${pathname === "/attendance" ? "text-white" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/attendance" ? "text-orange-600" : ""}`}
+                  className={`font-medium truncate ${pathname === "/attendance" ? "text-white" : ""}`}
                 >
                   Attendance
                 </span>
@@ -264,21 +248,17 @@ export default function Sidebar({
               href="/analytics"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/analytics"
-                  ? mounted && theme === "dark"
-                    ? "bg-white text-orange-600 shadow-lg"
-                    : "bg-white text-orange-600 shadow-lg"
-                  : mounted && theme === "dark"
-                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
+                  ? "bg-orange-500 text-white shadow-lg"
+                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Analytics"
             >
               <i
-                className={`fas fa-chart-bar text-lg flex-shrink-0 ${pathname === "/analytics" ? "text-orange-600" : ""}`}
+                className={`fas fa-chart-bar text-lg flex-shrink-0 ${pathname === "/analytics" ? "text-white" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/analytics" ? "text-orange-600" : ""}`}
+                  className={`font-medium truncate ${pathname === "/analytics" ? "text-white" : ""}`}
                 >
                   Analytics
                 </span>
@@ -289,21 +269,17 @@ export default function Sidebar({
               href="/bulk"
               className={`flex items-center ${sidebarOpen ? "space-x-3" : "justify-center"} p-3 rounded-lg transition-all duration-200 min-w-0 ${
                 pathname === "/bulk"
-                  ? mounted && theme === "dark"
-                    ? "bg-white text-orange-600 shadow-lg"
-                    : "bg-white text-orange-600 shadow-lg"
-                  : mounted && theme === "dark"
-                    ? "text-gray-300 hover:bg-gray-700 hover:text-white"
-                    : "text-orange-50 hover:bg-orange-400/40 hover:text-white"
+                  ? "bg-orange-500 text-white shadow-lg"
+                  : "text-gray-300 hover:bg-gray-800 hover:text-white"
               }`}
               title="Add Member"
             >
               <i
-                className={`fas fa-user-plus text-lg flex-shrink-0 ${pathname === "/bulk" ? "text-orange-600" : ""}`}
+                className={`fas fa-user-plus text-lg flex-shrink-0 ${pathname === "/bulk" ? "text-white" : ""}`}
               ></i>
               {sidebarOpen && (
                 <span
-                  className={`font-medium truncate ${pathname === "/bulk" ? "text-orange-600" : ""}`}
+                  className={`font-medium truncate ${pathname === "/bulk" ? "text-white" : ""}`}
                 >
                   Add Member
                 </span>
@@ -313,13 +289,13 @@ export default function Sidebar({
 
           {/* Notifications */}
           <div
-            className={`p-2 border-t ${"border-orange-400/30"}`}
+            className={`p-2 border-t ${"border-gray-800"}`}
           >
             <div className="relative">
               <button
                 data-notifications-button
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                className={`w-full flex items-center space-x-3 p-2 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-orange-50 hover:bg-orange-400/40"} rounded-lg transition-colors relative min-w-0`}
+                className={`w-full flex items-center space-x-3 p-2 ${"text-gray-300 hover:bg-gray-800 hover:text-white"} rounded-lg transition-colors relative min-w-0`}
                 title="Notifications"
               >
                 <i className="fas fa-bell text-lg flex-shrink-0"></i>
@@ -384,7 +360,7 @@ export default function Sidebar({
                     )}
                   </div>
                   <div className="p-2 border-t border-gray-200 dark:border-gray-700">
-                    <button className="text-xs text-orange-100 hover:text-white hover:underline truncate">
+                    <button className="text-xs text-orange-600 hover:text-orange-700 hover:underline truncate">
                       View all notifications
                     </button>
                   </div>
@@ -395,16 +371,16 @@ export default function Sidebar({
 
           {/* User Menu */}
           <div
-            className={`p-2 border-t ${"border-orange-400/30"}`}
+            className={`p-2 border-t ${"border-gray-800"}`}
           >
             <div className="relative">
               <button
                 data-user-menu-button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className={`w-full flex items-center space-x-3 p-2 ${mounted && theme === "dark" ? "text-gray-300 hover:bg-gray-700" : "text-orange-50 hover:bg-orange-400/40"} rounded-lg transition-colors min-w-0`}
+                className={`w-full flex items-center space-x-3 p-2 ${"text-gray-300 hover:bg-gray-800 hover:text-white"} rounded-lg transition-colors min-w-0`}
                 title={userInfo?.username || "User"}
               >
-                <div className="w-5 h-5 bg-white/25 rounded-full flex items-center justify-center flex-shrink-0">
+                <div className="w-5 h-5 bg-gray-700 rounded-full flex items-center justify-center flex-shrink-0">
                   <i className="fas fa-user text-xs text-white"></i>
                 </div>
                 {sidebarOpen && (
