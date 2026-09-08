@@ -356,24 +356,23 @@ def api_logout(request):
 def api_verify_password(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
-    """Verify user password for quiz creation"""
+    """Verify requester's own password for quiz creation"""
     try:
         data = json.loads(request.body)
-        username = data.get('username')
         password = data.get('password')
-        
-        if not username or not password:
+
+        if not password:
             return JsonResponse({
                 'success': False,
-                'error': 'Username and password are required'
+                'error': 'Password is required'
             }, status=400)
-        
-        # Import Django's authenticate function
+
+        # Verify the authenticated requester's own credentials (ignore any
+        # client-supplied username to prevent credential checking of other users).
         from django.contrib.auth import authenticate
-        
-        # Verify credentials using Django authentication
-        user = authenticate(request, username=username, password=password)
-        
+
+        user = authenticate(request, username=request.user.username, password=password)
+
         if user:
             return JsonResponse({
                 'success': True,
@@ -1888,9 +1887,14 @@ def api_members(request):
 def api_attendance_stats(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     congregation_id = request.GET.get("congregation")
 
-    if congregation_id:
+    if not requester_is_district:
+        attendance = SundayAttendance.objects.filter(congregation=requester_cong)
+    elif congregation_id:
         attendance = SundayAttendance.objects.filter(congregation_id=congregation_id)
     else:
         attendance = SundayAttendance.objects.all()
@@ -1909,6 +1913,9 @@ def api_attendance_stats(request):
 def api_add_member(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     try:
         # Support both JSON and multipart/form-data
         content_type = request.content_type or ""
@@ -1935,8 +1942,12 @@ def api_add_member(request):
             elif len(dob) == 4 and dob[1] == "-":
                 data["date_of_birth"] = f"1900-0{dob}"
 
-        # Handle congregation name to ID conversion
-        if data.get("congregation") and isinstance(data.get("congregation"), str):
+        # Handle congregation name to ID conversion.
+        # Non-district users are pinned to their own congregation regardless
+        # of any congregation value they submit.
+        if not requester_is_district:
+            data["congregation"] = requester_cong.id
+        elif data.get("congregation") and isinstance(data.get("congregation"), str):
             try:
                 congregation = Congregation.objects.get(name=data["congregation"])
                 data["congregation"] = congregation.id
@@ -2163,13 +2174,20 @@ def api_attendance_chart_data(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for attendance chart data"""
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     weeks = int(request.GET.get("weeks", 8))
     congregation_id = request.GET.get("congregation")
 
     end_date = timezone.now().date()
     start_date = end_date - timedelta(weeks=weeks)
 
-    if congregation_id:
+    if not requester_is_district:
+        attendance_records = SundayAttendance.objects.filter(
+            congregation=requester_cong, date__gte=start_date, date__lte=end_date
+        ).order_by("date")
+    elif congregation_id:
         attendance_records = SundayAttendance.objects.filter(
             congregation_id=congregation_id, date__gte=start_date, date__lte=end_date
         ).order_by("date")
@@ -2195,7 +2213,14 @@ def api_congregation_pie_data(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for congregation distribution pie chart"""
-    congregations = Congregation.objects.all()
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
+
+    if not requester_is_district:
+        congregations = Congregation.objects.filter(id=requester_cong.id)
+    else:
+        congregations = Congregation.objects.all()
 
     labels = []
     data = []
@@ -2217,7 +2242,14 @@ def api_gender_distribution(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for gender distribution histogram"""
-    congregations = Congregation.objects.all()
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
+
+    if not requester_is_district:
+        congregations = Congregation.objects.filter(id=requester_cong.id)
+    else:
+        congregations = Congregation.objects.all()
 
     labels = []
     male_data = []
@@ -2246,13 +2278,20 @@ def api_attendance_trends(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     """API endpoint for attendance trends over time"""
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     months = int(request.GET.get("months", 12))
     congregation_id = request.GET.get("congregation")
 
     end_date = timezone.now().date()
     start_date = end_date - timedelta(days=months * 30)
 
-    if congregation_id:
+    if not requester_is_district:
+        attendance_records = SundayAttendance.objects.filter(
+            congregation=requester_cong, date__gte=start_date, date__lte=end_date
+        ).order_by("date")
+    elif congregation_id:
         attendance_records = SundayAttendance.objects.filter(
             congregation_id=congregation_id, date__gte=start_date, date__lte=end_date
         ).order_by("date")
@@ -2543,19 +2582,25 @@ def api_notifications(request):
 def api_mark_notification_read(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
     notif_id = request.POST.get("id")
     congregation_name = request.POST.get("congregation")
-    
+
     try:
-        # Filter by congregation if specified
-        if congregation_name:
+        # Non-district users may only touch their own congregation's notifications.
+        if not requester_is_district:
             notif = Notification.objects.get(
-                id=notif_id, 
+                id=notif_id,
+                congregation=requester_cong
+            )
+        elif congregation_name:
+            notif = Notification.objects.get(
+                id=notif_id,
                 congregation__name=congregation_name
             )
         else:
             notif = Notification.objects.get(id=notif_id)
-            
+
         notif.is_read = True
         notif.save()
         return JsonResponse({"success": True})
@@ -2567,18 +2612,21 @@ def api_mark_notification_read(request):
 def api_clear_notifications(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
     congregation_name = request.POST.get("congregation")
-    
+
     try:
-        # Filter by congregation if specified
-        if congregation_name:
+        # Non-district users may only clear their own congregation's notifications.
+        if not requester_is_district:
+            Notification.objects.filter(congregation=requester_cong).delete()
+        elif congregation_name:
             Notification.objects.filter(
                 congregation__name=congregation_name
             ).delete()
         else:
-            # Clear all notifications if no congregation specified
+            # Clear all notifications if no congregation specified (district only)
             Notification.objects.all().delete()
-            
+
         return JsonResponse({"success": True})
     except Exception as e:
         return JsonResponse({"success": False, "error": str(e)})
@@ -2588,6 +2636,9 @@ def api_clear_notifications(request):
 def api_send_manual_notification(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     try:
         data = json.loads(request.body)
         target = data.get("target")  # 'all' or 'local'
@@ -2597,11 +2648,14 @@ def api_send_manual_notification(request):
 
         # Create a system notification
         try:
-            if congregation_name:
+            # Non-district users may only send notifications to their own congregation.
+            if not requester_is_district:
+                congregation = requester_cong
+            elif congregation_name:
                 congregation = Congregation.objects.get(name=congregation_name)
             else:
                 congregation = Congregation.objects.first()
-                
+
             if congregation:
                 create_notification(
                     user=None,  # System notification
@@ -2629,10 +2683,15 @@ def api_create_test_notifications(request):
         data = json.loads(request.body)
         congregation_name = data.get("congregation")
         
-        if not congregation_name:
-            return JsonResponse({"success": False, "error": "Congregation name required"})
+        requester_cong, requester_is_district = _get_requester_congregation(request)
         
-        congregation = Congregation.objects.get(name=congregation_name)
+        # Non-district users may only create test notifications for their own congregation.
+        if not requester_is_district:
+            congregation = requester_cong
+        else:
+            if not congregation_name:
+                return JsonResponse({"success": False, "error": "Congregation name required"})
+            congregation = Congregation.objects.get(name=congregation_name)
         
         # Create sample notifications
         test_notifications = [
@@ -2810,14 +2869,23 @@ def api_settings_profile(request):
 @require_http_methods(["GET", "POST"])
 def api_congregation_initials(request):
     """GET or SET the initials for the logged-in congregation"""
-    try:
-        congregation_id = request.GET.get("congregation") or (
-            json.loads(request.body).get("congregation_id") if request.method == "POST" else None
-        )
-        if not congregation_id:
-            return JsonResponse({"success": False, "error": "congregation_id required"}, status=400)
+    if not request.user.is_authenticated:
+        return JsonResponse({"success": False, "error": "Authentication required"}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({"success": False, "error": "No congregation associated with account"}, status=403)
 
-        congregation = Congregation.objects.get(id=congregation_id)
+    try:
+        # Non-district users are pinned to their own congregation.
+        if not requester_is_district:
+            congregation = requester_cong
+        else:
+            congregation_id = request.GET.get("congregation") or (
+                json.loads(request.body).get("congregation_id") if request.method == "POST" else None
+            )
+            if not congregation_id:
+                return JsonResponse({"success": False, "error": "congregation_id required"}, status=400)
+            congregation = Congregation.objects.get(id=congregation_id)
 
         if request.method == "GET":
             return JsonResponse({"success": True, "initials": congregation.initials or ""})
@@ -2840,64 +2908,34 @@ def api_congregation_initials(request):
 def api_get_current_pin(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     """API endpoint for getting current PIN (for debugging)"""
     try:
-        # Get congregation info from query parameters (sent by frontend)
         congregation_id = request.GET.get('congregation_id')
         congregation_name = request.GET.get('congregation_name')
-        
-        print(f"Get current PIN request - Congregation ID: {congregation_id}, Congregation Name: {congregation_name}")
-        
-        # Try to get congregation - prioritize frontend-provided info
+
         congregation = None
-        
-        # First, try to get congregation using ID from frontend
-        if congregation_id:
-            try:
-                # Handle special case where district ID might be "district" string
-                if congregation_id == "district":
-                    congregation = Congregation.objects.get(name="District Admin")
-                    print(f"Found district congregation by name: {congregation.name}")
-                else:
-                    congregation = Congregation.objects.get(id=congregation_id)
-                    print(f"Found congregation by ID from frontend: {congregation.name}")
-            except Congregation.DoesNotExist:
-                print(f"Congregation with ID {congregation_id} not found")
-        
-        # If not found by ID, try by name from frontend
-        if not congregation and congregation_name:
-            try:
-                congregation = Congregation.objects.get(name=congregation_name)
-                print(f"Found congregation by name from frontend: {congregation.name}")
-            except Congregation.DoesNotExist:
-                print(f"Congregation '{congregation_name}' not found in database")
-        
-        # If still not found, try authenticated user
-        if not congregation and request.user.is_authenticated:
-            try:
-                congregation = Congregation.objects.get(user=request.user)
-                print(f"Found authenticated congregation: {congregation.name}")
-            except Congregation.DoesNotExist:
-                print("No congregation found for authenticated user")
-        
-        # If still not found, try session
-        if not congregation:
-            session_congregation_id = request.session.get('congregation_id')
-            if session_congregation_id:
+
+        # Non-district users may only read their own congregation's PIN.
+        if not requester_is_district:
+            congregation = requester_cong
+        else:
+            if congregation_id:
                 try:
-                    congregation = Congregation.objects.get(id=session_congregation_id)
-                    print(f"Found congregation from session: {congregation.name}")
+                    if congregation_id == "district":
+                        congregation = Congregation.objects.get(name="District Admin")
+                    else:
+                        congregation = Congregation.objects.get(id=congregation_id)
                 except Congregation.DoesNotExist:
-                    print("Congregation from session not found")
-        
-        # Last resort - use first available congregation
-        if not congregation:
-            try:
-                congregation = Congregation.objects.first()
-                print(f"Using first available congregation: {congregation.name if congregation else 'None'}")
-            except:
-                print("No congregations available")
-        
+                    pass
+            if not congregation and congregation_name:
+                try:
+                    congregation = Congregation.objects.get(name=congregation_name)
+                except Congregation.DoesNotExist:
+                    pass
+
         if congregation:
             return JsonResponse({
                 'success': True,
@@ -2905,13 +2943,8 @@ def api_get_current_pin(request):
                 'pin': congregation.pin
             })
         else:
-            session_pin = request.session.get('new_pin', '1234')
-            return JsonResponse({
-                'success': True,
-                'congregation': 'Session',
-                'pin': session_pin
-            })
-                
+            return JsonResponse({'success': False, 'error': 'Congregation not found'}, status=404)
+
     except Exception as e:
         return JsonResponse({
             'success': False,
@@ -2923,100 +2956,56 @@ def api_get_current_pin(request):
 @require_http_methods(["POST"])
 def api_validate_pin(request):
     """API endpoint for validating PIN"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     try:
         data = json.loads(request.body)
         pin = data.get('pin')
         congregation_id = data.get('congregation_id')
         congregation_name = data.get('congregation_name')
-        
-        print(f"PIN validation request - PIN: {pin}, Congregation ID: {congregation_id}, Congregation Name: {congregation_name}")
-        
+
         if not pin:
             return JsonResponse({
                 'success': False,
                 'error': 'PIN is required'
             }, status=400)
-        
-        # Try to get congregation - prioritize frontend-provided info
+
         congregation = None
-        
-        # First, try to get congregation using ID from frontend
-        if congregation_id:
-            try:
-                # Handle special case where district ID might be "district" string
-                if congregation_id == "district":
-                    congregation = Congregation.objects.get(name="District Admin")
-                    print(f"Found district congregation by name: {congregation.name}")
-                else:
-                    congregation = Congregation.objects.get(id=congregation_id)
-                    print(f"Found congregation by ID from frontend: {congregation.name}")
-            except Congregation.DoesNotExist:
-                print(f"Congregation with ID {congregation_id} not found")
-        
-        # If not found by ID, try by name from frontend
-        if not congregation and congregation_name:
-            try:
-                congregation = Congregation.objects.get(name=congregation_name)
-                print(f"Found congregation by name from frontend: {congregation.name}")
-            except Congregation.DoesNotExist:
-                print(f"Congregation '{congregation_name}' not found in database")
-        
-        # If still not found, try authenticated user
-        if not congregation and request.user.is_authenticated:
-            try:
-                congregation = Congregation.objects.get(user=request.user)
-                print(f"Found authenticated congregation: {congregation.name}")
-            except Congregation.DoesNotExist:
-                print("No congregation found for authenticated user")
-        
-        # If still not found, try session
-        if not congregation:
-            session_congregation_id = request.session.get('congregation_id')
-            if session_congregation_id:
+
+        # Non-district users may only validate against their own congregation's PIN.
+        if not requester_is_district:
+            congregation = requester_cong
+        else:
+            if congregation_id:
                 try:
-                    congregation = Congregation.objects.get(id=session_congregation_id)
-                    print(f"Found congregation from session: {congregation.name}")
+                    if congregation_id == "district":
+                        congregation = Congregation.objects.get(name="District Admin")
+                    else:
+                        congregation = Congregation.objects.get(id=congregation_id)
                 except Congregation.DoesNotExist:
-                    print("Congregation from session not found")
-        
-        # Last resort - use first available congregation
-        if not congregation:
-            try:
-                congregation = Congregation.objects.first()
-                print(f"Using first available congregation: {congregation.name if congregation else 'None'}")
-            except:
-                print("No congregations available")
-        
+                    pass
+            if not congregation and congregation_name:
+                try:
+                    congregation = Congregation.objects.get(name=congregation_name)
+                except Congregation.DoesNotExist:
+                    pass
+
         if congregation:
-            print(f"Validating PIN for congregation {congregation.name}: stored PIN = '{congregation.pin}', provided PIN = '{pin}'")
             if congregation.pin == pin:
-                print("PIN validation successful")
                 return JsonResponse({
                     'success': True,
                     'message': 'PIN is valid'
                 })
             else:
-                print("PIN validation failed - PINs don't match")
                 return JsonResponse({
                     'success': False,
                     'error': 'Invalid PIN'
                 }, status=401)
         else:
-            # Fallback to session PIN or default
-            session_pin = request.session.get('new_pin', '1234')
-            print(f"Using session PIN: '{session_pin}', provided PIN: '{pin}'")
-            if session_pin == pin:
-                print("Session PIN validation successful")
-                return JsonResponse({
-                    'success': True,
-                    'message': 'PIN is valid'
-                })
-            else:
-                print("Session PIN validation failed")
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Invalid PIN'
-                }, status=401)
+            return JsonResponse({'success': False, 'error': 'Congregation not found'}, status=404)
                 
     except Exception as e:
         return JsonResponse({
@@ -3254,8 +3243,6 @@ def api_settings_security(request):
             
             # Handle PIN change
             if data.get('newPin'):
-                print(f"PIN change request - Current PIN: {data.get('currentPin')}, New PIN: {data.get('newPin')}")
-                
                 if not re.match(r'^\d{4}$', data['newPin']):
                     return JsonResponse({
                         'success': False,
@@ -3276,62 +3263,41 @@ def api_settings_security(request):
                     }, status=400)
                 
                 try:
-                    # Get congregation info from frontend data
-                    congregation_id = data.get('congregation_id')
-                    congregation_name = data.get('congregation_name')
-                    
-                    print(f"PIN change - Congregation ID: {congregation_id}, Congregation Name: {congregation_name}")
-                    
-                    # Try to get congregation - prioritize frontend-provided info
-                    congregation = None
-                    
-                    # First, try to get congregation using ID from frontend
-                    if congregation_id:
-                        try:
-                            # Handle special case where district ID might be "district" string
-                            if congregation_id == "district":
-                                congregation = Congregation.objects.get(name="District Admin")
-                                print(f"Found district congregation by name for PIN change: {congregation.name}")
-                            else:
-                                congregation = Congregation.objects.get(id=congregation_id)
-                                print(f"Found congregation by ID for PIN change: {congregation.name}")
-                        except Congregation.DoesNotExist:
-                            print(f"Congregation with ID {congregation_id} not found for PIN change")
-                    
-                    # If not found by ID, try by name from frontend
-                    if not congregation and congregation_name:
-                        try:
-                            congregation = Congregation.objects.get(name=congregation_name)
-                            print(f"Found congregation by name for PIN change: {congregation.name}")
-                        except Congregation.DoesNotExist:
-                            print(f"Congregation '{congregation_name}' not found for PIN change")
-                    
-                    # If still not found, try authenticated user
-                    if not congregation and request.user.is_authenticated:
-                        try:
-                            congregation = Congregation.objects.get(user=request.user)
-                            print(f"Found authenticated congregation for PIN change: {congregation.name}")
-                        except Congregation.DoesNotExist:
-                            print("No congregation found for authenticated user for PIN change")
-                    
+                    requester_cong, requester_is_district = _get_requester_congregation(request)
+
+                    # Non-district users may only change their own congregation's PIN.
+                    if requester_is_district:
+                        congregation = None
+                        congregation_id = data.get('congregation_id')
+                        congregation_name = data.get('congregation_name')
+                        if congregation_id:
+                            try:
+                                if congregation_id == "district":
+                                    congregation = Congregation.objects.get(name="District Admin")
+                                else:
+                                    congregation = Congregation.objects.get(id=congregation_id)
+                            except Congregation.DoesNotExist:
+                                pass
+                        if not congregation and congregation_name:
+                            try:
+                                congregation = Congregation.objects.get(name=congregation_name)
+                            except Congregation.DoesNotExist:
+                                pass
+                    else:
+                        congregation = requester_cong
+
                     if congregation:
-                        # Verify current PIN before updating
-                        if data.get('currentPin') and congregation.pin != data['currentPin']:
-                            print(f"Current PIN verification failed - stored: '{congregation.pin}', provided: '{data['currentPin']}'")
+                        # Require the current PIN to be verified before updating.
+                        if not data.get('currentPin') or congregation.pin != data['currentPin']:
                             return JsonResponse({
                                 'success': False,
                                 'error': 'Current PIN is incorrect'
                             }, status=400)
-                        
+
                         # Update PIN in database
-                        print(f"Updating PIN for congregation {congregation.name} from {congregation.pin} to {data['newPin']}")
                         congregation.pin = data['newPin']
                         congregation.save()
-                        
-                        # Verify the PIN was saved
-                        congregation.refresh_from_db()
-                        print(f"PIN after save: {congregation.pin}")
-                        
+
                         return JsonResponse({
                             'success': True,
                             'message': 'PIN updated successfully'
@@ -3341,9 +3307,8 @@ def api_settings_security(request):
                             'success': False,
                             'error': 'No congregation found to update PIN'
                         }, status=404)
-                        
+
                 except Exception as e:
-                    print(f"Error updating PIN: {str(e)}")
                     return JsonResponse({
                         'success': False,
                         'error': f'Failed to update PIN: {str(e)}'
@@ -3472,16 +3437,29 @@ def api_settings_preferences(request):
 def api_home_stats(request):
     """API endpoint for home page statistics - provides real data for core metrics"""
     try:
+        # Authenticated non-district users see only their own congregation's data;
+        # anonymous visitors still see the public district-wide aggregates.
+        requester_cong, requester_is_district = _get_requester_congregation(request)
+        is_scoped = requester_cong is not None and not requester_is_district
+
+        guilders_qs = Guilder.objects.all()
+        attendance_qs = SundayAttendance.objects.all()
+        if is_scoped:
+            guilders_qs = guilders_qs.filter(congregation=requester_cong)
+            attendance_qs = attendance_qs.filter(congregation=requester_cong)
+
         # Get real data from database
-        total_members = Guilder.objects.count()
-        active_members = Guilder.objects.filter(membership_status="Active").count()
-        total_male = Guilder.objects.filter(gender="Male").count()
-        total_female = Guilder.objects.filter(gender="Female").count()
-        total_congregations = Congregation.objects.filter(is_district=False).count()
-        executive_members = Executive.objects.filter(is_active=True).values("guilder_id").distinct().count()
+        total_members = guilders_qs.count()
+        active_members = guilders_qs.filter(membership_status="Active").count()
+        total_male = guilders_qs.filter(gender="Male").count()
+        total_female = guilders_qs.filter(gender="Female").count()
+        total_congregations = 1 if is_scoped else Congregation.objects.filter(is_district=False).count()
+        executive_members = Executive.objects.filter(
+            guilder__in=guilders_qs
+        ).values("guilder_id").distinct().count()
         
         # Calculate Sunday attendance (average of recent records)
-        recent_attendance = SundayAttendance.objects.filter(
+        recent_attendance = attendance_qs.filter(
             date__gte=timezone.now().date() - timedelta(days=30)
         ).aggregate(
             avg_total=Avg('total_count'),
@@ -3492,12 +3470,12 @@ def api_home_stats(request):
         
         # Calculate this week's attendance - use the most recent week with data
         # Get the most recent attendance record to determine the current week
-        latest_attendance = SundayAttendance.objects.order_by('-date').first()
+        latest_attendance = attendance_qs.order_by('-date').first()
         if latest_attendance:
             # Calculate week start for the most recent attendance date
             latest_date = latest_attendance.date
             week_start = latest_date - timedelta(days=latest_date.weekday())
-            this_week_attendance = SundayAttendance.objects.filter(
+            this_week_attendance = attendance_qs.filter(
                 date__gte=week_start
             ).aggregate(
                 total=Sum('total_count')
@@ -3510,7 +3488,7 @@ def api_home_stats(request):
             # Calculate month start for the most recent attendance date
             latest_date = latest_attendance.date
             month_start = latest_date.replace(day=1)
-            this_month_attendance = SundayAttendance.objects.filter(
+            this_month_attendance = attendance_qs.filter(
                 date__gte=month_start
             ).aggregate(
                 total=Sum('total_count')
@@ -3525,7 +3503,7 @@ def api_home_stats(request):
             latest_date = latest_attendance.date
             current_week_start = latest_date - timedelta(days=latest_date.weekday())
             last_week_start = current_week_start - timedelta(days=7)
-            last_week_attendance = SundayAttendance.objects.filter(
+            last_week_attendance = attendance_qs.filter(
                 date__gte=last_week_start,
                 date__lt=current_week_start
             ).aggregate(
@@ -3537,7 +3515,7 @@ def api_home_stats(request):
         
         # Get leaderboard data (top 3 congregations by recent attendance)
         leaderboard_data = []
-        recent_attendance_by_congregation = SundayAttendance.objects.filter(
+        recent_attendance_by_congregation = attendance_qs.filter(
             date__gte=timezone.now().date() - timedelta(days=30)
         ).values('congregation__name').annotate(
             total_attendance=Sum('total_count'),
@@ -3554,7 +3532,10 @@ def api_home_stats(request):
             })
         
         # Get congregation list for dropdown (exclude district)
-        congregations = list(Congregation.objects.filter(is_district=False).values_list('name', flat=True).order_by('name'))
+        if is_scoped:
+            congregations = [requester_cong.name]
+        else:
+            congregations = list(Congregation.objects.filter(is_district=False).values_list('name', flat=True).order_by('name'))
 
         # Fetch events this month from ypg_website API (with cache fallback)
         from django.core.cache import cache as _cache
@@ -3811,6 +3792,11 @@ def api_events(request, event_id=None):
 @require_http_methods(["POST"])
 def api_log_attendance(request):
     """API endpoint for logging attendance from frontend"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     try:
         data = json.loads(request.body)
         
@@ -3823,14 +3809,19 @@ def api_log_attendance(request):
                     'error': f'Missing required field: {field}'
                 }, status=400)
         
-        # Get congregation
-        try:
-            congregation = Congregation.objects.get(name=data['congregation'])
-        except Congregation.DoesNotExist:
-            return JsonResponse({
-                'success': False,
-                'error': f'Congregation not found: {data["congregation"]}'
-            }, status=404)
+        # Non-district users are pinned to their own congregation
+        # regardless of the congregation value they submit.
+        if not requester_is_district:
+            congregation = requester_cong
+        else:
+            # Get congregation
+            try:
+                congregation = Congregation.objects.get(name=data['congregation'])
+            except Congregation.DoesNotExist:
+                return JsonResponse({
+                    'success': False,
+                    'error': f'Congregation not found: {data["congregation"]}'
+                }, status=404)
         
         # Check if attendance already exists for this date and congregation
         existing_attendance = SundayAttendance.objects.filter(
@@ -3884,6 +3875,10 @@ def api_attendance_records(request):
     """API endpoint for getting attendance records"""
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
+
     try:
         congregation_param = request.GET.get('congregation')
         date_from = request.GET.get('date_from')
@@ -3891,8 +3886,11 @@ def api_attendance_records(request):
         
         records = SundayAttendance.objects.all().order_by('-date')
         
-        # Filter by congregation if specified
-        if congregation_param:
+        # Non-district users are pinned to their own congregation,
+        # regardless of the ?congregation= parameter they pass.
+        if not requester_is_district and requester_cong is not None:
+            records = records.filter(congregation=requester_cong)
+        elif congregation_param:
             try:
                 # Try to get congregation by ID first, then by name
                 if congregation_param.isdigit():
@@ -3941,8 +3939,13 @@ def api_attendance_records(request):
 @require_http_methods(["DELETE"])
 def api_delete_attendance(request, attendance_id):
     """API endpoint for deleting attendance record"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     try:
         attendance = get_object_or_404(SundayAttendance, id=attendance_id)
+        denied = _ensure_attendance_access(request, attendance)
+        if denied:
+            return denied
         attendance.delete()
         
         return JsonResponse({
@@ -3961,8 +3964,13 @@ def api_delete_attendance(request, attendance_id):
 @require_http_methods(["PUT"])
 def api_update_attendance(request, attendance_id):
     """API endpoint for updating attendance record"""
+    if not request.user.is_authenticated:
+        return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
     try:
         attendance = get_object_or_404(SundayAttendance, id=attendance_id)
+        denied = _ensure_attendance_access(request, attendance)
+        if denied:
+            return denied
         data = json.loads(request.body)
         
         # Update fields if provided
@@ -4009,19 +4017,23 @@ def api_export_csv(request):
     """API endpoint for exporting data as CSV"""
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     try:
         data = json.loads(request.body)
         export_type = data.get('type', 'all')  # all, members, attendance, analytics
+        scope = None if requester_is_district else requester_cong
         
         # Generate CSV data based on type
         if export_type == 'members':
-            csv_data = generate_members_csv()
+            csv_data = generate_members_csv(scope)
         elif export_type == 'attendance':
-            csv_data = generate_attendance_csv()
+            csv_data = generate_attendance_csv(scope)
         elif export_type == 'analytics':
-            csv_data = generate_analytics_csv()
+            csv_data = generate_analytics_csv(scope)
         else:  # all
-            csv_data = generate_all_data_csv()
+            csv_data = generate_all_data_csv(scope)
         
         return JsonResponse({
             'success': True,
@@ -4041,20 +4053,24 @@ def api_export_csv(request):
 def api_export_excel(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     """API endpoint for exporting data as Excel"""
     try:
         data = json.loads(request.body)
         export_type = data.get('type', 'all')
+        scope = None if requester_is_district else requester_cong
         
         # For now, return CSV data (Excel export would require additional libraries)
         if export_type == 'members':
-            csv_data = generate_members_csv()
+            csv_data = generate_members_csv(scope)
         elif export_type == 'attendance':
-            csv_data = generate_attendance_csv()
+            csv_data = generate_attendance_csv(scope)
         elif export_type == 'analytics':
-            csv_data = generate_analytics_csv()
+            csv_data = generate_analytics_csv(scope)
         else:
-            csv_data = generate_all_data_csv()
+            csv_data = generate_all_data_csv(scope)
         
         return JsonResponse({
             'success': True,
@@ -4075,10 +4091,14 @@ def api_export_excel(request):
 def api_export_pdf(request):
     if not request.user.is_authenticated:
         return JsonResponse({'success': False, 'error': 'Authentication required'}, status=401)
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
     """API endpoint for exporting data as PDF"""
     try:
         data = json.loads(request.body)
         export_type = data.get('type', 'all')
+        scope = None if requester_is_district else requester_cong
 
         buffer = BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=A4)
@@ -4097,6 +4117,8 @@ def api_export_pdf(request):
             elements.append(Paragraph("YPG Members Report", title_style))
             elements.append(Spacer(1, 20))
             members = Guilder.objects.all().order_by("congregation__name", "first_name")
+            if scope is not None:
+                members = members.filter(congregation=scope)
             table_data = [["Name", "Phone", "Congregation", "Status", "Gender"]]
             for m in members:
                 table_data.append([
@@ -4112,6 +4134,8 @@ def api_export_pdf(request):
             elements.append(Paragraph("YPG Attendance Report", title_style))
             elements.append(Spacer(1, 20))
             records = SundayAttendance.objects.all().order_by("-date")
+            if scope is not None:
+                records = records.filter(congregation=scope)
             table_data = [["Date", "Congregation", "Male", "Female", "Total"]]
             for r in records:
                 table_data.append([
@@ -4131,6 +4155,8 @@ def api_export_pdf(request):
             elements.append(Paragraph("Members", styles["Heading2"]))
             elements.append(Spacer(1, 10))
             members = Guilder.objects.all().order_by("congregation__name", "first_name")
+            if scope is not None:
+                members = members.filter(congregation=scope)
             members_data = [["Name", "Phone", "Congregation", "Status", "Gender"]]
             for m in members:
                 members_data.append([
@@ -4158,6 +4184,8 @@ def api_export_pdf(request):
             elements.append(Paragraph("Attendance", styles["Heading2"]))
             elements.append(Spacer(1, 10))
             records = SundayAttendance.objects.all().order_by("-date")
+            if scope is not None:
+                records = records.filter(congregation=scope)
             att_data = [["Date", "Congregation", "Male", "Female", "Total"]]
             for r in records:
                 att_data.append([
@@ -4432,10 +4460,22 @@ def api_custom_sms_send(request):
         return JsonResponse({'success': False, 'error': 'Message is required'}, status=400)
 
     guilders = Guilder.objects.exclude(phone_number="")
-    if recipient_filter == 'active':
-        guilders = guilders.filter(membership_status='Active')
+
+    # Non-district users may only message members of their own congregation.
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if not requester_is_district:
+        if requester_cong is None:
+            return JsonResponse({'success': False, 'error': 'No congregation associated with account'}, status=403)
+        if recipient_filter == 'congregation':
+            congregation_id = requester_cong.id
+        elif recipient_filter == 'district_executives':
+            recipient_filter = 'all'
+        guilders = guilders.filter(congregation=requester_cong)
     elif recipient_filter == 'congregation' and congregation_id:
         guilders = guilders.filter(congregation_id=congregation_id)
+
+    if recipient_filter == 'active':
+        guilders = guilders.filter(membership_status='Active')
     elif recipient_filter == 'executives':
         exec_ids = Executive.objects.filter(is_active=True).values_list('guilder_id', flat=True)
         guilders = guilders.filter(id__in=exec_ids)
@@ -4609,6 +4649,12 @@ def _sync_executive_record(member, exec_data, is_district=False):
 
 def _api_bulk_add_members(request, members_list):
     """Handle bulk member creation (members array in request body)."""
+    requester_cong, requester_is_district = _get_requester_congregation(request)
+    if requester_cong is None and not requester_is_district:
+        return JsonResponse({
+            'success': False, 'error': 'No congregation associated with account'
+        }, status=403)
+
     results = []
     errors = []
     success_count = 0
@@ -4624,14 +4670,19 @@ def _api_bulk_add_members(request, members_list):
                 elif len(dob) == 4 and dob[1] == "-":
                     data["date_of_birth"] = f"1900-0{dob}"
 
-            # Handle congregation name to ID conversion
-            if data.get("congregation") and isinstance(data.get("congregation"), str):
-                cong = Congregation.objects.filter(name=data["congregation"]).first()
-                if cong:
-                    data["congregation"] = cong.id
-                else:
-                    errors.append({"index": idx, "name": m.get("name", ""), "error": f"Congregation '{data['congregation']}' not found"})
-                    continue
+            # Non-district users are pinned to their own congregation
+            # regardless of any congregation value they submit.
+            if not requester_is_district:
+                data["congregation"] = requester_cong.id
+            else:
+                # Handle congregation name to ID conversion
+                if data.get("congregation") and isinstance(data.get("congregation"), str):
+                    cong = Congregation.objects.filter(name=data["congregation"]).first()
+                    if cong:
+                        data["congregation"] = cong.id
+                    else:
+                        errors.append({"index": idx, "name": m.get("name", ""), "error": f"Congregation '{data['congregation']}' not found"})
+                        continue
 
             # Extract executive data
             _executive_data = {
@@ -4688,6 +4739,19 @@ def _ensure_member_access(request, member):
         return JsonResponse({
             'success': False,
             'error': 'You can only manage members of your own congregation.'
+        }, status=403)
+    return None
+
+
+def _ensure_attendance_access(request, attendance):
+    """403 when a non-district user touches another congregation's attendance."""
+    requester_cong, is_district = _get_requester_congregation(request)
+    if is_district:
+        return None
+    if requester_cong is None or attendance.congregation_id != requester_cong.id:
+        return JsonResponse({
+            'success': False,
+            'error': 'You can only manage attendance for your own congregation.'
         }, status=403)
     return None
 
@@ -5079,9 +5143,11 @@ def api_reminder_settings(request):
 
 # ==================== HELPER FUNCTIONS FOR DATA EXPORT ====================
 
-def generate_members_csv():
+def generate_members_csv(congregation=None):
     """Generate CSV data for members"""
     members = Guilder.objects.all().prefetch_related('executive_roles')
+    if congregation is not None:
+        members = members.filter(congregation=congregation)
     csv_lines = ['Name,Gender,Date of Birth,Congregation,Phone,Email,Position,Membership Status,Date Added']
     
     for member in members:
@@ -5100,9 +5166,11 @@ def generate_members_csv():
     return '\n'.join(csv_lines)
 
 
-def generate_attendance_csv():
+def generate_attendance_csv(congregation=None):
     """Generate CSV data for attendance"""
     attendance_records = SundayAttendance.objects.all()
+    if congregation is not None:
+        attendance_records = attendance_records.filter(congregation=congregation)
     csv_lines = ['Date,Congregation,Male Count,Female Count,Total Count']
     
     for record in attendance_records:
@@ -5111,12 +5179,17 @@ def generate_attendance_csv():
     return '\n'.join(csv_lines)
 
 
-def generate_analytics_csv():
+def generate_analytics_csv(congregation=None):
     """Generate CSV data for analytics"""
     # Get analytics data
-    total_members = Guilder.objects.count()
-    total_attendance = SundayAttendance.objects.count()
-    total_congregations = Congregation.objects.count()
+    members_qs = Guilder.objects.all()
+    attendance_qs = SundayAttendance.objects.all()
+    if congregation is not None:
+        members_qs = members_qs.filter(congregation=congregation)
+        attendance_qs = attendance_qs.filter(congregation=congregation)
+    total_members = members_qs.count()
+    total_attendance = attendance_qs.count()
+    total_congregations = 1 if congregation is not None else Congregation.objects.count()
     
     csv_lines = [
         'Metric,Value',
@@ -5129,11 +5202,11 @@ def generate_analytics_csv():
     return '\n'.join(csv_lines)
 
 
-def generate_all_data_csv():
+def generate_all_data_csv(congregation=None):
     """Generate CSV data for all data"""
     # Combine all data types
-    members_csv = generate_members_csv()
-    attendance_csv = generate_attendance_csv()
-    analytics_csv = generate_analytics_csv()
+    members_csv = generate_members_csv(congregation)
+    attendance_csv = generate_attendance_csv(congregation)
+    analytics_csv = generate_analytics_csv(congregation)
     
     return f"=== MEMBERS DATA ===\n{members_csv}\n\n=== ATTENDANCE DATA ===\n{attendance_csv}\n\n=== ANALYTICS DATA ===\n{analytics_csv}"

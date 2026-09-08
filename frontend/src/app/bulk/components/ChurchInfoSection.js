@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import formatPosition from "../../utils/formatPosition";
 
 export default function ChurchInfoSection({
@@ -8,6 +8,22 @@ export default function ChurchInfoSection({
   onAddToList,
   isBulkMode,
 }) {
+  const [congregations, setCongregations] = useState([]);
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+  useEffect(() => {
+    const fetchCongregations = async () => {
+      try {
+        const res = await fetch(`${baseUrl}/api/congregations/`);
+        const data = await res.json();
+        if (data.success) setCongregations(data.congregations || []);
+      } catch (e) {
+        console.error("Failed to load congregations", e);
+      }
+    };
+    fetchCongregations();
+  }, [baseUrl]);
+
   // Function to capitalize first letter of each word
   const capitalizeWords = (str) => {
     return str.replace(/\b\w/g, (char) => char.toUpperCase());
@@ -47,63 +63,15 @@ export default function ChurchInfoSection({
             <option value="" className="text-light-text dark:text-dark-text">
               Select Congregation
             </option>
-            <option
-              value="Emmanuel Congregation Ahinsan"
-              className="text-light-text dark:text-dark-text"
-            >
-              Emmanuel Congregation Ahinsan
-            </option>
-            <option
-              value="Peniel Congregation Esreso No1"
-              className="text-light-text dark:text-dark-text"
-            >
-              Peniel Congregation Esreso No1
-            </option>
-            <option
-              value="Mizpah Congregation Odagya No1"
-              className="text-light-text dark:text-dark-text"
-            >
-              Mizpah Congregation Odagya No1
-            </option>
-            <option
-              value="Christ Congregation Ahinsan Estate"
-              className="text-light-text dark:text-dark-text"
-            >
-              Christ Congregation Ahinsan Estate
-            </option>
-            <option
-              value="Ebenezer Congregation Dompoase Aprabo"
-              className="text-light-text dark:text-dark-text"
-            >
-              Ebenezer Congregation Dompoase Aprabo
-            </option>
-            <option
-              value="Favour Congregation Esreso No2"
-              className="text-light-text dark:text-dark-text"
-            >
-              Favour Congregation Esreso No2
-            </option>
-            <option
-              value="Liberty Congregation Esreso High Tension"
-              className="text-light-text dark:text-dark-text"
-            >
-              Liberty Congregation Esreso High Tension
-            </option>
-            <option
-              value="Odagya No2"
-              className="text-light-text dark:text-dark-text"
-            >
-              Odagya No2
-            </option>
-            <option value="NOM" className="text-light-text dark:text-dark-text">
-              NOM
-            </option>
-            <option
-              value="Kokobriko"
-              className="text-light-text dark:text-dark-text"
-            >
-              Kokobriko
-            </option>
+            {congregations.map((cong) => (
+              <option
+                key={cong.id}
+                value={cong.name}
+                className="text-light-text dark:text-dark-text"
+              >
+                {cong.name}
+              </option>
+            ))}
           </select>
         </div>
 

@@ -3,8 +3,23 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+const CONGREGATION_COLORS = [
+  "bg-blue-500",
+  "bg-green-500",
+  "bg-purple-500",
+  "bg-red-500",
+  "bg-yellow-500",
+  "bg-indigo-500",
+  "bg-pink-500",
+  "bg-teal-500",
+  "bg-cyan-500",
+  "bg-orange-500",
+];
+
 export default function SelectCongregationPage() {
   const router = useRouter();
+  const [congregations, setCongregations] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedCongregation, setSelectedCongregation] = useState("");
   const [toast, setToast] = useState({
     show: false,
@@ -12,31 +27,31 @@ export default function SelectCongregationPage() {
     type: "success",
   });
 
-  // Congregation list (updated to match actual database IDs)
-  const congregations = [
-    { id: "2", name: "Emmanuel Congregation Ahinsan", color: "bg-blue-500" },
-    { id: "3", name: "Peniel Congregation Esreso No1", color: "bg-green-500" },
-    { id: "4", name: "Mizpah Congregation Odagya No1", color: "bg-purple-500" },
-    {
-      id: "5",
-      name: "Christ Congregation Ahinsan Estate",
-      color: "bg-red-500",
-    },
-    {
-      id: "6",
-      name: "Ebenezer Congregation Dompoase Aprabo",
-      color: "bg-yellow-500",
-    },
-    { id: "7", name: "Favour Congregation Esreso No2", color: "bg-indigo-500" },
-    {
-      id: "8",
-      name: "Liberty Congregation Esreso High Tension",
-      color: "bg-pink-500",
-    },
-    { id: "9", name: "Odagya No2", color: "bg-teal-500" },
-    { id: "10", name: "NOM", color: "bg-blue-500" },
-    { id: "11", name: "Kokobriko", color: "bg-cyan-500" },
-  ];
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "";
+
+  useEffect(() => {
+    const fetchCongregations = async () => {
+      try {
+        const res = await fetch(`${baseUrl}/api/congregations/`);
+        const data = await res.json();
+        if (data.success) {
+          const list = data.congregations || [];
+          setCongregations(
+            list.map((cong, i) => ({
+              id: String(cong.id),
+              name: cong.name,
+              color: CONGREGATION_COLORS[i % CONGREGATION_COLORS.length],
+            }))
+          );
+        }
+      } catch (e) {
+        console.error("Failed to load congregations", e);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCongregations();
+  }, [baseUrl]);
 
   const showToast = (message, type = "success") => {
     setToast({ show: true, message, type });
@@ -71,7 +86,17 @@ export default function SelectCongregationPage() {
 
         {/* Congregation Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {congregations.map((congregation) => (
+          {loading ? (
+            <div className="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
+              <i className="fas fa-spinner fa-spin text-3xl mb-3"></i>
+              <p>Loading congregations...</p>
+            </div>
+          ) : congregations.length === 0 ? (
+            <div className="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
+              <p>No congregations available.</p>
+            </div>
+          ) : (
+            congregations.map((congregation) => (
             <div
               key={congregation.id}
               className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer transform hover:scale-105 border-2 ${
@@ -109,7 +134,8 @@ export default function SelectCongregationPage() {
                 </div>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Back to Home */}
