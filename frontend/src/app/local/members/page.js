@@ -103,18 +103,22 @@ export default function LocalMembersPage() {
                 (member) => member.member_level !== "district"
               );
               // Separate executives from regular members.
-              // A member is a "local executive" if they have a local-level role
-              // (either via executive_roles array OR via executive_level flag)
+              // A member is an "executive" for this congregation if they have
+              // any active executive role (local, district, or both) and belong
+              // to this congregation.
               const executivesList = localMembers.filter((member) => {
                 if (!member.is_executive) return false;
                 if (Array.isArray(member.executive_roles) && member.executive_roles.length > 0) {
+                  // Show any member with an executive role in this congregation
                   return member.executive_roles.some(
-                    (r) => r.level === "local" || r.level === "both"
+                    (r) => r.level === "local" || r.level === "district" || r.level === "both"
                   );
                 }
                 return (
                   member.executive_level === "local" ||
                   member.executive_level === "Local" ||
+                  member.executive_level === "district" ||
+                  member.executive_level === "District" ||
                   member.executive_level === "both"
                 );
               });

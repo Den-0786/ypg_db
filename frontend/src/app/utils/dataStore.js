@@ -1,4 +1,5 @@
 // Centralized data store for managing data flow between local and district pages
+
 class DataStore {
   constructor() {
     // Check if we're in the browser environment
@@ -217,43 +218,61 @@ class DataStore {
 
       // Enforce unique positions before API call
       const existingMembers = await this.getMembers();
-      const isLocalPositionTaken = !!existingMembers.find(
+
+      const normalizedRequestedLocalPosition = (
+        member.executive_position ||
+        member.local_executive_position ||
+        ""
+      )
+        .toString()
+        .trim()
+        .toLowerCase();
+
+      const localPositionHolder = existingMembers.find(
         (m) =>
+          m.id !== member.id &&
           (m.congregation === member.congregation ||
             m.congregation?.name === member.congregation) &&
           (m.executive_position || m.local_executive_position || "")
             .toString()
             .trim()
-            .toLowerCase() ===
-            (member.executive_position || "").toString().trim().toLowerCase()
+            .toLowerCase() === normalizedRequestedLocalPosition
       );
+
       if (
         member.is_executive &&
-        member.executive_position &&
-        isLocalPositionTaken
+        normalizedRequestedLocalPosition &&
+        localPositionHolder
       ) {
         throw new Error(
-          `Position already assigned in ${member.congregation}. Choose another.`
+          "This position has already been assigned"
         );
       }
 
-      const isDistrictPositionTaken = !!existingMembers.find(
+      const normalizedRequestedDistrictPosition = (
+        member.district_executive_position || ""
+      )
+        .toString()
+        .trim()
+        .toLowerCase();
+
+      const districtPositionHolder = existingMembers.find(
         (m) =>
+          m.id !== member.id &&
           (m.district_executive_position || "")
             .toString()
             .trim()
-            .toLowerCase() ===
-          (member.district_executive_position || "")
-            .toString()
-            .trim()
-            .toLowerCase()
+            .toLowerCase() === normalizedRequestedDistrictPosition
       );
+
       if (
         member.is_executive &&
-        member.district_executive_position &&
-        isDistrictPositionTaken
+        normalizedRequestedDistrictPosition &&
+        districtPositionHolder
       ) {
-        throw new Error(`District position already assigned. Choose another.`);
+        throw new Error(
+          "This position has already been assigned"
+        );
       }
 
       let fetchOptions;
@@ -308,12 +327,14 @@ class DataStore {
         error
       );
 
-      // If the error is due to duplicate position, rethrow so UI can notify
+      // If the error is due to duplicate position or a clear backend error, rethrow so UI can notify
       if (
         typeof error?.message === "string" &&
-        (error.message.includes("Position already assigned") ||
-          error.message.includes("District position already assigned") ||
-          error.message.includes("already exists in"))
+        (error.message.includes("already held by") ||
+          error.message.includes("already assigned") ||
+          error.message.includes("already exists in") ||
+          error.message.includes("already taken") ||
+          error.message.includes("position"))
       ) {
         throw error;
       }
@@ -595,25 +616,26 @@ class DataStore {
           .trim()
           .toLowerCase();
 
-        const isLocalPositionTaken =
+        const localPositionHolder =
           isExecutive &&
-          normalizedRequestedLocalPosition !== "" &&
-          !!existingMembers.find(
-            (m) =>
-              m.id !== memberId &&
-              (m.congregation === requestData.congregation ||
-                m.congregation?.name === requestData.congregation) &&
-              (m.executive_position || m.local_executive_position || "")
-                .toString()
-                .trim()
-                .toLowerCase() === normalizedRequestedLocalPosition
-          );
+          normalizedRequestedLocalPosition !== ""
+            ? existingMembers.find(
+                (m) =>
+                  m.id !== memberId &&
+                  (m.congregation === requestData.congregation ||
+                    m.congregation?.name === requestData.congregation) &&
+                  (m.executive_position || m.local_executive_position || "")
+                    .toString()
+                    .trim()
+                    .toLowerCase() === normalizedRequestedLocalPosition
+              )
+            : null;
 
-        if (isLocalPositionTaken) {
-          throw new Error(
-            `Position already assigned in ${requestData.congregation}. Choose another.`
-          );
-        }
+      if (localPositionHolder) {
+        throw new Error(
+          "This position has already been assigned"
+        );
+      }
 
         // Check district position uniqueness across district
         const normalizedRequestedDistrictPosition = (
@@ -623,23 +645,24 @@ class DataStore {
           .trim()
           .toLowerCase();
 
-        const isDistrictPositionTaken =
+        const districtPositionHolder =
           isExecutive &&
-          normalizedRequestedDistrictPosition !== "" &&
-          !!existingMembers.find(
-            (m) =>
-              m.id !== memberId &&
-              (m.district_executive_position || "")
-                .toString()
-                .trim()
-                .toLowerCase() === normalizedRequestedDistrictPosition
-          );
+          normalizedRequestedDistrictPosition !== ""
+            ? existingMembers.find(
+                (m) =>
+                  m.id !== memberId &&
+                  (m.district_executive_position || "")
+                    .toString()
+                    .trim()
+                    .toLowerCase() === normalizedRequestedDistrictPosition
+              )
+            : null;
 
-        if (isDistrictPositionTaken) {
-          throw new Error(
-            `District position already assigned. Choose another.`
-          );
-        }
+      if (districtPositionHolder) {
+        throw new Error(
+          "This position has already been assigned"
+        );
+      }
       } catch (precheckError) {
         // Surface pre-validation errors to UI
         throw precheckError;

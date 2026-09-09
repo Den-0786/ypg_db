@@ -1212,7 +1212,12 @@ def add_member(request):
         if form.is_valid():
             member = form.save()
             # Sync executive record if executive data was provided
-            _sync_executive_record(member, request.POST, is_district=bool(user_congregation.is_district))
+            try:
+                _sync_executive_record(member, request.POST, is_district=bool(user_congregation.is_district))
+            except ValueError as e:
+                member.delete()
+                messages.error(request, str(e))
+                return render(request, "core/member_form.html", {"form": form})
             _send_welcome_sms(member)
             # Notification for district
             create_notification(
@@ -1261,7 +1266,11 @@ def edit_member(request, member_id):
         if form.is_valid():
             member = form.save()
             # Sync executive record if executive data was provided
-            _sync_executive_record(member, request.POST, is_district=bool(user_congregation.is_district))
+            try:
+                _sync_executive_record(member, request.POST, is_district=bool(user_congregation.is_district))
+            except ValueError as e:
+                messages.error(request, str(e))
+                return render(request, "core/member_form.html", {"form": form, "member": member})
             # Detect changes
             changes = {}
             for field in old_data:
@@ -1512,8 +1521,13 @@ def bulk_cart(request, cart_id):
                     member = form.save()
                     # Sync executive record if applicable
                     if profile_data.get("is_executive"):
-                        req_cong, req_is_district = _get_requester_congregation(request)
-                        _sync_executive_record(member, profile_data, is_district=req_is_district)
+                        try:
+                            req_cong, req_is_district = _get_requester_congregation(request)
+                            _sync_executive_record(member, profile_data, is_district=req_is_district)
+                        except ValueError as e:
+                            member.delete()
+                            messages.error(request, f"Skipped {member.first_name} {member.last_name}: {e}")
+                            continue
                     _send_welcome_sms(member)
 
             cart.submitted = True
@@ -1980,8 +1994,12 @@ def api_add_member(request):
             print(f"api_add_member - Member saved successfully with ID: {member.id}")
 
             # Create Executive record if needed
-            _, req_is_district = _get_requester_congregation(request)
-            _sync_executive_record(member, _executive_data, is_district=req_is_district)
+            try:
+                _, req_is_district = _get_requester_congregation(request)
+                _sync_executive_record(member, _executive_data, is_district=req_is_district)
+            except ValueError as e:
+                member.delete()
+                return JsonResponse({"success": False, "error": str(e)}, status=400)
             _send_welcome_sms(member)
 
             return JsonResponse({
@@ -2066,8 +2084,11 @@ def api_update_member(request, member_id):
             print(f"api_update_member - Member updated successfully with ID: {updated_member.id}")
 
             # Sync Executive record - if is_executive is present in update data
-            _, req_is_district = _get_requester_congregation(request)
-            _sync_executive_record(updated_member, _executive_data, is_district=req_is_district)
+            try:
+                _, req_is_district = _get_requester_congregation(request)
+                _sync_executive_record(updated_member, _executive_data, is_district=req_is_district)
+            except ValueError as e:
+                return JsonResponse({"success": False, "error": str(e)}, status=400)
 
             return JsonResponse({
                 "success": True,
@@ -4577,6 +4598,9 @@ def _sync_executive_record(member, exec_data, is_district=False):
     Only district admins (is_district=True) may assign a district executive
     position. Non-district users are restricted to local roles and cannot
     create, change or remove district roles through this path.
+
+    Raises ValueError with a clear message if the requested position is already
+    held by another member.
     """
     is_executive = exec_data.get("is_executive") or exec_data.get("is_executive") is True
     # Allow string "true"/"false"
@@ -4623,6 +4647,36 @@ def _sync_executive_record(member, exec_data, is_district=False):
         # Remove active executive roles for this member
         Executive.objects.filter(guilder=member, is_active=True).update(is_active=False)
         return
+
+    # --- Position uniqueness validation ---
+    # Check local position uniqueness within the same congregation
+    if local_pos:
+        conflict = (
+            Executive.objects.filter(
+                is_active=True,
+                congregation=congregation,
+                local_position__iexact=local_pos,
+            )
+            .exclude(guilder=member)
+            .select_related("guilder")
+            .first()
+        )
+        if conflict:
+            raise ValueError("This position has already been assigned")
+
+    # Check district position uniqueness across the district
+    if district_pos:
+        conflict = (
+            Executive.objects.filter(
+                is_active=True,
+                district_position__iexact=district_pos,
+            )
+            .exclude(guilder=member)
+            .select_related("guilder")
+            .first()
+        )
+        if conflict:
+            raise ValueError("This position has already been assigned")
 
     if existing:
         if not is_district and existing.district_position:
@@ -4701,8 +4755,13 @@ def _api_bulk_add_members(request, members_list):
             form = GuilderForm(data)
             if form.is_valid():
                 member = form.save()
-                _, req_is_district = _get_requester_congregation(request)
-                _sync_executive_record(member, _executive_data, is_district=req_is_district)
+                try:
+                    _, req_is_district = _get_requester_congregation(request)
+                    _sync_executive_record(member, _executive_data, is_district=req_is_district)
+                except ValueError as e:
+                    member.delete()
+                    errors.append({"index": idx, "name": m.get("name", ""), "error": str(e)})
+                    continue
                 _send_welcome_sms(member)
                 success_count += 1
                 results.append({

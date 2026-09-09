@@ -65,16 +65,18 @@ export default function LocalDashboardPage() {
 
       // Calculate stats locally for this congregation
       const totalMembers = members.length;
-      // Count executives who hold a local-level role in this congregation
+      // Count ALL executives belonging to this congregation (local, district, or both)
       const localExecutives = members.filter(
         (m) =>
           m.is_executive &&
           (Array.isArray(m.executive_roles) && m.executive_roles.length > 0
             ? m.executive_roles.some(
-                (r) => r.level === "local" || r.level === "both"
+                (r) => r.level === "local" || r.level === "district" || r.level === "both"
               )
             : m.executive_level === "local" ||
               m.executive_level === "Local" ||
+              m.executive_level === "district" ||
+              m.executive_level === "District" ||
               m.executive_level === "both")
       ).length;
 
