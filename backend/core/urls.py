@@ -5,6 +5,9 @@ from . import views
 app_name = "core"
 
 urlpatterns = [
+    # Health check endpoint
+    path("api/health/", views.health_check, name="health_check"),
+
     # Dashboard URLs
     path("", views.dashboard, name="dashboard"),
     path(

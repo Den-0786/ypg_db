@@ -10,8 +10,13 @@ from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
+from django.http import JsonResponse
 
 logger = logging.getLogger(__name__)
+
+
+def health_check(request):
+    return JsonResponse({"status": "healthy"})
 
 from django.core.mail import send_mail
 
